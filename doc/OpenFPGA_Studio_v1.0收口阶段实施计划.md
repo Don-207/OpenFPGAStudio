@@ -38,7 +38,7 @@ v1.0 不承诺：
 | Debug Core/UART TX | RTL、仿真、bitstream和板级持续输出 | 基本通过 |
 | Trace | 协议、Probe、Viewer、仿真、候选镜像构建/下载和板级记录 | WP3复核完成 |
 | Monitor | RTL/仿真、真实读写/错误响应、控制行为和30分钟长稳通过 | WP2完成 |
-| Profiler | Probe重复累计缺陷已修复；离线回归、候选构建/下载和30分钟板级长稳通过 | 待Edge人工视觉签署 |
+| Profiler | Probe重复累计缺陷已修复；离线回归、候选构建/下载、30分钟板级长稳和Edge视觉签署通过 | WP3复核完成 |
 | Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
 | AI Debug | 离线门禁通过，主要板级场景已执行 | 待派生损坏场景、长稳和签署 |
 | JTAG | 性能镜像达到100 KB/s门槛并完成30分钟长稳 | 普通功能闭环和共存证据待补 |
@@ -240,4 +240,5 @@ JavaScript syntax gates: PASS
 - 修复FIFO probe仅在level变化、读写和异常事件时发出metric，并加入稳定level不得重复发出的XSim断言。
 - 重新构建并下载当前M36 UART+JTAG+ILA候选：WNS `+3.522 ns`、TNS `0`、未布线网络`0`、DRC `0 error`。
 - 修复镜像120秒预检和1800秒正式长稳均通过；正式窗口得到7,203个snapshot、1,801个alert、90,000个status，checksum error与设备drop均为0，FIFO overflow峰值为0，原始配置恢复成功。
-- 第四阶段Checklist仅剩Windows Edge Profiler视图人工确认；下一步在Edge中确认指标卡、趋势、alert和控制状态并保存截图，然后关闭Profiler复核。
+- Windows Edge Profiler视图人工确认通过：99 snapshots、49 alerts、0 malformed，四类指标、趋势、alert和控制区均正常显示。
+- 第四阶段Profiler Checklist无PENDING或FAIL项，WP3 Profiler复核完成；下一项为第五阶段Logic Analyzer Checklist复核。

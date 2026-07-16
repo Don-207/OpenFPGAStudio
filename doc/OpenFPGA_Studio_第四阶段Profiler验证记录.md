@@ -89,6 +89,14 @@ just profiler-soak /dev/ttyUSB1 115200 1800
 
 `Latency=1`来自board demo刻意产生的延迟/超时事件，未增长到饱和值；FIFO修复后峰值保持0。两次测试均覆盖metric `0x0001/0x0101/0x0201/0x0301`，并成功恢复测试前Profiler配置。
 
-## 当前待签署
+## Windows Edge人工视觉签署
 
-- Windows Microsoft Edge `150.0.4078.65`人工观察Profiler指标卡、趋势图、alert面板和控制状态；保存截图或明确观察结果。
+2026-07-16在Windows Microsoft Edge `150.0.4078.65`正式版本（64位）完成当前候选的Profiler页面人工观察：
+
+- 页面累计99 snapshots、49 alerts、0 malformed。
+- Throughput、FIFO、Latency和Frame Rate四类指标均显示实时值、窗口、flags和history。
+- Throughput趋势图正常绘制，alert面板持续显示FIFO/Latency演示告警。
+- `Period=100000`下FIFO/Latency卡片出现`SATURATED/ALERT`，对应board demo刻意产生的窗口事件；该视觉状态不代表Debug Core丢帧。正式1800秒门禁中设备drop为0、FIFO overflow计数峰值为0。
+- Enable、Disable、Apply Period、Clear、Read Status和Diagnose控制入口均正常渲染。
+
+结论：Windows Edge人工视觉签署PASS。第四阶段Profiler验证无剩余PENDING项。

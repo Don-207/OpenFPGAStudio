@@ -18,8 +18,8 @@ WP3状态标记：`PASS`已有直接证据，`PENDING`仍需执行，`WAIVED`为
 - [x] **WAIVED** 历史COM7板级结果仅作为旧环境记录；当前候选已在Ubuntu `/dev/ttyUSB1`重新完成更严格验证，不再以COM7作为发布依据。
 - [x] **PASS** 当前候选120秒预检通过：483 snapshots、121 alerts、6000 status，checksum error与设备drop均为0。
 - [x] **PASS** 当前候选1800秒长稳通过：7203 snapshots、1801 alerts、90000 status，checksum error与设备drop均为0；FIFO overflow峰值为0，配置恢复成功。
-- [ ] **PENDING** Windows Edge人工确认Profiler指标卡、趋势、alert和控制状态显示，并保存截图或观察记录。
+- [x] **PASS** Windows Microsoft Edge `150.0.4078.65`人工确认Profiler视图：99 snapshots、49 alerts、0 malformed；四类指标实时值/历史、趋势图、alert面板和控制状态均正常显示。
 
 ## WP3当前结论
 
-Profiler RTL重复累计缺陷已经修复，离线回归、当前候选构建/下载及30分钟实板长稳均为PASS。仅剩Windows Edge Web Viewer人工视觉签署；完成该项后可关闭第四阶段Profiler复核。
+Profiler RTL重复累计缺陷已经修复，离线回归、当前候选构建/下载、30分钟实板长稳和Windows Edge人工视觉签署均为PASS。第四阶段Profiler Checklist无PENDING或FAIL项，WP3 Profiler复核完成。
