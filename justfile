@@ -219,9 +219,9 @@ la-validator-self-test:
     {{python}} tools/viewer/logic_analyzer_validate.py --self-test
 
 la-core-sim:
-    xvlog -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v sim/openfpga_debug/tb_openfpga_la_core.v
-    xelab tb_openfpga_la_core -s tb_openfpga_la_core_sim
-    xsim tb_openfpga_la_core_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v sim/openfpga_debug/tb_openfpga_la_core.v
+    {{xelab}} tb_openfpga_la_core -s tb_openfpga_la_core_wp3_sim
+    {{xsim}} tb_openfpga_la_core_wp3_sim -runall
 
 profiler-probes-sim:
     {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v sim/openfpga_debug/tb_openfpga_profiler_probes.v
@@ -229,9 +229,9 @@ profiler-probes-sim:
     {{xsim}} tb_openfpga_profiler_probes_wp3_fifo_fix_sim -runall
 
 la-board-sim:
-    $rtl = Get-ChildItem rtl/openfpga_debug -File | Where-Object { $_.Extension -in '.vh', '.v' } | ForEach-Object FullName; xvlog -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug $rtl rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_la.v
-    xelab tb_openfpga_debug_board_la -s tb_openfpga_debug_board_la_sim
-    xsim tb_openfpga_debug_board_la_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_la.v
+    {{xelab}} tb_openfpga_debug_board_la -s tb_openfpga_debug_board_la_wp3_sim
+    {{xsim}} tb_openfpga_debug_board_la_wp3_sim -runall
 
 # Requires confirmation before running (Vivado synthesis/elaboration gate).
 la-elab:
