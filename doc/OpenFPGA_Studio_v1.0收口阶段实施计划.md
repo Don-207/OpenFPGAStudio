@@ -36,7 +36,7 @@ v1.0 不承诺：
 | 能力 | 当前证据 | 收口状态 |
 | --- | --- | --- |
 | Debug Core/UART TX | RTL、仿真、bitstream和板级持续输出 | 基本通过 |
-| Trace | 协议、Probe、Viewer、仿真和板级记录 | 待整理Checklist |
+| Trace | 协议、Probe、Viewer、仿真、候选镜像构建和板级记录 | WP3复核中，待候选下载与人工Viewer验收 |
 | Monitor | RTL/仿真、真实读写/错误响应、控制行为和30分钟长稳通过 | WP2完成 |
 | Profiler | Probe、Viewer、仿真和板级记录 | 待最终Checklist复核 |
 | Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
@@ -227,4 +227,5 @@ JavaScript syntax gates: PASS
 - 当前Parser、Viewer、M9 XSim、M10 XSim和完整顶层Vivado elaboration通过。
 - WP3复跑发现并修复Monitor默认周期覆盖Board Demo仿真参数的回归；真实板默认周期不变。
 - 更新陈旧的M10 elaboration文件清单，使其覆盖当前Profiler、LA和JTAG顶层依赖。
-- Trace板级仍有5项PENDING：候选bitstream重建/下载、Web Viewer连接记录、四泳道确认、DMA高亮确认、`drop_count`记录。
+- 当前WP3 RTL的M36 JTAG+ILA候选镜像已重新构建：WNS `+3.298 ns`、TNS `0`、未布线网络 `0`、DRC `0 error`；bitstream与LTX哈希已记录在Trace验证记录。
+- Trace板级仍有5项PENDING：候选bitstream下载、Web Viewer连接记录、四泳道确认、DMA高亮确认、`drop_count`记录。

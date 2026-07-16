@@ -201,4 +201,7 @@ powershell -ExecutionPolicy Bypass -File tools\viewer\serial_validate.ps1 -Port 
 - 修复为新增`MONITOR_DEFAULT_DEMO_PERIOD`参数并由Board Demo传入`EVENT_INTERVAL_TICKS`；真实板默认值仍为10,000,000 ticks，功能配置不变。
 - 修复后M10 XSim PASS：Debug与Trace帧共存。
 - 原M10 elaboration脚本因后续阶段新增Profiler/LA/JTAG后文件清单陈旧而FAIL；更新为读取当前完整RTL/vendor依赖后PASS，84 infos、13 warnings、0 critical warnings、0 errors。
-- 当前仍需重新生成/下载候选bitstream，人工确认Viewer四泳道与DMA高亮，并记录`drop_count`。
+- 执行`just m36-ila-bitstream`重新生成当前WP3候选镜像PASS：Vivado 2024.2，器件`xcku5p-ffvb676-2-i`，单个USER2 BSCANE2和单个ILA均通过构建断言。
+- 实现结果：WNS `+3.298 ns`、TNS `0`、WHS `+0.017 ns`、THS `0`，11,305个可布线网络全部完成；DRC为0 error、4个来自`dbg_hub`生成IP的warning，CDC为4个`dbg_hub`生成IP CDC-15 warning，无用户RTL新增CDC warning。
+- 产物：bitstream 15,431,260 bytes，SHA-256 `b30d7cdd1b6e61d2744d13b0e6d460b8c37dd4437a31be3d557c85bd5c6811c0`；LTX 13,686 bytes，SHA-256 `019c53da47cee5fb7cecfc429efe703e9b07c038e9534a906d47e44cca115622`。
+- 当前仍需下载该候选bitstream，人工确认Viewer四泳道与DMA高亮，并记录`drop_count`。
