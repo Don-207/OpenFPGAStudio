@@ -36,7 +36,7 @@ v1.0 不承诺：
 | 能力 | 当前证据 | 收口状态 |
 | --- | --- | --- |
 | Debug Core/UART TX | RTL、仿真、bitstream和板级持续输出 | 基本通过 |
-| Trace | 协议、Probe、Viewer、仿真、候选镜像构建/下载和板级记录 | WP3复核中，待人工Viewer验收 |
+| Trace | 协议、Probe、Viewer、仿真、候选镜像构建/下载和板级记录 | WP3复核完成 |
 | Monitor | RTL/仿真、真实读写/错误响应、控制行为和30分钟长稳通过 | WP2完成 |
 | Profiler | Probe、Viewer、仿真和板级记录 | 待最终Checklist复核 |
 | Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
@@ -230,5 +230,5 @@ JavaScript syntax gates: PASS
 - 当前WP3 RTL的M36 JTAG+ILA候选镜像已重新构建：WNS `+3.298 ns`、TNS `0`、未布线网络 `0`、DRC `0 error`；bitstream与LTX哈希已记录在Trace验证记录。
 - 候选镜像已下载到`Digilent/210512180081`的`xcku5p_0`，启动状态HIGH并枚举1个ILA；JTAG build ID为`0x4D360001`。
 - 候选镜像UART采样确认Trace ID `0x0001..0x0004`、DMA timeout状态均到达Host；750个STATUS帧的`drop_count`始终为0。
-- Windows Chrome截图确认四泳道渲染和DMA timeout高亮；由截图发现并修复32位timestamp回绕造成负duration的问题，Parser与Viewer压力回归通过。
-- Trace板级仅剩1项PENDING：补录Windows Chrome精确版本号。
+- Windows Microsoft Edge `150.0.4078.65`正式版本（64位）截图确认四泳道渲染和DMA timeout高亮；由截图发现并修复32位timestamp回绕造成负duration的问题，Parser与Viewer压力回归通过。
+- 第二阶段Trace Checklist无PENDING或FAIL项，WP3 Trace复核完成；下一项为第四阶段Profiler Checklist复核。
