@@ -229,4 +229,5 @@ JavaScript syntax gates: PASS
 - 更新陈旧的M10 elaboration文件清单，使其覆盖当前Profiler、LA和JTAG顶层依赖。
 - 当前WP3 RTL的M36 JTAG+ILA候选镜像已重新构建：WNS `+3.298 ns`、TNS `0`、未布线网络 `0`、DRC `0 error`；bitstream与LTX哈希已记录在Trace验证记录。
 - 候选镜像已下载到`Digilent/210512180081`的`xcku5p_0`，启动状态HIGH并枚举1个ILA；JTAG build ID为`0x4D360001`。
-- Trace板级仍有4项PENDING：Web Viewer连接记录、四泳道确认、DMA高亮确认、`drop_count`记录。
+- 候选镜像UART采样确认Trace ID `0x0001..0x0004`、DMA timeout状态均到达Host；750个STATUS帧的`drop_count`始终为0。
+- Trace板级仍有3项PENDING：Web Viewer连接记录、四泳道渲染确认、DMA高亮样式确认。

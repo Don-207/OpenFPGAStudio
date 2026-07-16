@@ -381,9 +381,28 @@ def validate(port: str, baud: int, duration: float, minimum: int) -> None:
         os.close(fd)
     elapsed = max(time.monotonic() - started, 1e-9)
     counts = Counter(TYPE_NAMES.get(kind, f"0x{kind:02x}") for kind, _ in decoder.frames)
+    trace_ids = Counter()
+    trace_statuses = Counter()
+    status_drop_counts = []
+    for kind, payload in decoder.frames:
+        if kind in (0x10, 0x11) and len(payload) >= 8:
+            trace_ids[read_u16(payload, 4)] += 1
+        elif kind in (0x12, 0x13, 0x14) and len(payload) >= 6:
+            trace_ids[read_u16(payload, 4)] += 1
+        if kind == 0x11 and len(payload) >= 9:
+            trace_statuses[payload[8]] += 1
+        if kind == 0x05 and len(payload) >= 8:
+            status_drop_counts.append(read_u16(payload, 6))
     print(f"port={port} baud={baud} seconds={elapsed:.3f} bytes={byte_count} "
           f"rate={byte_count/elapsed:.1f}B/s frames={len(decoder.frames)}")
     print("types=" + ", ".join(f"{name}:{count}" for name, count in sorted(counts.items())))
+    print("trace_ids=" + ", ".join(
+        f"0x{trace_id:04x}:{count}" for trace_id, count in sorted(trace_ids.items())))
+    print("trace_end_statuses=" + ", ".join(
+        f"{status}:{count}" for status, count in sorted(trace_statuses.items())))
+    if status_drop_counts:
+        print(f"status_drop_count_first={status_drop_counts[0]} "
+              f"last={status_drop_counts[-1]} max={max(status_drop_counts)}")
     print(f"checksum_errors={decoder.checksum_errors} version_errors={decoder.version_errors} "
           f"initial_sync_drops={decoder.sync_drops}")
     for index, raw in enumerate(decoder.bad_frames):

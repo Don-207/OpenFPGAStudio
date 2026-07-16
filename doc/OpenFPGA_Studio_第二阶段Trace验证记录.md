@@ -205,4 +205,6 @@ powershell -ExecutionPolicy Bypass -File tools\viewer\serial_validate.ps1 -Port 
 - 实现结果：WNS `+3.298 ns`、TNS `0`、WHS `+0.017 ns`、THS `0`，11,305个可布线网络全部完成；DRC为0 error、4个来自`dbg_hub`生成IP的warning，CDC为4个`dbg_hub`生成IP CDC-15 warning，无用户RTL新增CDC warning。
 - 产物：bitstream 15,431,260 bytes，SHA-256 `b30d7cdd1b6e61d2744d13b0e6d460b8c37dd4437a31be3d557c85bd5c6811c0`；LTX 13,686 bytes，SHA-256 `019c53da47cee5fb7cecfc429efe703e9b07c038e9534a906d47e44cca115622`。
 - 执行`just m36-program 'Digilent/210512180081'`下载PASS：精确匹配唯一Digilent目标，器件`xcku5p_0`，End of startup status为HIGH，刷新后枚举1个ILA；普通M36镜像JTAG build ID为`0x4D360001`。
-- 当前仍需连接Web Viewer，人工确认四泳道与DMA高亮，并记录`drop_count`。
+- 下载后UART 10秒基线PASS：1,664帧，Trace begin/end/mark/value均持续出现，checksum/version/sync error均为0。
+- 扩展`validate_uart_board.py`输出Trace ID、span end状态和STATUS中的drop计数；15秒板级采样PASS：2,493帧，Trace ID `0x0001..0x0004`全部出现，DMA timeout（status 3）15次，750个STATUS帧的`drop_count`首值/末值/最大值均为0。
+- 数据侧已证明四类泳道输入和DMA timeout输入；当前仍需连接Web Viewer，人工确认四泳道渲染与timeout高亮样式。
