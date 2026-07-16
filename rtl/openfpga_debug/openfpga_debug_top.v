@@ -4,6 +4,7 @@ module openfpga_debug_top #(
     parameter CLK_FREQ_HZ = 50000000,
     parameter UART_BAUD   = 115200,
     parameter BUFFER_ADDR_WIDTH = 4,
+    parameter MONITOR_DEFAULT_DEMO_PERIOD = CLK_FREQ_HZ / 10,
     parameter ENABLE_UART = 1
 ) (
     input  wire        clk,
@@ -208,7 +209,7 @@ openfpga_debug_command_parser u_monitor_command_parser (
 );
 
 openfpga_monitor_core #(
-    .DEFAULT_DEMO_PERIOD(CLK_FREQ_HZ / 10)
+    .DEFAULT_DEMO_PERIOD(MONITOR_DEFAULT_DEMO_PERIOD)
 ) u_monitor_core (
     .clk(clk),
     .rst(rst),

@@ -191,3 +191,14 @@ powershell -ExecutionPolicy Bypass -File tools\viewer\serial_validate.ps1 -Port 
 - timestamp 为 32 bit tick，长时间运行会回绕。
 - Trace 是事件级观测，不是波形采样。
 - 高密度 Trace 会受 UART 带宽和 ring buffer 深度限制，需要通过节流和 drop 统计解释。
+
+## 9. WP3复核记录（2026-07-16）
+
+- Parser与Viewer压力回归PASS：11,192 frames、2,400 spans、2,400 marks、800 values，checksum/sync/unknown均为0。
+- M9 Adapter当前源码XSim PASS。
+- M10 Board Demo首次复跑FAIL：Trace begin/end/mark/value均未在测试窗口出现。
+- 根因是Monitor接入后`openfpga_debug_top`固定使用`CLK_FREQ_HZ/10`初始化`DEMO_PERIOD`，覆盖Board Demo的`EVENT_INTERVAL_TICKS`仿真参数。
+- 修复为新增`MONITOR_DEFAULT_DEMO_PERIOD`参数并由Board Demo传入`EVENT_INTERVAL_TICKS`；真实板默认值仍为10,000,000 ticks，功能配置不变。
+- 修复后M10 XSim PASS：Debug与Trace帧共存。
+- 原M10 elaboration脚本因后续阶段新增Profiler/LA/JTAG后文件清单陈旧而FAIL；更新为读取当前完整RTL/vendor依赖后PASS，84 infos、13 warnings、0 critical warnings、0 errors。
+- 当前仍需重新生成/下载候选bitstream，人工确认Viewer四泳道与DMA高亮，并记录`drop_count`。

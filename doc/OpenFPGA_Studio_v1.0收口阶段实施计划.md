@@ -220,3 +220,11 @@ JavaScript syntax gates: PASS
 - `CLEAR_COUNTERS`触发后`COUNTER0`从4,189,421,936回落到375,120，证明真实清零脉冲生效。
 - WP2的身份读取、RW、RO拒绝、非法地址、非法值、Trigger、恢复和1800秒双向长稳均已通过。
 - 下一步：执行WP3，统一复核第二至第七阶段Checklist与验证记录，按PASS/FAIL/PENDING/WAIVED消除矛盾状态。
+
+### 2026-07-16：WP3第二阶段Trace复核
+
+- 第二阶段Checklist已统一为PASS/PENDING/WAIVED，原32个未勾选项不再被误读为全部未实现。
+- 当前Parser、Viewer、M9 XSim、M10 XSim和完整顶层Vivado elaboration通过。
+- WP3复跑发现并修复Monitor默认周期覆盖Board Demo仿真参数的回归；真实板默认周期不变。
+- 更新陈旧的M10 elaboration文件清单，使其覆盖当前Profiler、LA和JTAG顶层依赖。
+- Trace板级仍有5项PENDING：候选bitstream重建/下载、Web Viewer连接记录、四泳道确认、DMA高亮确认、`drop_count`记录。

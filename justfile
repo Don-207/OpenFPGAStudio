@@ -2,6 +2,9 @@ set windows-shell := ["C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe
 
 python := if os_family() == "windows" { "python" } else { "python3" }
 vivado := env_var_or_default("VIVADO", if os_family() == "windows" { "vivado" } else { "/tools/Xilinx/Vivado/2024.2/bin/vivado" })
+xvlog := env_var_or_default("XVLOG", if os_family() == "windows" { "xvlog" } else { "/tools/Xilinx/Vivado/2024.2/bin/xvlog" })
+xelab := env_var_or_default("XELAB", if os_family() == "windows" { "xelab" } else { "/tools/Xilinx/Vivado/2024.2/bin/xelab" })
+xsim := env_var_or_default("XSIM", if os_family() == "windows" { "xsim" } else { "/tools/Xilinx/Vivado/2024.2/bin/xsim" })
 
 default:
     @just --list
@@ -15,6 +18,21 @@ release-check: m27-check m28-check m29-check m30-check m32-check m36-check
     node --check tools/viewer/web/diagnosis_validator.js
     node --check tools/viewer/web/ai_debug_model.js
     node --check tools/viewer/web/app.js
+
+# Second-stage Trace RTL adapter payload/handshake regression.
+trace-adapter-sim:
+    {{xvlog}} -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_trace_adapter.v sim/openfpga_debug/tb_openfpga_trace_adapter.v
+    {{xelab}} tb_openfpga_trace_adapter -s tb_openfpga_trace_adapter_wp3_sim
+    {{xsim}} tb_openfpga_trace_adapter_wp3_sim -runall
+
+# Second-stage board demo coexistence regression for Debug and Trace frames.
+trace-board-sim:
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_demo.v
+    {{xelab}} tb_openfpga_debug_board_demo -s tb_openfpga_debug_board_demo_wp3_sim
+    {{xsim}} tb_openfpga_debug_board_demo_wp3_sim -runall
+
+# Current-source Trace software/RTL regression; Vivado elaboration and real board remain separate.
+trace-check: parser-test viewer-test trace-adapter-sim trace-board-sim
 
 # M32 hardware-free JTAG mailbox protocol/model regression.
 m32-check:
