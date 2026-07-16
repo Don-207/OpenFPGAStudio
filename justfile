@@ -52,6 +52,10 @@ monitor-read-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" ba
 monitor-safe-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200":
     {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-safe-suite
 
+# Reversible DEMO_PERIOD validation plus intentional CLEAR_COUNTERS trigger behavior.
+monitor-control-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200":
+    {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-control-suite
+
 # Periodic read-only Monitor transactions; defaults to the 30-minute WP2 release gate.
 monitor-soak port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" seconds="1800" interval="1":
     {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-soak-duration {{seconds}} --monitor-soak-interval {{interval}}

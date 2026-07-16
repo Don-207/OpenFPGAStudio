@@ -253,6 +253,72 @@ def monitor_safe_suite(port: str, baud: int, timeout: float) -> None:
     print("PASS: UART Monitor safe read/write/error validation")
 
 
+def monitor_control_suite(port: str, baud: int, timeout: float) -> None:
+    period_address = 0x0010
+    counter_address = 0x0014
+    clear_address = 0x0018
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    link = MonitorLink(fd)
+    original_period = None
+    try:
+        configure(fd, baud)
+        status, width, original_period = link.read(period_address, timeout)
+        if status != 0 or width != 4 or original_period == 0:
+            raise RuntimeError("failed to read valid original DEMO_PERIOD")
+        test_period = max(100_000, original_period // 2)
+        if test_period == original_period:
+            test_period = original_period + 1
+        status, old_value, new_value = link.write(
+            period_address, test_period, 0xFFFFFFFF, timeout)
+        if status != 0 or old_value != original_period or new_value != test_period:
+            raise RuntimeError("DEMO_PERIOD write response mismatch")
+        status, width, readback = link.read(period_address, timeout)
+        if status != 0 or width != 4 or readback != test_period:
+            raise RuntimeError("DEMO_PERIOD readback mismatch")
+        status, old_value, new_value = link.write(
+            period_address, 0, 0xFFFFFFFF, timeout)
+        if status != 5 or old_value != test_period or new_value != test_period:
+            raise RuntimeError("DEMO_PERIOD zero did not return BAD_VALUE(5) without change")
+
+        status, width, counter_before = link.read(counter_address, timeout)
+        if status != 0 or width != 4:
+            raise RuntimeError("failed to read COUNTER0 before clear")
+        status, _, _ = link.write(clear_address, 1, 0xFFFFFFFF, timeout)
+        if status != 0:
+            raise RuntimeError("CLEAR_COUNTERS trigger failed")
+        status, width, counter_after = link.read(counter_address, timeout)
+        if status != 0 or width != 4:
+            raise RuntimeError("failed to read COUNTER0 after clear")
+        # The free-running 100 MHz counter advances while the response is
+        # packetized, so it need not read as zero. It must return to the early
+        # post-clear region rather than continue from the pre-clear value.
+        if counter_before > 2_000_000 and counter_after >= counter_before:
+            raise RuntimeError(
+                f"COUNTER0 did not fall after clear: before={counter_before} after={counter_after}")
+        print(f"monitor_control_suite period_original={original_period} "
+              f"period_test={test_period} zero_status=5 "
+              f"counter_before={counter_before} counter_after={counter_after}")
+    finally:
+        if original_period is not None:
+            try:
+                status, _, restored = link.write(
+                    period_address, original_period, 0xFFFFFFFF, timeout)
+                if status != 0 or restored != original_period:
+                    raise RuntimeError("DEMO_PERIOD restore response mismatch")
+                status, width, readback = link.read(period_address, timeout)
+                if status != 0 or width != 4 or readback != original_period:
+                    raise RuntimeError("DEMO_PERIOD restore readback mismatch")
+                print(f"restore DEMO_PERIOD={original_period}: PASS")
+            finally:
+                os.close(fd)
+        else:
+            os.close(fd)
+    if link.decoder.checksum_errors:
+        raise RuntimeError(
+            f"UART checksum errors during control suite: {link.decoder.checksum_errors}")
+    print("PASS: UART Monitor period/clear control validation")
+
+
 def monitor_soak(port: str, baud: int, timeout: float, duration: float,
                  interval: float) -> None:
     if duration <= 0 or interval <= 0:
@@ -338,12 +404,15 @@ def main() -> int:
     parser.add_argument("--monitor-read-address", type=lambda value: int(value, 0))
     parser.add_argument("--monitor-timeout", type=float, default=2.0)
     parser.add_argument("--monitor-safe-suite", action="store_true")
+    parser.add_argument("--monitor-control-suite", action="store_true")
     parser.add_argument("--monitor-soak-duration", type=float)
     parser.add_argument("--monitor-soak-interval", type=float, default=1.0)
     args = parser.parse_args()
     if args.monitor_soak_duration is not None:
         monitor_soak(args.port, args.baud, args.monitor_timeout,
                      args.monitor_soak_duration, args.monitor_soak_interval)
+    elif args.monitor_control_suite:
+        monitor_control_suite(args.port, args.baud, args.monitor_timeout)
     elif args.monitor_safe_suite:
         monitor_safe_suite(args.port, args.baud, args.monitor_timeout)
     elif args.monitor_read_address is None:

@@ -37,7 +37,7 @@ v1.0 不承诺：
 | --- | --- | --- |
 | Debug Core/UART TX | RTL、仿真、bitstream和板级持续输出 | 基本通过 |
 | Trace | 协议、Probe、Viewer、仿真和板级记录 | 待整理Checklist |
-| Monitor | RTL/仿真、真实读写/错误响应和30分钟长稳通过 | `DEMO_PERIOD`与`CLEAR_COUNTERS`专项行为待补 |
+| Monitor | RTL/仿真、真实读写/错误响应、控制行为和30分钟长稳通过 | WP2完成 |
 | Profiler | Probe、Viewer、仿真和板级记录 | 待最终Checklist复核 |
 | Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
 | AI Debug | 离线门禁通过，主要板级场景已执行 | 待派生损坏场景、长稳和签署 |
@@ -212,4 +212,11 @@ JavaScript syntax gates: PASS
 - 安全suite PASS：`LED_CONTROL`掩码写入、读回和原值恢复通过；RO写返回`DENIED(2)`，非法地址返回`BAD_ADDR(1)`。
 - 60秒双向soak冒烟PASS：60次周期读、timeout=0、checksum error=0；随后继续执行正式1800秒门禁。
 - 正式1800秒双向soak PASS：1800次周期读、timeout=0、checksum error=0；启动`sync_drops=2`且全程未增长。
-- Monitor发布Checklist现已全部勾选；WP2仍保留`DEMO_PERIOD`周期行为与`CLEAR_COUNTERS`触发行为专项验证，避免用ID轮询替代全部寄存器语义。
+- Monitor发布Checklist现已全部勾选；随后专项验证也覆盖`DEMO_PERIOD`和`CLEAR_COUNTERS`，避免用ID轮询替代全部寄存器语义。
+
+### 2026-07-16：WP2 Monitor完成
+
+- `DEMO_PERIOD`可写、可读回、写0返回`BAD_VALUE(5)`，且测试后恢复原值10,000,000。
+- `CLEAR_COUNTERS`触发后`COUNTER0`从4,189,421,936回落到375,120，证明真实清零脉冲生效。
+- WP2的身份读取、RW、RO拒绝、非法地址、非法值、Trigger、恢复和1800秒双向长稳均已通过。
+- 下一步：执行WP3，统一复核第二至第七阶段Checklist与验证记录，按PASS/FAIL/PENDING/WAIVED消除矛盾状态。
