@@ -111,7 +111,7 @@ just m34-check
 just m36-check
 ```
 
-建议新增`just release-check`收口上述无硬件、无网络测试。Vivado综合、实现、下载和真实板级操作继续保持独立入口，避免默认命令产生硬件副作用。
+已新增`just release-check`收口上述无硬件、无网络测试。Vivado综合、实现、下载和真实板级操作继续保持独立入口，避免默认命令产生硬件副作用。
 
 发布证据至少包括：
 
@@ -165,3 +165,29 @@ v1.0收口完成需要同时满足：
 
 在这些条件满足前，版本状态统一表述为“v1.0 release candidate”，不得表述为完整正式发布。
 
+## 8. 实施记录
+
+### 2026-07-16：WP1与WP6离线入口
+
+- Git仓库已在`main`分支建立并同步到`Don-207/OpenFPGAStudio`。
+- `.gitignore`已排除Vivado runs/cache、bitstream、DCP/LTX、日志和仿真缓存。
+- README已更新为完整能力、release candidate状态、v1.0边界和阻塞项说明。
+- 新增`just release-check`统一无硬件、无网络门禁；Vivado和真实板级操作保持独立。
+- 基线提交为`b60b6c0`；后续收口结果使用新的提交记录，不回写正式`v1.0.0`标签。
+
+本轮执行`just release-check`通过：
+
+```text
+Protocol parser: PASS
+Snapshot validation: PASS (4 fixtures, 6 kinds)
+Diagnostic rules: PASS (12 golden cases, 10 rules)
+AI provider: PASS (12 lifecycle/validation cases)
+Viewer stress: PASS (11192 frames, checksum/sync/unknown=0, dangling references=0)
+JTAG mailbox model: PASS (7 tests)
+FTDI MPSSE/backend: PASS (6 tests)
+JTAG Bridge: PASS (9 tests)
+M36 release validator: PASS (3 tests)
+JavaScript syntax gates: PASS
+```
+
+离线门禁结论：WP6无硬件部分通过。`board qualification manifest`仍报告2项硬件签署待完成；该结果不替代WP2、WP4、WP5和Vivado候选构建。

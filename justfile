@@ -6,6 +6,16 @@ vivado := env_var_or_default("VIVADO", if os_family() == "windows" { "vivado" } 
 default:
     @just --list
 
+# v1.0 hardware-free/no-network release-candidate gate. Vivado and board sign-off remain separate.
+release-check: m27-check m28-check m29-check m30-check m32-check m36-check
+    {{python}} tools/viewer/ai_debug_validate.py release
+    node --check tools/viewer/web/diagnostic_snapshot.js
+    node --check tools/viewer/web/diagnostic_rules.js
+    node --check tools/viewer/web/ai_provider.js
+    node --check tools/viewer/web/diagnosis_validator.js
+    node --check tools/viewer/web/ai_debug_model.js
+    node --check tools/viewer/web/app.js
+
 # M32 hardware-free JTAG mailbox protocol/model regression.
 m32-check:
     {{python}} tools/jtag/test_mailbox_model.py

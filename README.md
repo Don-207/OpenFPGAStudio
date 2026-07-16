@@ -1,18 +1,29 @@
 # OpenFPGA Studio
 
-OpenFPGA Studio 当前提供一个 FPGA 调试与 Trace 观测闭环：FPGA 端 `OpenFPGA Debug Core` 产生二进制调试帧，经 UART 输出到 PC；PC 端使用 Web Viewer 接收、解析、展示和导出日志与 Trace 时间线。
+OpenFPGA Studio 是面向 FPGA 的开放调试与可观测性平台。当前 v1.0 release candidate 以 Xilinx `xcku5p-ffvb676-2-i` 为参考平台，提供 Debug Core、Trace、Monitor、Profiler、Logic Analyzer、AI Debug，以及 UART/JTAG 数据通道和统一 Web Viewer。
 
 当前板级 demo 已在 `xcku5p-ffvb676-2-i` 工程上跑通，默认串口参数为 `115200 8N1`。
 
 ## 当前能力
 
 - Debug Protocol v1：`SOF + VER + TYPE + LEN + PAYLOAD + XOR checksum`
-- 消息类型：`HEARTBEAT`、`DEBUG_PRINT`、`EVENT`、`WATCH`、`STATUS`、`TRACE_SPAN_BEGIN/END`、`TRACE_MARK`、`TRACE_VALUE`、`TRACE_DROP`
-- RTL：packetizer、UART TX、timestamp、ring buffer、Trace Adapter、DMA/Frame/FIFO/IRQ probe、drop/packet/buffer 统计
-- Web Viewer：串口连接、协议解析、Log/Event/Watch/Status/Trace 视图、暂停、清空、CSV/JSONL 导出
-- 板级 demo：100 MHz 差分时钟、UART TX、两个 LED、按钮触发 event/print，并周期性输出 Trace 场景
+- Debug Core：packetizer、timestamp、ring buffer、UART TX/RX、事件、Watch、状态和丢包统计。
+- Trace：Span/Mark/Value/Drop 模型，以及 DMA、Frame、FIFO、IRQ Probe 和时间轴视图。
+- Monitor：安全寄存器窗口、读写权限、W1C/Trigger 和 Viewer 轮询；RTL闭环已通过，真实板级UART RX仍是v1.0阻塞项。
+- Profiler：AXI Stream、FIFO、Frame、Latency指标采集、告警、趋势和Monitor配置窗口。
+- Logic Analyzer：32-bit/128-sample参考捕获、触发、分块读出、波形显示及VCD/JSONL导出。
+- AI Debug：诊断快照、证据模型、10条本地规则、12个Golden Cases、受校验Provider和无网络降级。
+- Transport：UART和Xilinx BSCAN/USER2 JTAG；JTAG性能镜像已达到100 KB/s门槛，普通功能闭环仍在收口。
+- Web Viewer：共享协议Parser、串口/JTAG来源选择、七类视图、暂停、历史、反馈和导出。
+- 板级Demo：100 MHz差分时钟、UART、JTAG、LED、可控场景和多类观测数据源。
 
 Qt Viewer 仍保留为后续目标；当前以 Web Viewer 作为可验收上位机。
+
+## v1.0 状态与边界
+
+当前版本统一标记为 **v1.0 release candidate**，尚未标记正式发布。主要阻塞项是Monitor真实双向UART、Logic Analyzer/AI Debug板级长稳签署，以及JTAG普通功能流、ILA共存和物理重连证据。
+
+v1.0只承诺Xilinx参考实现；Intel/Lattice/国产FPGA、PCIe/Ethernet/USB/SPI Transport和Qt Viewer属于后续版本。完整范围、门禁和停止发布条件见[v1.0收口阶段实施计划](doc/OpenFPGA_Studio_v1.0收口阶段实施计划.md)。
 
 ## 目录
 
@@ -75,6 +86,14 @@ powershell -ExecutionPolicy Bypass -File tools\viewer\serial_validate.ps1 -Port 
 - `WATCH/STATUS/EVENT/DEBUG_PRINT` 按 demo 周期持续增长
 
 ## 仿真
+
+v1.0统一无硬件、无网络门禁：
+
+```text
+just release-check
+```
+
+该命令不会综合、生成或下载bitstream，也不会连接真实板卡。Vivado和硬件门禁必须按收口计划独立执行。
 
 M2 协议/UART 基础测试：
 
