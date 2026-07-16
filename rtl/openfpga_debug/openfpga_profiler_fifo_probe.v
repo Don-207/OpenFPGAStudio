@@ -39,6 +39,8 @@ wire [31:0] next_max_level = (!seen_sample || level_ext > max_level) ? level_ext
 wire [31:0] next_min_level = (!seen_sample || level_ext < min_level) ? level_ext : min_level;
 wire [15:0] next_overflow_count = (fifo_overflow && overflow_count != 16'hFFFF) ? overflow_count + 16'd1 : overflow_count;
 wire [15:0] next_underflow_count = (fifo_underflow && underflow_count != 16'hFFFF) ? underflow_count + 16'd1 : underflow_count;
+wire sample_event = (level_ext != metric_value0) || fifo_wr_en || fifo_rd_en ||
+                    fifo_overflow || fifo_underflow;
 
 always @(posedge clk) begin
     if (rst || clear) begin
@@ -65,7 +67,11 @@ always @(posedge clk) begin
             underflow_count <= next_underflow_count;
             seen_sample <= 1'b1;
 
-            metric_valid <= 1'b1;
+            // Gauge values are cumulative/latest snapshots. Re-emitting an
+            // unchanged gauge every clock makes the Profiler Core aggregate
+            // the same value repeatedly and eventually saturate. Publish only
+            // on an observable FIFO change or error event.
+            metric_valid <= sample_event;
             metric_id <= METRIC_ID;
             metric_value0 <= level_ext;
             metric_value1 <= next_max_level;

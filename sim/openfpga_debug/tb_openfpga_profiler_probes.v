@@ -287,11 +287,12 @@ initial begin
 
     fifo_level = 8'd10;
     pulse_clear();
-    drive_fifo(8'd10, 1'b0, 1'b0);
     check(fifo_metric_valid, "FIFO level should emit metric");
     check(fifo_value0 == 32'd10, "FIFO current level mismatch");
     check(fifo_value1 == 32'd10, "FIFO first max level mismatch");
     check(fifo_value2 == 32'd10, "FIFO first min level mismatch");
+    tick();
+    check(!fifo_metric_valid, "Stable FIFO level must not re-emit cumulative metric");
     drive_fifo(8'd18, 1'b1, 1'b0);
     check(fifo_value1 == 32'd18, "FIFO max level mismatch");
     check(fifo_value2 == 32'd10, "FIFO min should hold");
@@ -303,7 +304,6 @@ initial begin
     check(fifo_value3[15:0] == 16'd1, "FIFO underflow count mismatch");
     fifo_level = 8'd7;
     pulse_clear();
-    drive_fifo(8'd7, 1'b0, 1'b0);
     check(fifo_value1 == 32'd7 && fifo_value2 == 32'd7, "FIFO clear should reset window extrema");
     $display("INFO: FIFO probe checked");
 

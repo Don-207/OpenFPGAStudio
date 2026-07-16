@@ -363,6 +363,121 @@ def monitor_soak(port: str, baud: int, timeout: float, duration: float,
     print("PASS: UART Monitor bidirectional soak validation")
 
 
+def profiler_soak(port: str, baud: int, timeout: float, duration: float) -> None:
+    if duration <= 0:
+        raise ValueError("Profiler soak duration must be positive")
+    addresses = {
+        "control": 0x0048, "period": 0x004C, "clear": 0x0050,
+        "mask": 0x0058, "threshold": 0x005C,
+    }
+    expected_metrics = {0x0001, 0x0101, 0x0201, 0x0301}
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    link = MonitorLink(fd)
+    originals: dict[str, int] = {}
+    counts = Counter()
+    overflow_first: dict[int, int] = {}
+    overflow_last: dict[int, int] = {}
+    overflow_max: dict[int, int] = {}
+    status_drop_first = None
+    status_drop_last = None
+    status_drop_max = 0
+    try:
+        configure(fd, baud)
+        for address, expected in ((0x0040, 0x4F465034), (0x0044, 0x00010000)):
+            status, width, value = link.read(address, timeout)
+            if (status, width, value) != (0, 4, expected):
+                raise RuntimeError(
+                    f"unexpected Profiler identity at 0x{address:04X}: "
+                    f"{(status, width, value)}")
+        for name in ("control", "period", "mask", "threshold"):
+            status, width, value = link.read(addresses[name], timeout)
+            if status != 0 or width != 4:
+                raise RuntimeError(f"failed to read original Profiler {name}")
+            originals[name] = value
+
+        for name, value, mask in (
+                # A 1,000,000-cycle window yields about 100 snapshots/s at
+                # 100 MHz: below 115200-baud capacity while providing enough
+                # windows to expose counter growth during a bounded soak.
+                ("control", 0, 1), ("period", 1_000_000, 0xFFFFFFFF),
+                ("mask", 0xFFFFFFFF, 0xFFFFFFFF),
+                ("threshold", 0, 0xFFFFFFFF), ("clear", 1, 0xFFFFFFFF),
+                ("control", 1, 1)):
+            status, _, new_value = link.write(addresses[name], value, mask, timeout)
+            if status != 0 or (name != "clear" and (new_value & mask) != (value & mask)):
+                raise RuntimeError(f"failed to configure Profiler {name}: status={status}")
+
+        link.decoder.frames.clear()
+        link.checked = 0
+        started = time.monotonic()
+        deadline = started + duration
+        next_progress = started + 60.0
+        while time.monotonic() < deadline:
+            readable, _, _ = select.select(
+                [fd], [], [], min(0.25, deadline - time.monotonic()))
+            if readable:
+                link.decoder.feed(os.read(fd, 4096))
+                for msg_type, payload in link.decoder.frames:
+                    counts[msg_type] += 1
+                    if msg_type == 0x30 and len(payload) == 32:
+                        metric_id = read_u16(payload, 4)
+                        overflow = read_u32(payload, 28)
+                        overflow_first.setdefault(metric_id, overflow)
+                        overflow_last[metric_id] = overflow
+                        overflow_max[metric_id] = max(
+                            overflow_max.get(metric_id, 0), overflow)
+                    elif msg_type == 0x05 and len(payload) >= 8:
+                        drop_count = read_u16(payload, 6)
+                        if status_drop_first is None:
+                            status_drop_first = drop_count
+                        status_drop_last = drop_count
+                        status_drop_max = max(status_drop_max, drop_count)
+                link.decoder.frames.clear()
+                link.checked = 0
+            if time.monotonic() >= next_progress:
+                seen = ",".join(f"0x{x:04X}" for x in sorted(overflow_last))
+                print(f"profiler_soak_progress seconds={time.monotonic()-started:.1f} "
+                      f"snapshots={counts[0x30]} alerts={counts[0x31]} "
+                      f"metrics=[{seen}] checksum_errors={link.decoder.checksum_errors} "
+                      f"drop_max={status_drop_max}", flush=True)
+                next_progress += 60.0
+
+        missing = expected_metrics - set(overflow_last)
+        overflow_saturated = {
+            metric: overflow for metric, overflow in overflow_max.items()
+            if overflow == 0xFFFF
+        }
+        print(f"profiler_soak seconds={time.monotonic()-started:.3f} "
+              f"snapshots={counts[0x30]} alerts={counts[0x31]} "
+              f"status_frames={counts[0x05]} checksum_errors={link.decoder.checksum_errors} "
+              f"sync_drops={link.decoder.sync_drops} drop_first={status_drop_first} "
+              f"drop_last={status_drop_last} drop_max={status_drop_max} "
+              f"overflow_max={overflow_max}")
+        if missing:
+            raise RuntimeError(f"missing Profiler metrics: {sorted(missing)}")
+        if link.decoder.checksum_errors:
+            raise RuntimeError("UART checksum errors during Profiler soak")
+        if status_drop_first is None or status_drop_max != 0:
+            raise RuntimeError(f"Debug Core drop_count is not stable at zero: {status_drop_max}")
+        if overflow_saturated:
+            raise RuntimeError(
+                f"Profiler overflow counters saturated: {overflow_saturated}")
+    finally:
+        if originals:
+            try:
+                if "control" in originals:
+                    link.write(addresses["control"], originals["control"], 0xFFFFFFFF, timeout)
+                for name in ("period", "mask", "threshold"):
+                    if name in originals:
+                        link.write(addresses[name], originals[name], 0xFFFFFFFF, timeout)
+                print("restore Profiler control/period/mask/threshold: PASS")
+            finally:
+                os.close(fd)
+        else:
+            os.close(fd)
+    print("PASS: UART Profiler board soak validation")
+
+
 def validate(port: str, baud: int, duration: float, minimum: int) -> None:
     fd = os.open(port, os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
     decoder = Decoder()
@@ -426,8 +541,12 @@ def main() -> int:
     parser.add_argument("--monitor-control-suite", action="store_true")
     parser.add_argument("--monitor-soak-duration", type=float)
     parser.add_argument("--monitor-soak-interval", type=float, default=1.0)
+    parser.add_argument("--profiler-soak-duration", type=float)
     args = parser.parse_args()
-    if args.monitor_soak_duration is not None:
+    if args.profiler_soak_duration is not None:
+        profiler_soak(args.port, args.baud, args.monitor_timeout,
+                      args.profiler_soak_duration)
+    elif args.monitor_soak_duration is not None:
         monitor_soak(args.port, args.baud, args.monitor_timeout,
                      args.monitor_soak_duration, args.monitor_soak_interval)
     elif args.monitor_control_suite:

@@ -52,7 +52,43 @@ Vivado RTL elaboration 已执行：
 vivado -mode batch -source prj/scripts/check_openfpga_profiler_m21_elab.tcl
 ```
 
-## 板级待验证
+## 2026-07-16 v1.0 WP3复核
 
-- Web Viewer 人工观察 Profiler 视图。
-- 连续运行 30 分钟，确认 checksum error、drop、overflow 不持续增长。
+### 回归与缺陷修复
+
+- `just profiler-check`覆盖Parser、Viewer压力、M18 Core、M19 Probe、M21 Board Demo和Vivado elaboration；各项通过。
+- Viewer压力回归共处理11,194帧，checksum、sync、unknown均为0，Profiler snapshot、alert和malformed路径均有覆盖。
+- 首次在旧候选镜像执行1800秒长稳时，虽然checksum和设备drop均为0，但FIFO metric `0x0101`的`overflow_count`增长并饱和到65,535，因此该次结果判为FAIL，未沿用历史板级PASS。
+- 定位到`openfpga_profiler_fifo_probe`在FIFO level不变时仍每拍发出当前gauge，Profiler Core因而重复累计同一值。修复后只在level变化、读写或overflow/underflow事件发生时发出metric，并增加稳定level不得重复发出的M19断言。
+- 修复后的M19 Probe和M21 Board Demo XSim通过。
+
+### 当前候选构建与下载
+
+| 项目 | 结果 |
+| --- | --- |
+| Vivado/器件 | Vivado 2024.2 / `xcku5p-ffvb676-2-i` |
+| 配置 | M36 UART+JTAG+ILA，USER2，1个BSCANE2，1个ILA |
+| 实现 | WNS `+3.522 ns`，TNS `0`，未布线网络`0`，DRC `0 error` |
+| bitstream | 15,431,260 bytes，SHA-256 `3c4e1fd154802784340e68d2b69544b4ce2c7bde7a36b3ab3d935dc0432539de` |
+| LTX | 13,686 bytes，SHA-256 `019c53da47cee5fb7cecfc429efe703e9b07c038e9534a906d47e44cca115622` |
+| 下载 | `Digilent/210512180081` / `xcku5p_0`，startup HIGH，枚举1个ILA |
+
+### Ubuntu串口板级验收
+
+环境：CH340 `/dev/ttyUSB1`，115200 baud。验收脚本读取并保存原始control/period/mask/threshold，设置有界采样窗口，结束后逐项恢复。
+
+```text
+just profiler-soak /dev/ttyUSB1 115200 120
+just profiler-soak /dev/ttyUSB1 115200 1800
+```
+
+| 时长 | snapshots | alerts | status | checksum | 设备drop | overflow峰值 | 结果 |
+| ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |
+| 120秒 | 483 | 121 | 6,000 | 0 | 0 | Throughput 0，FIFO 0，Latency 1，Frame 0 | PASS |
+| 1800秒 | 7,203 | 1,801 | 90,000 | 0 | 0 | Throughput 0，FIFO 0，Latency 1，Frame 0 | PASS |
+
+`Latency=1`来自board demo刻意产生的延迟/超时事件，未增长到饱和值；FIFO修复后峰值保持0。两次测试均覆盖metric `0x0001/0x0101/0x0201/0x0301`，并成功恢复测试前Profiler配置。
+
+## 当前待签署
+
+- Windows Microsoft Edge `150.0.4078.65`人工观察Profiler指标卡、趋势图、alert面板和控制状态；保存截图或明确观察结果。

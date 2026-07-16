@@ -34,6 +34,21 @@ trace-board-sim:
 # Current-source Trace software/RTL regression; Vivado elaboration and real board remain separate.
 trace-check: parser-test viewer-test trace-adapter-sim trace-board-sim
 
+# Fourth-stage Profiler core snapshot/alert regression.
+profiler-core-sim:
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_core.v sim/openfpga_debug/tb_openfpga_profiler_core.v
+    {{xelab}} tb_openfpga_profiler_core -s tb_openfpga_profiler_core_wp3_sim
+    {{xsim}} tb_openfpga_profiler_core_wp3_sim -runall
+
+# Fourth-stage board demo coexistence and control regression on current RTL.
+profiler-board-sim:
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_profiler.v
+    {{xelab}} tb_openfpga_debug_board_profiler -s tb_openfpga_debug_board_profiler_wp3_sim
+    {{xsim}} tb_openfpga_debug_board_profiler_wp3_sim -runall
+
+# Current-source Profiler software/RTL regression; Vivado and real board remain separate.
+profiler-check: parser-test viewer-test profiler-core-sim profiler-probes-sim profiler-board-sim
+
 # M32 hardware-free JTAG mailbox protocol/model regression.
 m32-check:
     {{python}} tools/jtag/test_mailbox_model.py
@@ -77,6 +92,10 @@ monitor-control-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0"
 # Periodic read-only Monitor transactions; defaults to the 30-minute WP2 release gate.
 monitor-soak port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" seconds="1800" interval="1":
     {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-soak-duration {{seconds}} --monitor-soak-interval {{interval}}
+
+# Reversible Profiler configuration plus current-candidate UART soak; defaults to the 30-minute WP3 gate.
+profiler-soak port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" seconds="1800":
+    {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --profiler-soak-duration {{seconds}}
 
 # Hardware operation: benchmark USER2 burst reads on the FT232H cable.
 m34-jtag-benchmark:
@@ -205,9 +224,9 @@ la-core-sim:
     xsim tb_openfpga_la_core_sim -runall
 
 profiler-probes-sim:
-    xvlog -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v sim/openfpga_debug/tb_openfpga_profiler_probes.v
-    xelab tb_openfpga_profiler_probes -s tb_openfpga_profiler_probes_sim
-    xsim tb_openfpga_profiler_probes_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v sim/openfpga_debug/tb_openfpga_profiler_probes.v
+    {{xelab}} tb_openfpga_profiler_probes -s tb_openfpga_profiler_probes_wp3_fifo_fix_sim
+    {{xsim}} tb_openfpga_profiler_probes_wp3_fifo_fix_sim -runall
 
 la-board-sim:
     $rtl = Get-ChildItem rtl/openfpga_debug -File | Where-Object { $_.Extension -in '.vh', '.v' } | ForEach-Object FullName; xvlog -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug $rtl rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_la.v
