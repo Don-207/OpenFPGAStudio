@@ -207,4 +207,8 @@ powershell -ExecutionPolicy Bypass -File tools\viewer\serial_validate.ps1 -Port 
 - 执行`just m36-program 'Digilent/210512180081'`下载PASS：精确匹配唯一Digilent目标，器件`xcku5p_0`，End of startup status为HIGH，刷新后枚举1个ILA；普通M36镜像JTAG build ID为`0x4D360001`。
 - 下载后UART 10秒基线PASS：1,664帧，Trace begin/end/mark/value均持续出现，checksum/version/sync error均为0。
 - 扩展`validate_uart_board.py`输出Trace ID、span end状态和STATUS中的drop计数；15秒板级采样PASS：2,493帧，Trace ID `0x0001..0x0004`全部出现，DMA timeout（status 3）15次，750个STATUS帧的`drop_count`首值/末值/最大值均为0。
-- 数据侧已证明四类泳道输入和DMA timeout输入；当前仍需连接Web Viewer，人工确认四泳道渲染与timeout高亮样式。
+- 数据侧已证明四类泳道输入和DMA timeout输入。
+- Windows Chrome板级截图确认91个span、93个mark、31个value，Frame/DMA/FIFO/Interrupt四泳道均可见，DMA timeout为红色problem高亮。
+- 截图发现`Avg Duration`为负数；根因是span跨32位timestamp回绕时使用普通减法。Viewer与Python参考Parser均改为无符号32位差值，并新增`0xFFFFFFF0 -> 0x00000020`用例，期望duration为48 ticks。
+- 修复后Parser回归PASS；Viewer压力门禁PASS：11,194帧、2,401 spans、回绕duration 48、checksum/sync/unknown均为0。
+- 当前仅需补录本次Windows Chrome精确版本号。

@@ -1535,7 +1535,9 @@
       instanceId,
       startTimestamp: begin.startTimestamp,
       endTimestamp: timestamp,
-      duration: timestamp - begin.startTimestamp,
+      // Protocol timestamps are unsigned 32-bit ticks and may wrap while a
+      // span is open. Unsigned subtraction preserves the elapsed interval.
+      duration: (timestamp - begin.startTimestamp) >>> 0,
       status,
       startArg0: begin.startArg0,
       endArg0: arg0,

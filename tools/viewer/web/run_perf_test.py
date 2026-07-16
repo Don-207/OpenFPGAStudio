@@ -100,6 +100,19 @@ STRESS_EXPRESSION = r"""
     addFrame(0x12, cycle);
     if (cycle % 3 === 0) addFrame(0x13, cycle);
   }
+  const wrapBegin = [];
+  api.pushU32(wrapBegin, 0xfffffff0);
+  api.pushU16(wrapBegin, 0x0001);
+  api.pushU16(wrapBegin, 0xbeef);
+  api.pushU32(wrapBegin, 0);
+  bytes.push.apply(bytes, api.frame(0x10, wrapBegin));
+  const wrapEnd = [];
+  api.pushU32(wrapEnd, 0x00000020);
+  api.pushU16(wrapEnd, 0x0001);
+  api.pushU16(wrapEnd, 0xbeef);
+  wrapEnd.push(0);
+  api.pushU32(wrapEnd, 0);
+  bytes.push.apply(bytes, api.frame(0x11, wrapEnd));
   const start = performance.now();
   api.parseBytes(bytes);
   api.injectProfilerSample();
@@ -113,6 +126,7 @@ STRESS_EXPRESSION = r"""
     syncDrops: api.state.syncDrops,
     unknownFrames: api.state.unknownFrames,
     spans: api.state.trace.spans.length,
+    wrapDuration: api.state.trace.spans.find((span) => span.instanceId === 0xbeef).duration,
     marks: api.state.trace.marks.length,
     values: api.state.trace.values.length,
     profilerSnapshots: api.state.profiler.counters.snapshots,
@@ -370,6 +384,8 @@ def main():
         if not result:
             raise RuntimeError(f"Perf test returned no result: {evaluated}")
         parsed = json.loads(result)
+        if parsed["wrapDuration"] != 0x30:
+            raise RuntimeError(f"Trace timestamp wrap handling failed: {result}")
         if parsed["profilerSnapshots"] < 4:
             raise RuntimeError(f"Profiler snapshots missing: {result}")
         if parsed["profilerAlerts"] < 1:

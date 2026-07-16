@@ -186,7 +186,8 @@ class Parser:
                 "instance_id": instance_id,
                 "start_timestamp": begin["timestamp"] if begin else None,
                 "end_timestamp": timestamp,
-                "duration": timestamp - begin["timestamp"] if begin else None,
+                "duration": ((timestamp - begin["timestamp"]) & 0xFFFFFFFF)
+                if begin else None,
                 "status": status,
                 "start_arg0": begin["arg0"] if begin else None,
                 "end_arg0": arg0,
@@ -735,6 +736,13 @@ def main():
     expect(parser.trace["marks"][0]["level"] == 2, "trace mark level should decode")
     expect(parser.trace["values"][0]["value"] == 0x7C, "trace value should decode")
     expect(parser.trace["drops"][0]["drop_count"] == 3, "trace drop count should decode")
+
+    wrap_begin = [*u32(0xFFFFFFF0), *u16(0x0001), *u16(0xBEEF), *u32(0)]
+    wrap_end = [*u32(0x00000020), *u16(0x0001), *u16(0xBEEF), 0, *u32(0)]
+    parser.feed(frame(0x10, wrap_begin))
+    parser.feed(frame(0x11, wrap_end))
+    expect(parser.trace["spans"][-1]["duration"] == 0x30,
+           "trace duration should handle 32-bit timestamp wrap")
 
     orphan_end_payload = [
         *u32(200),
