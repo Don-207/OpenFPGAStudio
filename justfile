@@ -44,6 +44,10 @@ m34-board-validate:
 m34-uart-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200":
     {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}}
 
+# Dependency-free POSIX Monitor read-only board validation; never writes a register.
+monitor-read-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" address="0x0000":
+    {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-read-address {{address}}
+
 # Hardware operation: benchmark USER2 burst reads on the FT232H cable.
 m34-jtag-benchmark:
     {{python}} tools/jtag/benchmark_m34_board.py

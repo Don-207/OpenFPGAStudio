@@ -25,5 +25,5 @@
 - [x] M13 Vivado elaboration。
 - [x] M16 Vivado elaboration。
 - [x] 补充 `uart_rx` XDC。
-- [ ] Bitstream 构建。
+- [x] Bitstream 构建。
 - [ ] 板级 30 分钟长稳。

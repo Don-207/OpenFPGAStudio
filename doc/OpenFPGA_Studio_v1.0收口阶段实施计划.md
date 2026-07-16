@@ -37,7 +37,7 @@ v1.0 不承诺：
 | --- | --- | --- |
 | Debug Core/UART TX | RTL、仿真、bitstream和板级持续输出 | 基本通过 |
 | Trace | 协议、Probe、Viewer、仿真和板级记录 | 待整理Checklist |
-| Monitor | RTL/仿真通过，真实UART RX命令无响应 | 阻塞 |
+| Monitor | RTL/仿真通过，真实板级ID/version读响应通过 | 写操作、错误响应和30分钟长稳待完成 |
 | Profiler | Probe、Viewer、仿真和板级记录 | 待最终Checklist复核 |
 | Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
 | AI Debug | 离线门禁通过，主要板级场景已执行 | 待派生损坏场景、长稳和签署 |
@@ -66,6 +66,14 @@ v1.0 不承诺：
 5. 完成不少于30分钟双向运行，记录checksum、timeout、drop和恢复结果。
 
 未经ILA或引脚波形证据，不因板级超时直接修改已通过仿真的协议逻辑。
+
+POSIX环境可先执行无依赖、只读寄存器验证：
+
+```text
+just monitor-read-validate /dev/ttyUSB1 115200 0x0000
+```
+
+该入口只发送`MONITOR_READ_REQ`，不发送Monitor写请求。
 
 ### V1.WP3：阶段Checklist一致性整理
 
@@ -191,3 +199,11 @@ JavaScript syntax gates: PASS
 ```
 
 离线门禁结论：WP6无硬件部分通过。`board qualification manifest`仍报告2项硬件签署待完成；该结果不替代WP2、WP4、WP5和Vivado候选构建。
+
+### 2026-07-16：WP2 Monitor读路径复测
+
+- 新增`just monitor-read-validate`，在POSIX环境使用标准库完成只读Monitor事务，不依赖PowerShell或pyserial。
+- `/dev/ttyUSB1`连续接收10秒：25272 bytes、1662 frames、checksum/version error为0。
+- `MONITOR_ID(0x0000)`读取PASS：`0x4F464D30`。
+- `MONITOR_VERSION(0x0004)`读取PASS：`0x00010000`。
+- 历史UART RX“无响应”阻塞已解除；WP2剩余写寄存器、错误响应与30分钟双向长稳。

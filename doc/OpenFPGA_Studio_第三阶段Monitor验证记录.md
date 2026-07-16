@@ -14,6 +14,8 @@
 | JTAG 下载 | `vivado -mode batch -source prj/program.tcl -tclargs prj/OpenFPGAStudio.runs/impl_1/openfpga_debug_board_demo.bit` | PASS |
 | 30 秒 TX 长稳 | `powershell -ExecutionPolicy Bypass -File tools/viewer/serial_validate.ps1 -Port COM6 -Baud 115200 -DurationSec 30` | PASS |
 | Monitor 双向命令 | `powershell -ExecutionPolicy Bypass -File tools/viewer/monitor_validate.ps1 -Port COM6 -Baud 115200 -TimeoutMs 4000` | FAIL: read response timeout |
+| POSIX Monitor只读命令 | `just monitor-read-validate /dev/ttyUSB1 115200 0x0000` | PASS：`MONITOR_ID=0x4F464D30` |
+| POSIX Monitor版本读取 | `just monitor-read-validate /dev/ttyUSB1 115200 0x0004` | PASS：`MONITOR_VERSION=0x00010000` |
 
 ## 2026-06-30 顶层 RX 重构后复测
 
@@ -24,9 +26,18 @@
 - COM6 10 秒 TX 复测 PASS：1659 frames，checksum_errors=0，sync_drops=0，unknown_frames=0。
 - COM6 Monitor 双向命令仍 FAIL：等待首个 `MONITOR_READ_RESP` 超时。
 
+## 2026-07-16 Linux板级复测
+
+- CH340 `1a86:7523`绑定`ch341`驱动，串口节点为`/dev/ttyUSB1`；FT232H `0403:6014`同时可见。
+- 10秒UART TX只读验证PASS：25272 bytes、1662 frames、约2527 B/s，`checksum_errors=0`、`version_errors=0`。
+- 使用无pyserial依赖入口发送一次`MONITOR_READ_REQ`读取`0x0000`，收到合法`MONITOR_READ_RESP`：status=0、width=4、value=`0x4F464D30`。
+- 读取`0x0004`同样PASS：status=0、width=4、value=`0x00010000`、`checksum_errors=0`。
+- 首次读取在持续流中途打开串口，收到正确响应的同时记录1个校验候选错误；立即重复读取为0，独立10秒TX验证亦为0。该现象保留记录，不据此宣称长稳通过。
+- 结论：PC到FPGA UART RX、Command Parser、Monitor Core、Response Adapter和FPGA到PC TX读响应链路已真实闭环。Monitor写操作、错误响应和30分钟长稳仍待执行。
+
 ## 板级待验证
 
-- 读取 `MONITOR_ID/MONITOR_VERSION`。
+- ~~读取 `MONITOR_ID/MONITOR_VERSION`。~~ 2026-07-16 PASS。
 - 写 `LED_CONTROL` 后确认 LED 行为变化。
 - 写 `DEMO_PERIOD` 后确认 Event/Trace 周期变化。
 - 写 `CLEAR_COUNTERS` 后确认计数器清零。
@@ -35,4 +46,4 @@
 
 ## 限制
 
-`uart_rx` 已在 `prj/constraints/openfpga_debug_board_demo.xdc` 中补充，且与 vendor `pin.xdc` 中 `uart_rxd` 的 B16/LVCMOS18 一致。`uart_rx` 入口也已上移到 `openfpga_debug_top`，仿真和 elaboration 能覆盖 RX 到 Monitor response 的 RTL 路径。当前板级结果表明 FPGA 到 PC 的 `uart_tx` 链路稳定，PC 到 FPGA 的 `uart_rx` 命令链路尚未收到 Monitor response，需要继续检查 COM6 TX 到 B16 的线缆方向、电平和实际板级连接。Vivado 期间出现本机 Tcl store 写权限 warning，但构建、下载和 RTL/XDC 处理成功。
+`uart_rx` 已在 `prj/constraints/openfpga_debug_board_demo.xdc` 中补充，且与 vendor `pin.xdc` 中 `uart_rxd` 的 B16/LVCMOS18 一致。`uart_rx` 入口也已上移到 `openfpga_debug_top`，仿真和 elaboration 能覆盖 RX 到 Monitor response 的 RTL 路径。2026-07-16 Linux板级复测已证明读请求和响应链路有效；此前COM6超时作为历史结果保留，可能与当时串口、线缆方向或环境有关。写操作、错误响应和30分钟长稳完成前，第三阶段仍不标记完整发布。Vivado期间出现的本机Tcl store写权限warning不影响既有构建、下载和RTL/XDC处理结果。

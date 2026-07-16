@@ -20,6 +20,8 @@ TYPE_NAMES = {
     0x41: "LA_SAMPLE_DATA", 0x42: "LA_CAPTURE_STATUS",
     0x43: "LA_TRIGGER_EVENT",
 }
+MONITOR_READ_REQ = 0x20
+MONITOR_READ_RESP = 0x21
 
 
 class Decoder:
@@ -88,6 +90,79 @@ def configure(fd: int, baud: int) -> None:
     termios.tcflush(fd, termios.TCIFLUSH)
 
 
+def u16(value: int) -> bytes:
+    return bytes((value & 0xFF, (value >> 8) & 0xFF))
+
+
+def read_u16(data: bytes, offset: int) -> int:
+    return data[offset] | (data[offset + 1] << 8)
+
+
+def read_u32(data: bytes, offset: int) -> int:
+    return sum(data[offset + index] << (8 * index) for index in range(4))
+
+
+def make_frame(msg_type: int, payload: bytes) -> bytes:
+    body = bytes((VERSION, msg_type, len(payload))) + payload
+    checksum = 0
+    for value in body:
+        checksum ^= value
+    return bytes((SOF,)) + body + bytes((checksum,))
+
+
+def monitor_read_frame(sequence: int, address: int) -> bytes:
+    return make_frame(MONITOR_READ_REQ, u16(sequence) + u16(address) + b"\x04")
+
+
+def monitor_read(port: str, baud: int, address: int, timeout: float) -> None:
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    decoder = Decoder()
+    sequence = 0x4100
+    request = monitor_read_frame(sequence, address)
+    try:
+        configure(fd, baud)
+        written = os.write(fd, request)
+        if written != len(request):
+            raise RuntimeError(f"short UART write: {written}/{len(request)} bytes")
+        deadline = time.monotonic() + timeout
+        checked = 0
+        while time.monotonic() < deadline:
+            readable, _, _ = select.select([fd], [], [], min(0.05, deadline-time.monotonic()))
+            if not readable:
+                continue
+            decoder.feed(os.read(fd, 4096))
+            while checked < len(decoder.frames):
+                msg_type, payload = decoder.frames[checked]
+                checked += 1
+                if msg_type != MONITOR_READ_RESP or len(payload) < 14:
+                    continue
+                if read_u16(payload, 4) != sequence:
+                    continue
+                response_address = read_u16(payload, 6)
+                status = payload[8]
+                width = payload[9]
+                value = read_u32(payload, 10)
+                print(f"monitor_read seq=0x{sequence:04X} addr=0x{response_address:04X} "
+                      f"status={status} width={width} value=0x{value:08X} "
+                      f"checksum_errors={decoder.checksum_errors}")
+                if response_address != address:
+                    raise RuntimeError("Monitor response address mismatch")
+                if status != 0:
+                    raise RuntimeError(f"Monitor returned status {status}")
+                if width != 4:
+                    raise RuntimeError(f"Monitor returned width {width}, expected 4")
+                if decoder.checksum_errors:
+                    raise RuntimeError("UART checksum error while waiting for Monitor response")
+                print("PASS: UART Monitor read validation")
+                return
+        raise TimeoutError(
+            f"Monitor read timeout: addr=0x{address:04X} timeout={timeout:.3f}s "
+            f"valid_frames={len(decoder.frames)} checksum_errors={decoder.checksum_errors}"
+        )
+    finally:
+        os.close(fd)
+
+
 def validate(port: str, baud: int, duration: float, minimum: int) -> None:
     fd = os.open(port, os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
     decoder = Decoder()
@@ -126,8 +201,13 @@ def main() -> int:
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--duration", type=float, default=5.0)
     parser.add_argument("--minimum-frames", type=int, default=10)
+    parser.add_argument("--monitor-read-address", type=lambda value: int(value, 0))
+    parser.add_argument("--monitor-timeout", type=float, default=2.0)
     args = parser.parse_args()
-    validate(args.port, args.baud, args.duration, args.minimum_frames)
+    if args.monitor_read_address is None:
+        validate(args.port, args.baud, args.duration, args.minimum_frames)
+    else:
+        monitor_read(args.port, args.baud, args.monitor_read_address, args.monitor_timeout)
     return 0
 
 
