@@ -22,6 +22,8 @@ TYPE_NAMES = {
 }
 MONITOR_READ_REQ = 0x20
 MONITOR_READ_RESP = 0x21
+MONITOR_WRITE_REQ = 0x22
+MONITOR_WRITE_RESP = 0x23
 
 
 class Decoder:
@@ -94,6 +96,10 @@ def u16(value: int) -> bytes:
     return bytes((value & 0xFF, (value >> 8) & 0xFF))
 
 
+def u32(value: int) -> bytes:
+    return bytes((value >> shift) & 0xFF for shift in (0, 8, 16, 24))
+
+
 def read_u16(data: bytes, offset: int) -> int:
     return data[offset] | (data[offset + 1] << 8)
 
@@ -114,53 +120,171 @@ def monitor_read_frame(sequence: int, address: int) -> bytes:
     return make_frame(MONITOR_READ_REQ, u16(sequence) + u16(address) + b"\x04")
 
 
-def monitor_read(port: str, baud: int, address: int, timeout: float) -> None:
-    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
-    decoder = Decoder()
-    sequence = 0x4100
-    request = monitor_read_frame(sequence, address)
-    try:
-        configure(fd, baud)
-        written = os.write(fd, request)
+def monitor_write_frame(sequence: int, address: int, value: int, mask: int) -> bytes:
+    payload = u16(sequence) + u16(address) + b"\x04" + u32(value) + u32(mask)
+    return make_frame(MONITOR_WRITE_REQ, payload)
+
+
+class MonitorLink:
+    def __init__(self, fd: int) -> None:
+        self.fd = fd
+        self.decoder = Decoder()
+        self.sequence = 0x4100
+        self.checked = 0
+
+    def transact(self, request: bytes, expected_type: int, sequence: int,
+                 timeout: float) -> bytes:
+        written = os.write(self.fd, request)
         if written != len(request):
             raise RuntimeError(f"short UART write: {written}/{len(request)} bytes")
         deadline = time.monotonic() + timeout
-        checked = 0
         while time.monotonic() < deadline:
-            readable, _, _ = select.select([fd], [], [], min(0.05, deadline-time.monotonic()))
+            readable, _, _ = select.select(
+                [self.fd], [], [], min(0.05, deadline-time.monotonic()))
             if not readable:
                 continue
-            decoder.feed(os.read(fd, 4096))
-            while checked < len(decoder.frames):
-                msg_type, payload = decoder.frames[checked]
-                checked += 1
-                if msg_type != MONITOR_READ_RESP or len(payload) < 14:
-                    continue
-                if read_u16(payload, 4) != sequence:
-                    continue
-                response_address = read_u16(payload, 6)
-                status = payload[8]
-                width = payload[9]
-                value = read_u32(payload, 10)
-                print(f"monitor_read seq=0x{sequence:04X} addr=0x{response_address:04X} "
-                      f"status={status} width={width} value=0x{value:08X} "
-                      f"checksum_errors={decoder.checksum_errors}")
-                if response_address != address:
-                    raise RuntimeError("Monitor response address mismatch")
-                if status != 0:
-                    raise RuntimeError(f"Monitor returned status {status}")
-                if width != 4:
-                    raise RuntimeError(f"Monitor returned width {width}, expected 4")
-                if decoder.checksum_errors:
-                    raise RuntimeError("UART checksum error while waiting for Monitor response")
-                print("PASS: UART Monitor read validation")
-                return
+            self.decoder.feed(os.read(self.fd, 4096))
+            while self.checked < len(self.decoder.frames):
+                msg_type, payload = self.decoder.frames[self.checked]
+                self.checked += 1
+                if msg_type == expected_type and len(payload) >= 9 and read_u16(payload, 4) == sequence:
+                    # A soak run may process hundreds of thousands of background
+                    # frames. Once the matching response is found, older frames
+                    # are no longer needed and must not grow memory unboundedly.
+                    self.decoder.frames.clear()
+                    self.checked = 0
+                    return payload
         raise TimeoutError(
-            f"Monitor read timeout: addr=0x{address:04X} timeout={timeout:.3f}s "
-            f"valid_frames={len(decoder.frames)} checksum_errors={decoder.checksum_errors}"
+            f"Monitor response timeout: type=0x{expected_type:02X} seq=0x{sequence:04X} "
+            f"timeout={timeout:.3f}s valid_frames={len(self.decoder.frames)} "
+            f"checksum_errors={self.decoder.checksum_errors}"
         )
+
+    def read(self, address: int, timeout: float) -> tuple[int, int, int]:
+        sequence = self.sequence
+        self.sequence += 1
+        payload = self.transact(
+            monitor_read_frame(sequence, address), MONITOR_READ_RESP, sequence, timeout)
+        if len(payload) < 14:
+            raise RuntimeError(f"short Monitor read response: {len(payload)} bytes")
+        if read_u16(payload, 6) != address:
+            raise RuntimeError("Monitor response address mismatch")
+        return payload[8], payload[9], read_u32(payload, 10)
+
+    def write(self, address: int, value: int, mask: int,
+              timeout: float) -> tuple[int, int, int]:
+        sequence = self.sequence
+        self.sequence += 1
+        payload = self.transact(
+            monitor_write_frame(sequence, address, value, mask),
+            MONITOR_WRITE_RESP, sequence, timeout)
+        if len(payload) < 17:
+            raise RuntimeError(f"short Monitor write response: {len(payload)} bytes")
+        if read_u16(payload, 6) != address:
+            raise RuntimeError("Monitor response address mismatch")
+        return payload[8], read_u32(payload, 9), read_u32(payload, 13)
+
+
+def monitor_read(port: str, baud: int, address: int, timeout: float) -> None:
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    try:
+        configure(fd, baud)
+        link = MonitorLink(fd)
+        status, width, value = link.read(address, timeout)
+        print(f"monitor_read addr=0x{address:04X} status={status} width={width} "
+              f"value=0x{value:08X} checksum_errors={link.decoder.checksum_errors}")
+        if status != 0 or width != 4:
+            raise RuntimeError(f"unexpected Monitor read response status={status} width={width}")
+        if link.decoder.checksum_errors:
+            raise RuntimeError("UART checksum error while waiting for Monitor response")
+        print("PASS: UART Monitor read validation")
     finally:
         os.close(fd)
+
+
+def monitor_safe_suite(port: str, baud: int, timeout: float) -> None:
+    led_address = 0x000C
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    original_led = None
+    link = MonitorLink(fd)
+    try:
+        configure(fd, baud)
+        status, width, monitor_id = link.read(0x0000, timeout)
+        if (status, width, monitor_id) != (0, 4, 0x4F464D30):
+            raise RuntimeError(f"unexpected MONITOR_ID response: {(status, width, monitor_id)}")
+        status, width, original_led = link.read(led_address, timeout)
+        if status != 0 or width != 4:
+            raise RuntimeError("failed to read original LED_CONTROL")
+        test_led = original_led ^ 0x3
+        status, old_value, new_value = link.write(led_address, test_led, 0x3, timeout)
+        if status != 0 or old_value != original_led or new_value != test_led:
+            raise RuntimeError("LED_CONTROL masked write response mismatch")
+        status, width, readback = link.read(led_address, timeout)
+        if status != 0 or width != 4 or readback != test_led:
+            raise RuntimeError("LED_CONTROL readback mismatch")
+        status, _, _ = link.write(0x0000, 0, 0xFFFFFFFF, timeout)
+        if status != 2:
+            raise RuntimeError(f"RO write returned status {status}, expected DENIED(2)")
+        status, _, _ = link.read(0x003C, timeout)
+        if status != 1:
+            raise RuntimeError(f"invalid address returned status {status}, expected BAD_ADDR(1)")
+        print(f"monitor_safe_suite id=0x{monitor_id:08X} led_original=0x{original_led:08X} "
+              f"led_test=0x{test_led:08X} ro_status=2 bad_addr_status=1")
+    finally:
+        if original_led is not None:
+            try:
+                status, _, restored = link.write(
+                    led_address, original_led, 0xFFFFFFFF, timeout)
+                if status != 0 or restored != original_led:
+                    raise RuntimeError("LED_CONTROL restore response mismatch")
+                status, width, readback = link.read(led_address, timeout)
+                if status != 0 or width != 4 or readback != original_led:
+                    raise RuntimeError("LED_CONTROL restore readback mismatch")
+                print(f"restore LED_CONTROL=0x{original_led:08X}: PASS")
+            finally:
+                os.close(fd)
+        else:
+            os.close(fd)
+    if link.decoder.checksum_errors:
+        raise RuntimeError(f"UART checksum errors during safe suite: {link.decoder.checksum_errors}")
+    print("PASS: UART Monitor safe read/write/error validation")
+
+
+def monitor_soak(port: str, baud: int, timeout: float, duration: float,
+                 interval: float) -> None:
+    if duration <= 0 or interval <= 0:
+        raise ValueError("Monitor soak duration and interval must be positive")
+    fd = os.open(port, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+    link = MonitorLink(fd)
+    reads = 0
+    started = time.monotonic()
+    deadline = started + duration
+    next_read = started
+    try:
+        configure(fd, baud)
+        while time.monotonic() < deadline:
+            now = time.monotonic()
+            if now < next_read:
+                time.sleep(min(next_read - now, 0.05))
+                continue
+            status, width, value = link.read(0x0000, timeout)
+            if (status, width, value) != (0, 4, 0x4F464D30):
+                raise RuntimeError(
+                    f"unexpected MONITOR_ID during soak: {(status, width, value)}")
+            reads += 1
+            next_read += interval
+    finally:
+        os.close(fd)
+    elapsed = time.monotonic() - started
+    print(f"monitor_soak seconds={elapsed:.3f} reads={reads} "
+          f"checksum_errors={link.decoder.checksum_errors} "
+          f"sync_drops={link.decoder.sync_drops}")
+    if link.decoder.checksum_errors:
+        raise RuntimeError("UART checksum errors detected during Monitor soak")
+    expected_minimum = max(1, int(duration / interval) - 1)
+    if reads < expected_minimum:
+        raise RuntimeError(f"only {reads} Monitor reads, expected at least {expected_minimum}")
+    print("PASS: UART Monitor bidirectional soak validation")
 
 
 def validate(port: str, baud: int, duration: float, minimum: int) -> None:
@@ -203,8 +327,16 @@ def main() -> int:
     parser.add_argument("--minimum-frames", type=int, default=10)
     parser.add_argument("--monitor-read-address", type=lambda value: int(value, 0))
     parser.add_argument("--monitor-timeout", type=float, default=2.0)
+    parser.add_argument("--monitor-safe-suite", action="store_true")
+    parser.add_argument("--monitor-soak-duration", type=float)
+    parser.add_argument("--monitor-soak-interval", type=float, default=1.0)
     args = parser.parse_args()
-    if args.monitor_read_address is None:
+    if args.monitor_soak_duration is not None:
+        monitor_soak(args.port, args.baud, args.monitor_timeout,
+                     args.monitor_soak_duration, args.monitor_soak_interval)
+    elif args.monitor_safe_suite:
+        monitor_safe_suite(args.port, args.baud, args.monitor_timeout)
+    elif args.monitor_read_address is None:
         validate(args.port, args.baud, args.duration, args.minimum_frames)
     else:
         monitor_read(args.port, args.baud, args.monitor_read_address, args.monitor_timeout)

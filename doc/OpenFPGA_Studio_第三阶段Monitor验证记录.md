@@ -34,14 +34,18 @@
 - 读取`0x0004`同样PASS：status=0、width=4、value=`0x00010000`、`checksum_errors=0`。
 - 首次读取在持续流中途打开串口，收到正确响应的同时记录1个校验候选错误；立即重复读取为0，独立10秒TX验证亦为0。该现象保留记录，不据此宣称长稳通过。
 - 结论：PC到FPGA UART RX、Command Parser、Monitor Core、Response Adapter和FPGA到PC TX读响应链路已真实闭环。Monitor写操作、错误响应和30分钟长稳仍待执行。
+- 安全写入suite PASS：`LED_CONTROL`从`0x00000000`临时改为`0x00000003`，读回一致，随后恢复并再次读回`0x00000000`。
+- 权限/错误语义PASS：写RO `MONITOR_ID`返回`DENIED(2)`；读取`0x003C`返回`BAD_ADDR(1)`。
+- 60秒双向冒烟PASS：每秒读取一次`MONITOR_ID`，共60次，timeout=0、`checksum_errors=0`；打开持续流时前导半帧产生`sync_drops=4`。
+- 新增正式入口`just monitor-soak /dev/ttyUSB1 115200 1800 1`；60秒结果不替代30分钟发布门禁。
 
 ## 板级待验证
 
 - ~~读取 `MONITOR_ID/MONITOR_VERSION`。~~ 2026-07-16 PASS。
-- 写 `LED_CONTROL` 后确认 LED 行为变化。
+- ~~写 `LED_CONTROL` 后确认寄存器变化并恢复。~~ 2026-07-16 PASS；人工LED视觉确认未作为自动门禁。
 - 写 `DEMO_PERIOD` 后确认 Event/Trace 周期变化。
 - 写 `CLEAR_COUNTERS` 后确认计数器清零。
-- 非法地址和 RO 写入返回错误。
+- ~~非法地址和 RO 写入返回错误。~~ 2026-07-16 PASS。
 - 长稳 30 分钟，checksum error 不持续增加。
 
 ## 限制

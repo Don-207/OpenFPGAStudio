@@ -48,6 +48,14 @@ m34-uart-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="
 monitor-read-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" address="0x0000":
     {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-read-address {{address}}
 
+# Safe board suite: temporary LED_CONTROL masked write with guaranteed restore, RO denial and bad-address checks.
+monitor-safe-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200":
+    {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-safe-suite
+
+# Periodic read-only Monitor transactions; defaults to the 30-minute WP2 release gate.
+monitor-soak port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0" baud="115200" seconds="1800" interval="1":
+    {{python}} tools/viewer/validate_uart_board.py --port {{port}} --baud {{baud}} --monitor-soak-duration {{seconds}} --monitor-soak-interval {{interval}}
+
 # Hardware operation: benchmark USER2 burst reads on the FT232H cable.
 m34-jtag-benchmark:
     {{python}} tools/jtag/benchmark_m34_board.py

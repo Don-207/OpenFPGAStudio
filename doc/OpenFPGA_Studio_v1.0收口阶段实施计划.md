@@ -71,9 +71,11 @@ POSIX环境可先执行无依赖、只读寄存器验证：
 
 ```text
 just monitor-read-validate /dev/ttyUSB1 115200 0x0000
+just monitor-safe-validate /dev/ttyUSB1 115200
+just monitor-soak /dev/ttyUSB1 115200 1800 1
 ```
 
-该入口只发送`MONITOR_READ_REQ`，不发送Monitor写请求。
+`monitor-read-validate`只发送`MONITOR_READ_REQ`。`monitor-safe-validate`短暂修改LED低2位并保证恢复，用于验证RW、RO拒绝和非法地址；`monitor-soak`只周期读取ID，不写寄存器。
 
 ### V1.WP3：阶段Checklist一致性整理
 
@@ -207,3 +209,5 @@ JavaScript syntax gates: PASS
 - `MONITOR_ID(0x0000)`读取PASS：`0x4F464D30`。
 - `MONITOR_VERSION(0x0004)`读取PASS：`0x00010000`。
 - 历史UART RX“无响应”阻塞已解除；WP2剩余写寄存器、错误响应与30分钟双向长稳。
+- 安全suite PASS：`LED_CONTROL`掩码写入、读回和原值恢复通过；RO写返回`DENIED(2)`，非法地址返回`BAD_ADDR(1)`。
+- 60秒双向soak冒烟PASS：60次周期读、timeout=0、checksum error=0；正式1800秒门禁仍待执行。
