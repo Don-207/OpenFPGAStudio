@@ -1,0 +1,13 @@
+{
+  "schema":"openfpga.ai_debug_board_qualification",
+  "schema_version":1,
+  "status":"hardware_partial_pass",
+  "privacy":"sanitized_metadata_only",
+  "scenarios":[
+    {"id":"transport_error","category":"transport","origin":"offline_derived","input_case":"transport_errors","expected_rules":["transport.error_rate.v1"],"required_evidence":["viewer_transport"],"injection":"Corrupt checksum/malformed counters in a copy of a sanitized capture.","recovery":"Replay the unmodified capture and confirm transport counters return to baseline."},
+    {"id":"fifo_backpressure","category":"fifo_backpressure","origin":"hardware_validated_2026_07_16","input_case":"fifo_backpressure","expected_rules":["fifo.backpressure.v1"],"required_evidence":["profiler_metric","trace_span"],"injection":"Use the existing demo control to reduce consumer service rate.","recovery":"Restore the original consumer rate and verify FIFO level and stalls return to baseline."},
+    {"id":"performance_degradation","category":"performance","origin":"hardware_validated_2026_07_16","input_case":"throughput_drop","expected_rules":["throughput.drop.v1"],"required_evidence":["profiler_metric","trace_span"],"injection":"Apply a bounded demo stall/duty parameter.","recovery":"Restore the recorded baseline parameter and compare the same metric window."},
+    {"id":"la_trigger_missing","category":"la_trigger","origin":"hardware_validated_2026_07_16","input_case":"la_trigger_missing","expected_rules":["la.trigger_missing.v1"],"required_evidence":["la_capture"],"injection":"Arm with a safe trigger expression known not to occur during the window.","recovery":"Stop/clear the analyzer and restore the baseline trigger configuration."},
+    {"id":"la_data_integrity","category":"la_integrity","origin":"offline_derived","input_case":"la_partial_capture","expected_rules":["data_quality.incomplete.v1","la.data_integrity.v1"],"forbidden_rules":["la.trigger_missing.v1"],"required_evidence":["la_capture"],"injection":"Remove one chunk from a copy of a sanitized board capture.","recovery":"Use the unmodified capture and confirm chunk/sample counts and integrity hash."}
+  ]
+}

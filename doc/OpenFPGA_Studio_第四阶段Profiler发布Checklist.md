@@ -1,0 +1,21 @@
+# OpenFPGA Studio 第四阶段 Profiler 发布 Checklist
+
+- [x] `OpenFPGA_Debug_Protocol_v1.md` 定义 `PROFILER_SNAPSHOT/ALERT` payload。
+- [x] Parser 回归测试覆盖 Profiler snapshot、alert、malformed 和 checksum error。
+- [x] M18 Profiler Core XSim 用例已存在。
+- [x] M19 Probe XSim 用例已存在。
+- [x] M20 Web Viewer Profiler 视图已存在。
+- [x] M21 Board Demo RTL 接入 Profiler core、adapter 和 demo probes。
+- [x] M21 Monitor register map 接入 Profiler 控制寄存器。
+- [x] M21 Board Demo XSim testbench 已补齐。
+- [x] M21 Vivado elaboration 脚本已补齐。
+- [x] Profiler 使用说明已补齐。
+- [x] 本轮 Parser 回归通过。
+- [x] 本轮 Web Viewer smoke/perf 通过。
+- [x] 本轮 M18/M19/Monitor 回归通过。
+- [x] 本轮 M21 Board Demo XSim 通过。
+- [x] 本轮 M21 Vivado elaboration 通过。
+- [x] Bitstream 构建完成。
+- [x] COM7 Monitor 板级串口验证通过。
+- [x] COM7 Profiler 板级串口验证通过。
+- [ ] 板级 30 分钟长稳通过。
