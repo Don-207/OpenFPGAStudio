@@ -132,6 +132,11 @@ class MonitorLink:
         self.sequence = 0x4100
         self.checked = 0
 
+    def next_sequence(self) -> int:
+        sequence = self.sequence
+        self.sequence = (self.sequence + 1) & 0xFFFF
+        return sequence
+
     def transact(self, request: bytes, expected_type: int, sequence: int,
                  timeout: float) -> bytes:
         written = os.write(self.fd, request)
@@ -161,8 +166,7 @@ class MonitorLink:
         )
 
     def read(self, address: int, timeout: float) -> tuple[int, int, int]:
-        sequence = self.sequence
-        self.sequence += 1
+        sequence = self.next_sequence()
         payload = self.transact(
             monitor_read_frame(sequence, address), MONITOR_READ_RESP, sequence, timeout)
         if len(payload) < 14:
@@ -173,8 +177,7 @@ class MonitorLink:
 
     def write(self, address: int, value: int, mask: int,
               timeout: float) -> tuple[int, int, int]:
-        sequence = self.sequence
-        self.sequence += 1
+        sequence = self.next_sequence()
         payload = self.transact(
             monitor_write_frame(sequence, address, value, mask),
             MONITOR_WRITE_RESP, sequence, timeout)
@@ -260,6 +263,7 @@ def monitor_soak(port: str, baud: int, timeout: float, duration: float,
     started = time.monotonic()
     deadline = started + duration
     next_read = started
+    next_progress = started + 60.0
     try:
         configure(fd, baud)
         while time.monotonic() < deadline:
@@ -273,6 +277,12 @@ def monitor_soak(port: str, baud: int, timeout: float, duration: float,
                     f"unexpected MONITOR_ID during soak: {(status, width, value)}")
             reads += 1
             next_read += interval
+            if time.monotonic() >= next_progress:
+                elapsed = time.monotonic() - started
+                print(f"monitor_soak_progress seconds={elapsed:.1f} reads={reads} "
+                      f"checksum_errors={link.decoder.checksum_errors} "
+                      f"sync_drops={link.decoder.sync_drops}", flush=True)
+                next_progress += 60.0
     finally:
         os.close(fd)
     elapsed = time.monotonic() - started
