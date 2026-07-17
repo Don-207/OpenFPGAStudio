@@ -280,3 +280,15 @@ JavaScript syntax gates: PASS
   64 samples、13/13 chunks、malformed=0，波形、触发位置和 11 路通道名签署通过；
   随后以合法 divisor `50000` 重采 capture `0x42`，VCD/JSONL 的64 samples、
   13个连续chunks、触发标记、通道名和零错误计数全部通过。第五阶段 WP3 复核完成。
+
+### 2026-07-17：WP3第六阶段AI Debug复核启动
+
+- 将第五阶段 capture `0x42` 的脱敏 JSONL 作为共同板级原始证据，完成 Transport checksum/malformed 与 LA 缺 chunk 两类离线派生 snapshot 绑定。
+- 新增门禁校验原始捕获 SHA-256、snapshot schema/hash、派生与 baseline 关系、规则命中、禁止规则、evidence 引用和未修改 baseline 恢复。
+- 第六阶段 Checklist 的两项派生证据绑定已完成；下一步为补齐其余实板场景 snapshot、执行不少于30分钟周期诊断长稳并完成发布签署。
+- 板卡恢复后的 LA trigger-missing 复测暴露 `LA_STATUS[2:0]` 将互斥状态当作粘滞位 OR 的缺陷；配置已完整恢复，失败结果保留。RTL 已改为低三位实时状态、高位粘滞/W1C，并由 `la-board-sim` 新断言覆盖。下一步需重建并下载候选镜像后复测。
+- 修复候选构建 WNS `+2.907 ns`，0 warning/error，指定 target 下载和 ILA 枚举通过；10 秒 UART 纯接收、Profiler 受控场景及 LA trigger-missing 实板复测均 PASS，临时配置完整恢复。下一步执行第六阶段 1800 秒持续接收与周期诊断门禁。
+- 修复镜像 1800 秒 LA/Profiler 共存长稳 PASS：62 次采集、最终 capture ID 63、720 个 Profiler snapshots，checksum/drop/overflow/malformed 全为 0。硬件持续接收门槛完成；第六阶段组合条目仅余 Viewer 内存与取消次数度量及最终签署。
+- Chromium 补测记录 11,194 frames、5,920 evidence、heap used 21,174,608 bytes、5 次取消全部正确收敛并保留本地 finding；与 1800 秒硬件结果合并后，第六阶段组合长稳条目完成。
+- 五类 AI Debug 场景现全部绑定可复现 snapshot 和 baseline：Performance 使用等长窗口的受控 `DEMO_PERIOD` 注入，吞吐帧率 10.0/s→0.1/s，配置恢复通过。Release 门禁验证 5/5 源哈希、snapshot hash、规则、引用和恢复；第六阶段仅待发布负责人签署。
+- 2026-07-17 发布负责人确认签署；第六阶段 AI Debug 自动门禁、五类板级场景、恢复、组合长稳和已知限制复核全部完成，WP3 第六阶段复核收口。

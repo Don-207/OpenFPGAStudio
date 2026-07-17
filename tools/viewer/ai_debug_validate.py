@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent
 FIXTURES = ROOT / "fixtures" / "ai_debug" / "snapshots"
 RULE_TEST = ROOT / "web" / "diagnostic_rules_test.js"
 PROVIDER_TEST = ROOT / "web" / "ai_provider_test.js"
+BOARD_EVIDENCE_TEST = ROOT / "web" / "ai_debug_board_evidence_test.js"
 BOARD_MANIFEST = ROOT / "fixtures" / "ai_debug" / "board" / "qualification_manifest.json"
 REQUIRED = {
     "schema", "schema_version", "snapshot_id", "created_at", "time_range",
@@ -152,7 +153,7 @@ def validate_board_manifest():
     golden_expected = json.loads((ROOT / "fixtures" / "ai_debug" / "expected" / "rule_golden_cases.json").read_text(encoding="utf-8"))
     input_ids = {item["id"] for item in golden_inputs["cases"]}
     for item in scenarios:
-        for field in ("id", "category", "origin", "input_case", "expected_rules", "required_evidence", "injection", "recovery"):
+        for field in ("id", "category", "origin", "qualification_status", "input_case", "expected_rules", "required_evidence", "injection", "recovery"):
             if not item.get(field):
                 failures.append(f"{item.get('id', '<unknown>')}: missing {field}")
         case_id = item.get("input_case")
@@ -177,8 +178,23 @@ def validate_board_manifest():
         for failure in failures:
             print(f"FAIL: {failure}", file=sys.stderr)
         return 1
-    pending = sum(not str(item.get("origin", "")).startswith("hardware_validated") for item in scenarios)
-    print(f"board qualification manifest: PASS ({len(scenarios)} scenarios, {pending} hardware sign-offs pending)")
+    if shutil.which("node") is None:
+        failures.append("node is required for board evidence binding")
+    else:
+        result = subprocess.run(
+            ["node", str(BOARD_EVIDENCE_TEST)], cwd=ROOT.parent.parent,
+            text=True, capture_output=True, check=False,
+        )
+        if result.stdout:
+            print(result.stdout, end="")
+        if result.returncode:
+            failures.append(result.stderr.strip() or "ai_debug_board_evidence_test.js failed")
+    if failures:
+        for failure in failures:
+            print(f"FAIL: {failure}", file=sys.stderr)
+        return 1
+    pending = sum(item.get("qualification_status") != "passed" for item in scenarios)
+    print(f"board qualification manifest: PASS ({len(scenarios)} scenarios, {pending} scenario sign-offs pending)")
     return 0
 
 
@@ -193,7 +209,11 @@ def validate_release_documents():
         for path in missing:
             print(f"FAIL: missing release document: {path}", file=sys.stderr)
         return 1
-    print(f"AI Debug release documents: PASS ({len(documents)} documents; board sign-off remains manual)")
+    checklist = documents[1].read_text(encoding="utf-8")
+    if "- [ ]" in checklist:
+        print("FAIL: AI Debug release checklist contains unsigned items", file=sys.stderr)
+        return 1
+    print(f"AI Debug release documents: PASS ({len(documents)} documents; board release signed)")
     return 0
 
 

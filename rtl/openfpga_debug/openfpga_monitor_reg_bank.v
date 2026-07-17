@@ -137,7 +137,10 @@ always @(*) begin
             is_writable = 1'b1;
         end
         `OFD_MON_ADDR_LA_STATUS: begin
-            old_value = la_status | la_status_set;
+            // [2:0] is a mutually exclusive live state, not a sticky flag
+            // field. Keep only [31:3] latched/W1C; OR-ing historical state
+            // values makes ARMED(1) -> CAPTURING(2) appear as DONE(3).
+            old_value = (la_status & 32'hFFFFFFF8) | la_status_set;
             is_writable = 1'b1;
             is_w1c = 1'b1;
         end
@@ -264,7 +267,7 @@ always @(posedge clk) begin
         la_force_trigger_pulse <= 1'b0;
         la_start_readout_pulse <= 1'b0;
         profiler_status <= profiler_status | profiler_status_set;
-        la_status <= la_status | la_status_set;
+        la_status <= (la_status | la_status_set) & 32'hFFFFFFF8;
 
         if (resp_valid && resp_ready) begin
             resp_valid <= 1'b0;
@@ -291,7 +294,7 @@ always @(posedge clk) begin
                     `OFD_MON_ADDR_PROFILER_METRIC_MASK0: profiler_metric_mask0 <= new_value;
                     `OFD_MON_ADDR_PROFILER_ALERT_THRESHOLD0: profiler_alert_threshold0 <= new_value;
                     `OFD_MON_ADDR_LA_CONTROL: la_control <= new_value;
-                    `OFD_MON_ADDR_LA_STATUS: la_status <= new_value | la_status_set;
+                    `OFD_MON_ADDR_LA_STATUS: la_status <= (new_value | la_status_set) & 32'hFFFFFFF8;
                     `OFD_MON_ADDR_LA_SAMPLE_DIVISOR: la_sample_divisor <= new_value;
                     `OFD_MON_ADDR_LA_CAPTURE_DEPTH: la_capture_depth <= new_value;
                     `OFD_MON_ADDR_LA_PRETRIGGER_DEPTH: la_pretrigger_depth <= new_value;

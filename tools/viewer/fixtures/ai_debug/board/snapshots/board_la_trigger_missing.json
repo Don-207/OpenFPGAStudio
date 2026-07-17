@@ -1,0 +1,78 @@
+{
+  "created_at": "2026-07-17T07:30:31.890093+00:00",
+  "evidence": [
+    {
+      "data": {
+        "armed": true,
+        "armedCycles": 500000000,
+        "complete": true,
+        "state": "armed",
+        "status": 17,
+        "triggerEventCount": 0,
+        "triggered": false
+      },
+      "evidence_id": "ev_board_la_armed",
+      "kind": "la_capture",
+      "severity": "warning",
+      "source": "logic_analyzer",
+      "source_ref": {
+        "locator": {
+          "scenario": "la-trigger-missing"
+        },
+        "record_type": "board_run_status",
+        "view": "logic_analyzer"
+      },
+      "summary": "board Logic Analyzer remained armed without a trigger",
+      "timestamp": {
+        "quality": "exact",
+        "raw": 0,
+        "tick": 0,
+        "wrap_count": 0
+      }
+    }
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "complete": true,
+    "issues": [],
+    "sha256": "859f7f0682da5f76d66791ba93decf31ebb5eb7d9b42c032df7eb1412cafe2f9"
+  },
+  "provenance": {
+    "baseline_snapshot": "board_la_trigger_baseline.json",
+    "derivation": "actual ARMED status and trigger-event count",
+    "source_path": "artifacts/manual/ai-debug-la-trigger-missing-run-20260717.json",
+    "source_sha256": "265a40a861877b89d0467249de0e7e6f3164d80b677d3bbe416a0108f0de4276"
+  },
+  "redaction": {
+    "audit": [],
+    "profile": "local_export"
+  },
+  "schema": "openfpga.diagnostic_snapshot",
+  "schema_version": 1,
+  "session_summary": {
+    "evidence_count": 1,
+    "source_counts": {
+      "logic_analyzer": 1
+    },
+    "warning_count": 1
+  },
+  "snapshot_id": "board_la_trigger_missing",
+  "target": {
+    "board": "sanitized-xilinx-board",
+    "build_id": "m36_ila:3461b2cef34e2102",
+    "part": "xcku5p",
+    "protocol_version": 1
+  },
+  "time_range": {
+    "end_tick": 0,
+    "scope": {
+      "type": "board_scenario"
+    },
+    "start_tick": 0
+  },
+  "timebase": {
+    "frequency_hz": 100000000,
+    "timestamp_modulus": 4294967296,
+    "unit": "cycle"
+  }
+}

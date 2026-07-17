@@ -294,6 +294,20 @@ initial begin
         send_monitor_write(16'h2504, `OFD_MON_ADDR_LA_PRETRIGGER_DEPTH, 32'd3, 32'hFFFFFFFF);
         read_until_monitor_response(16'h2504, `OFD_TYPE_MONITOR_WRITE_RESP);
     join
+    // Use a deterministic non-matching trigger so the Monitor status read can
+    // distinguish live ARMED(1) from a sticky OR of ARMED(1)/CAPTURING(2).
+    fork
+        send_monitor_write(16'h250A, `OFD_MON_ADDR_LA_TRIGGER_MODE, `OFD_LA_TRIGGER_LEVEL, 32'hFFFFFFFF);
+        read_until_monitor_response(16'h250A, `OFD_TYPE_MONITOR_WRITE_RESP);
+    join
+    fork
+        send_monitor_write(16'h250B, `OFD_MON_ADDR_LA_TRIGGER_CHANNEL, 32'd31, 32'hFFFFFFFF);
+        read_until_monitor_response(16'h250B, `OFD_TYPE_MONITOR_WRITE_RESP);
+    join
+    fork
+        send_monitor_write(16'h250C, `OFD_MON_ADDR_LA_TRIGGER_VALUE, 32'd1, 32'hFFFFFFFF);
+        read_until_monitor_response(16'h250C, `OFD_TYPE_MONITOR_WRITE_RESP);
+    join
     fork
         send_monitor_write(16'h2505, `OFD_MON_ADDR_LA_CONTROL, 32'h00000005, 32'hFFFFFFFF);
         read_until_monitor_response(16'h2505, `OFD_TYPE_MONITOR_WRITE_RESP);
@@ -304,6 +318,12 @@ initial begin
     join
 
     repeat (20) @(posedge clk_p);
+    fork
+        send_monitor_read(16'h250D, `OFD_MON_ADDR_LA_STATUS);
+        read_until_monitor_response(16'h250D, `OFD_TYPE_MONITOR_READ_RESP);
+    join
+    check((payload_u32(10) & 32'h00000007) == `OFD_LA_STATE_ARMED,
+          "LA_STATUS state must reflect live ARMED state without sticky OR corruption");
     fork
         send_monitor_write(16'h2507, `OFD_MON_ADDR_LA_COMMAND, 32'h00000008, 32'hFFFFFFFF);
         read_until_monitor_response(16'h2507, `OFD_TYPE_MONITOR_WRITE_RESP);

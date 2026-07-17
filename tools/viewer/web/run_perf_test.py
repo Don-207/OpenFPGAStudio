@@ -160,6 +160,21 @@ AI_DEBUG_EXPRESSION = r"""
   const evidenceIds = new Set(api.aiDebug.state.snapshot.evidence.map((item) => item.evidence_id));
   const references = report.findings.flatMap((item) => item.evidence_ids)
     .concat((report.diagnosis ? report.diagnosis.hypotheses : []).flatMap((item) => item.evidence_ids));
+  let cancelCount = 0;
+  let cancelledFindingCount = 0;
+  for (let index = 0; index < 5; index += 1) {
+    const controller = new window.OpenFPGAAIProvider.AnalysisController();
+    const pending = controller.run(
+      new window.OpenFPGAAIProvider.MockProvider("valid", 50),
+      api.aiDebug.state.snapshot,
+      api.aiDebug.state.ruleResult
+    );
+    window.setTimeout(() => controller.cancel(), 1);
+    const cancelled = await pending;
+    if (cancelled.status !== "cancelled") throw new Error(`cancel iteration ${index} returned ${cancelled.status}`);
+    cancelCount += 1;
+    cancelledFindingCount += (cancelled.local_findings || []).length;
+  }
   return JSON.stringify({
     localStatus: api.aiDebug.state.status,
     findingCount: local.findings.length,
@@ -167,7 +182,9 @@ AI_DEBUG_EXPRESSION = r"""
     hypothesisCount: report.diagnosis ? report.diagnosis.hypotheses.length : 0,
     danglingReferences: references.filter((id) => !evidenceIds.has(id)),
     previewText: document.getElementById("aiDebugPreview").textContent,
-    historyCount: api.aiDebug.state.history.length
+    historyCount: api.aiDebug.state.history.length,
+    cancelCount,
+    cancelledFindingCount
   });
 })()
 """
@@ -358,6 +375,7 @@ def main():
         sock = ws_connect(tabs[0]["webSocketDebuggerUrl"])
         counter = ids()
         cdp_call(sock, counter, "Runtime.enable")
+        heap_before = cdp_call(sock, counter, "Runtime.getHeapUsage")
 
         hook_ready = None
         deadline = time.time() + 20
@@ -416,6 +434,15 @@ def main():
             raise RuntimeError(f"AI Debug Mock workflow failed: {ai_result}")
         if ai_parsed["danglingReferences"] or ai_parsed["historyCount"] < 2:
             raise RuntimeError(f"AI Debug report/history integrity failed: {ai_result}")
+        if ai_parsed["cancelCount"] != 5:
+            raise RuntimeError(f"AI Debug cancellation lifecycle failed: {ai_result}")
+        heap_after = cdp_call(sock, counter, "Runtime.getHeapUsage")
+        parsed["memory"] = {
+            "heapUsedBeforeBytes": heap_before["usedSize"],
+            "heapUsedAfterBytes": heap_after["usedSize"],
+            "heapDeltaBytes": heap_after["usedSize"] - heap_before["usedSize"],
+            "heapTotalAfterBytes": heap_after["totalSize"],
+        }
         parsed["aiDebug"] = ai_parsed
         result = json.dumps(parsed, separators=(",", ":"))
         print(result)
