@@ -97,8 +97,10 @@ wire [7:0]  fifo_rd_len;
 wire [255:0] fifo_rd_payload;
 wire        fifo_rd_ready;
 wire [BUFFER_ADDR_WIDTH:0] fifo_used_count;
+wire        stream_wr_ready;
 wire        packet_accepted;
-wire        packet_dropped;
+wire        legacy_msg_valid;
+wire        legacy_packet_accepted;
 wire        trace_msg_valid;
 wire [7:0]  trace_msg_type;
 wire [7:0]  trace_msg_len;
@@ -127,19 +129,25 @@ openfpga_debug_timestamp u_timestamp (
 
 assign input_count = {2'b0, event_valid} + {2'b0, watch_valid} + {2'b0, print_valid} +
                      {2'b0, heartbeat_valid} + {2'b0, status_valid};
+assign legacy_msg_valid = (input_count != 3'd0);
 assign packet_accepted = fifo_wr_valid && fifo_wr_ready;
-assign packet_dropped = fifo_wr_valid && !fifo_wr_ready;
+assign legacy_packet_accepted = packet_accepted && !monitor_msg_valid && legacy_msg_valid;
 assign fifo_rd_ready = fifo_rd_valid && packetizer_ready;
 assign buffer_used = {{(16 - BUFFER_ADDR_WIDTH - 1){1'b0}}, fifo_used_count};
 assign busy = uart_busy || fifo_rd_valid || !packetizer_ready || packet_byte_valid;
 assign monitor_msg_ready = fifo_wr_ready;
-assign la_msg_ready = fifo_wr_ready && !monitor_msg_valid;
-assign trace_msg_ready = fifo_wr_ready && !monitor_msg_valid && !la_msg_valid;
-assign profiler_msg_ready = fifo_wr_ready && !monitor_msg_valid && !la_msg_valid && !trace_msg_valid;
+// Handshake-aware streams stop two entries before full so a Monitor response
+// and a pulse-only legacy source both retain admission headroom during bursts.
+assign stream_wr_ready = fifo_wr_ready &&
+                         (fifo_used_count < ((1 << BUFFER_ADDR_WIDTH) - 2));
+assign trace_msg_ready = stream_wr_ready && !monitor_msg_valid && !legacy_msg_valid;
+assign la_msg_ready = stream_wr_ready && !monitor_msg_valid && !legacy_msg_valid &&
+                      !trace_msg_valid;
+assign profiler_msg_ready = stream_wr_ready && !monitor_msg_valid && !legacy_msg_valid &&
+                            !trace_msg_valid && !la_msg_valid;
 assign core_drop_increment =
-    (input_count > {2'b0, packet_accepted}) ?
-        {13'd0, input_count - {2'b0, packet_accepted}} :
-    packet_dropped ? 16'd1 : 16'd0;
+    (input_count > {2'b0, legacy_packet_accepted}) ?
+        {13'd0, input_count - {2'b0, legacy_packet_accepted}} : 16'd0;
 
 always @(*) begin
     fifo_wr_valid = 1'b0;
@@ -152,21 +160,6 @@ always @(*) begin
         fifo_wr_type = monitor_msg_type;
         fifo_wr_len = monitor_msg_len;
         fifo_wr_payload = monitor_msg_payload;
-    end else if (la_msg_valid) begin
-        fifo_wr_valid = 1'b1;
-        fifo_wr_type = la_msg_type;
-        fifo_wr_len = la_msg_len;
-        fifo_wr_payload = la_msg_payload;
-    end else if (trace_msg_valid) begin
-        fifo_wr_valid = 1'b1;
-        fifo_wr_type = trace_msg_type;
-        fifo_wr_len = trace_msg_len;
-        fifo_wr_payload = trace_msg_payload;
-    end else if (profiler_msg_valid) begin
-        fifo_wr_valid = 1'b1;
-        fifo_wr_type = profiler_msg_type;
-        fifo_wr_len = profiler_msg_len;
-        fifo_wr_payload = profiler_msg_payload;
     end else if (event_valid) begin
         fifo_wr_valid = 1'b1;
         fifo_wr_type = `OFD_TYPE_EVENT;
@@ -203,6 +196,21 @@ always @(*) begin
         fifo_wr_payload[47:32] = buffer_used;
         fifo_wr_payload[63:48] = drop_count;
         fifo_wr_payload[79:64] = packet_count;
+    end else if (trace_msg_valid && stream_wr_ready) begin
+        fifo_wr_valid = 1'b1;
+        fifo_wr_type = trace_msg_type;
+        fifo_wr_len = trace_msg_len;
+        fifo_wr_payload = trace_msg_payload;
+    end else if (la_msg_valid && stream_wr_ready) begin
+        fifo_wr_valid = 1'b1;
+        fifo_wr_type = la_msg_type;
+        fifo_wr_len = la_msg_len;
+        fifo_wr_payload = la_msg_payload;
+    end else if (profiler_msg_valid && stream_wr_ready) begin
+        fifo_wr_valid = 1'b1;
+        fifo_wr_type = profiler_msg_type;
+        fifo_wr_len = profiler_msg_len;
+        fifo_wr_payload = profiler_msg_payload;
     end
 end
 

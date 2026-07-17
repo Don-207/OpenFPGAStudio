@@ -39,7 +39,7 @@ v1.0 不承诺：
 | Trace | 协议、Probe、Viewer、仿真、候选镜像构建/下载和板级记录 | WP3复核完成 |
 | Monitor | RTL/仿真、真实读写/错误响应、控制行为和30分钟长稳通过 | WP2完成 |
 | Profiler | Probe重复累计缺陷已修复；离线回归、候选构建/下载、30分钟板级长稳和Edge视觉签署通过 | WP3复核完成 |
-| Logic Analyzer | 自动arm/trigger/readout通过 | 待人工导出确认和长稳 |
+| Logic Analyzer | 自动arm/trigger/readout、30分钟长稳、Edge波形及VCD/JSONL导出签署通过 | WP3复核完成 |
 | AI Debug | 离线门禁通过，主要板级场景已执行 | 待派生损坏场景、长稳和签署 |
 | JTAG | 性能镜像达到100 KB/s门槛并完成30分钟长稳 | 普通功能闭环和共存证据待补 |
 | Web Viewer | 11,192帧压力回归通过，解析错误为0 | 通过 |
@@ -242,3 +242,41 @@ JavaScript syntax gates: PASS
 - 修复镜像120秒预检和1800秒正式长稳均通过；正式窗口得到7,203个snapshot、1,801个alert、90,000个status，checksum error与设备drop均为0，FIFO overflow峰值为0，原始配置恢复成功。
 - Windows Edge Profiler视图人工确认通过：99 snapshots、49 alerts、0 malformed，四类指标、趋势、alert和控制区均正常显示。
 - 第四阶段Profiler Checklist无PENDING或FAIL项，WP3 Profiler复核完成；下一项为第五阶段Logic Analyzer Checklist复核。
+
+### 2026-07-16 至 2026-07-17：WP3第五阶段Logic Analyzer修复审计
+
+- 恢复并扩展 POSIX LA 板级验证器，覆盖两次采集、stop/clear/re-arm、配置恢复、
+  checksum、malformed、overflow、Profiler snapshot 和 Debug Core `drop_count`。
+- 旧镜像快速采集功能通过，但 60 秒共存预检暴露 `drop_count` 持续增长；该结果记为
+  FAIL，不以采集帧完整掩盖链路拥塞。
+- 修复 Debug Core 对可回压 `valid` 的重复丢包计数，并在仲裁中为 Legacy pulse
+  保留 FIFO 余量；双槽预留会阻塞 LA 尾帧，最终设计收敛为单槽预留。
+- 修正 Board Demo 默认 Watch/Status 频率，使默认流量符合 115200 baud 容量。
+- 修正 LA 验收脚本 Profiler 周期单位错误：`100,000,000` 个 100 MHz 周期才是 1 秒。
+- 为 Trace Adapter 增加一项 pending，避免单周期 Trace 在下游背压时直接丢失。
+- 断电恢复后确认 CH340 `/dev/ttyUSB1`、Digilent FT232H/JTAG 和 `brltty` inactive；
+  位流构建、指定 target 下载和 ILA 枚举链路恢复正常。
+- 多个中间 M36 镜像均完成正 WNS、0 未布线网络和 DRC 0 error；最新源码仍需重新
+  构建和板测，故 WP3 Logic Analyzer 当前状态保持 `IN PROGRESS`。
+- 下一步：构建/下载最新单槽+Trace pending 镜像，依次执行快速验证、60 秒预检和
+  1800 秒正式长稳；之后再进行 Edge 波形与 VCD/JSONL 人工签署。
+- 2026-07-17 最新单槽镜像快速验证和 60 秒预检已通过；1800 秒运行在 300 秒时
+  因 `drop_count 1->4` 判定 FAIL 并停止，checksum/overflow/malformed 仍为 0。
+  下一修复为在已降载并带 Trace pending 的前提下恢复双槽 FIFO 余量，然后重新执行门禁。
+- 2026-07-17 双槽候选构建 WNS `+3.210 ns`；快速验证和 60 秒预检均 PASS，
+  60 秒窗口 `drop_count 1->1` 且 checksum/overflow/malformed 为 0。下一步执行
+  同参数 1800 秒正式长稳。
+- 带宽感知调度版正式长稳的 5/10/15 分钟门禁通过，但约 18 分钟后 LA readout
+  尾帧停滞，故仍记为 FAIL。根因是 16 项 FIFO 小于一次 16 帧 LA readout 加后台
+  最坏突发；Board Demo FIFO 已扩展为 64 项，待重新构建和执行门禁。
+- 64 项 FIFO 候选构建 WNS `+4.315 ns`，快速验证与 60 秒预检均 PASS；下一步
+  使用同一镜像执行 1800 秒正式长稳。
+- 64 项 FIFO 候选 1800 秒正式长稳 PASS：62 次采集，最终 `capture_id=62`，
+  `drop_count 0->0`，checksum/overflow/malformed 为 0，Profiler snapshot 723，
+  所有临时配置恢复成功。WP3 Logic Analyzer 自动板级长稳门禁完成；剩余 Edge
+  波形/触发线/通道名和 VCD/JSONL 导出人工签署。
+- Windows Edge 人工验收发现并修复 Viewer Monitor 并发写入争用 writer lock、LA Apply
+  遗漏 `LA_CONTROL` 使能两项缺陷；回归测试通过。真实板采集 `capture_id=0x3F`、
+  64 samples、13/13 chunks、malformed=0，波形、触发位置和 11 路通道名签署通过；
+  随后以合法 divisor `50000` 重采 capture `0x42`，VCD/JSONL 的64 samples、
+  13个连续chunks、触发标记、通道名和零错误计数全部通过。第五阶段 WP3 复核完成。

@@ -49,12 +49,15 @@ openfpga_debug_board_demo #(
     .CLK_FREQ_HZ(CLK_FREQ_HZ),
     .UART_BAUD(UART_BAUD),
     .BUFFER_ADDR_WIDTH(3),
-    .HEARTBEAT_INTERVAL_TICKS(100),
-    .EVENT_INTERVAL_TICKS(40),
-    .WATCH_INTERVAL_TICKS(20),
-    .PRINT_INTERVAL_TICKS(60),
-    .STATUS_INTERVAL_TICKS(30),
-    .TRACE_SCENARIO_INTERVAL_TICKS(12),
+    // Preserve the board image's relationship between producer rate and UART
+    // capacity. Tiny tens-of-cycle intervals permanently overload the UART and
+    // turn this coexistence test into an artificial starvation test.
+    .HEARTBEAT_INTERVAL_TICKS(100000),
+    .EVENT_INTERVAL_TICKS(4000),
+    .WATCH_INTERVAL_TICKS(20000),
+    .PRINT_INTERVAL_TICKS(60000),
+    .STATUS_INTERVAL_TICKS(30000),
+    .TRACE_SCENARIO_INTERVAL_TICKS(12000),
     .LED_HOLD_TICKS(10)
 ) dut (
     .clk_p(clk_p),

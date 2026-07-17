@@ -2139,7 +2139,9 @@
     return Number.parseInt(value, 10) >>> 0;
   }
 
-  async function sendMonitorBytes(bytes) {
+  let monitorWriteQueue = Promise.resolve();
+
+  async function sendMonitorBytesNow(bytes) {
     if (state.sourceType === "jtag") {
       addMonitorError({ kind: "monitor_error", statusText: "UNSUPPORTED", text: "JTAG Transport v1 is receive-only; use Serial for Monitor commands" });
       return false;
@@ -2158,6 +2160,12 @@
     } finally {
       writer.releaseLock();
     }
+  }
+
+  function sendMonitorBytes(bytes) {
+    const write = monitorWriteQueue.then(() => sendMonitorBytesNow(bytes));
+    monitorWriteQueue = write.catch(() => false);
+    return write;
   }
 
   async function monitorRead(addr) {
@@ -2196,9 +2204,9 @@
     monitorWrite(0x0050, 1, 0xFFFFFFFF);
   }
 
-  function applyLogicAnalyzerConfig() {
+  async function applyLogicAnalyzerConfig() {
     const config = state.logicAnalyzer.config;
-    config.sampleDivisor = Math.max(1, parseNumber(el.laSampleDivisor.value));
+    config.sampleDivisor = Math.max(1, Math.min(0xFFFF, parseNumber(el.laSampleDivisor.value)));
     config.captureDepth = Math.max(1, parseNumber(el.laCaptureDepth.value));
     config.pretriggerDepth = Math.max(0, parseNumber(el.laPretriggerDepth.value));
     config.triggerMode = Math.max(0, Math.min(4, parseNumber(el.laTriggerMode.value)));
@@ -2217,14 +2225,16 @@
     el.laTriggerValue.value = hex(config.triggerValue, 8);
     el.laTriggerMask.value = hex(config.triggerMask, 8);
 
-    monitorWrite(0x0070, config.sampleDivisor, 0xFFFFFFFF);
-    monitorWrite(0x0074, config.captureDepth, 0xFFFFFFFF);
-    monitorWrite(0x0078, config.pretriggerDepth, 0xFFFFFFFF);
-    monitorWrite(0x007C, config.triggerMode, 0xFFFFFFFF);
-    monitorWrite(0x0080, config.triggerChannel, 0xFFFFFFFF);
-    monitorWrite(0x0084, config.triggerValue, 0xFFFFFFFF);
-    monitorWrite(0x0088, config.triggerMask, 0xFFFFFFFF);
-    monitorWrite(0x0094, config.channelMask, 0xFFFFFFFF);
+    const control = 0x1 | (config.triggerMode === 0 ? 0 : 0x4);
+    await monitorWrite(0x0068, control, 0xFFFFFFFF);
+    await monitorWrite(0x0070, config.sampleDivisor, 0xFFFFFFFF);
+    await monitorWrite(0x0074, config.captureDepth, 0xFFFFFFFF);
+    await monitorWrite(0x0078, config.pretriggerDepth, 0xFFFFFFFF);
+    await monitorWrite(0x007C, config.triggerMode, 0xFFFFFFFF);
+    await monitorWrite(0x0080, config.triggerChannel, 0xFFFFFFFF);
+    await monitorWrite(0x0084, config.triggerValue, 0xFFFFFFFF);
+    await monitorWrite(0x0088, config.triggerMask, 0xFFFFFFFF);
+    await monitorWrite(0x0094, config.channelMask, 0xFFFFFFFF);
     requestRender(renderLogicAnalyzer);
   }
 
