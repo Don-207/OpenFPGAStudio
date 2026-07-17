@@ -1,4 +1,4 @@
-# OpenFPGA Profiler 使用说明
+# YiFPGA Studio Profiler 使用说明
 
 ## 1. 功能范围
 

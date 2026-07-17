@@ -2260,7 +2260,7 @@
   function exportLogicAnalyzerVcd() {
     const capture = latestLogicAnalyzerCapture();
     if (!capture || !capture.samples.length) {
-      downloadText(`openfpga-la-empty-${Date.now()}.vcd`, "text/plain;charset=utf-8", "$date\n  no capture\n$end\n");
+      downloadText(`yifpga-la-empty-${Date.now()}.vcd`, "text/plain;charset=utf-8", "$date\n  no capture\n$end\n");
       return;
     }
     const symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()[]{}";
@@ -2272,7 +2272,7 @@
       `  ${new Date().toISOString()}`,
       "$end",
       "$version",
-      "  OpenFPGA Web Viewer Logic Analyzer",
+      "  YiFPGA Studio Web Viewer Logic Analyzer",
       "$end",
       "$timescale 1ns $end",
       "$scope module openfpga_la $end",
@@ -2306,7 +2306,7 @@
     channels.forEach((channel) => {
       delete channel.vcdSymbol;
     });
-    downloadText(`openfpga-la-${header ? hex(header.captureId, 8) : "capture"}-${Date.now()}.vcd`, "text/plain;charset=utf-8", lines.join("\n") + "\n");
+    downloadText(`yifpga-la-${header ? hex(header.captureId, 8) : "capture"}-${Date.now()}.vcd`, "text/plain;charset=utf-8", lines.join("\n") + "\n");
   }
 
   async function connect() {
@@ -2806,7 +2806,7 @@
         row.text,
       ]),
     ];
-    const name = profilerHistory.length ? `openfpga-profiler-${hex(state.profiler.selectedMetricId, 4)}-${Date.now()}.csv` : `openfpga-debug-${Date.now()}.csv`;
+    const name = profilerHistory.length ? `yifpga-profiler-${hex(state.profiler.selectedMetricId, 4)}-${Date.now()}.csv` : `yifpga-debug-${Date.now()}.csv`;
     downloadText(
       name,
       "text/csv;charset=utf-8",
@@ -2846,7 +2846,7 @@
       },
     ];
     downloadText(
-      `openfpga-debug-${Date.now()}.jsonl`,
+      `yifpga-debug-${Date.now()}.jsonl`,
       "application/x-ndjson;charset=utf-8",
       records.map((record) => JSON.stringify(record)).join("\n") + "\n"
     );

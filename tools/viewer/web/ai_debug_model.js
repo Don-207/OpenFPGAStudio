@@ -1,4 +1,4 @@
-/* OpenFPGA Studio M30 AI Debug page-session workflow model. */
+/* YiFPGA Studio M30 AI Debug page-session workflow model. */
 (function (root, factory) {
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;

@@ -1,4 +1,4 @@
-/* OpenFPGA Studio M29 diagnosis_result v1 validator. */
+/* YiFPGA Studio M29 diagnosis_result v1 validator. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;

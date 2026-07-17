@@ -1,8 +1,8 @@
-# OpenFPGA Trace 使用说明
+# YiFPGA Studio Trace 使用说明
 
 ## 1. 定位
 
-OpenFPGA Trace 是 Debug Protocol v1 上的第二阶段扩展，用来观察 FPGA 内部过程级事件：什么时候开始、什么时候结束、哪里出现 warning/error/timeout，以及关键低频计数的变化。
+YiFPGA Studio Trace 是 Debug Protocol v1 上的过程级事件扩展，用来观察 FPGA 内部过程级事件：什么时候开始、什么时候结束、哪里出现 warning/error/timeout，以及关键低频计数的变化。
 
 Trace 适合：
 

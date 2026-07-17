@@ -1,4 +1,4 @@
-/* OpenFPGA Studio M29 provider-neutral context and lifecycle boundary. */
+/* YiFPGA Studio M29 provider-neutral context and lifecycle boundary. */
 (function (root, factory) {
   const validator = typeof module === "object" && module.exports ? require("./diagnosis_validator.js") : root.OpenFPGADiagnosisValidator;
   const api = factory(validator);

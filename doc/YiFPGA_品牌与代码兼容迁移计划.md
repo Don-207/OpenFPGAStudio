@@ -95,6 +95,10 @@
 
 ### YF.WP1：品牌展示迁移
 
+状态（2026-07-17）：**已完成**。README、Viewer、当前使用说明和Viewer新导出文件名前缀
+已迁移；代码ABI、旧入口、工程路径及历史证据保持不变。`just parser-test`、`just m27-check`
+至`just m30-check`均通过。
+
 - 更新README首页、Viewer标题、页面说明、帮助文本和当前使用说明为`YiFPGA Studio`。
 - 首次出现时写明`YiFPGA Studio（原OpenFPGA Studio）`。
 - 新文档文件名使用`YiFPGA_*`；历史验证文档不重命名。

@@ -1,4 +1,4 @@
-# OpenFPGA Web Viewer 使用说明
+# YiFPGA Studio Web Viewer 使用说明
 
 ## 1. 浏览器要求
 

@@ -1,8 +1,8 @@
-# OpenFPGA Monitor 使用说明
+# YiFPGA Studio Monitor 使用说明
 
 ## 功能
 
-OpenFPGA Monitor 在 Debug Protocol v1 上增加 PC 到 FPGA 的安全控制通道。第一版支持：
+YiFPGA Studio Monitor 在 Debug Protocol v1 上增加 PC 到 FPGA 的安全控制通道。第一版支持：
 
 - `MONITOR_READ_REQ/RESP`
 - `MONITOR_WRITE_REQ/RESP`

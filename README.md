@@ -1,8 +1,8 @@
-# OpenFPGA Studio
+# YiFPGA Studio
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-OpenFPGA Studio 是面向 FPGA 的开放调试与可观测性平台。当前 v1.0 release candidate 以 Xilinx `xcku5p-ffvb676-2-i` 为参考平台，提供 Debug Core、Trace、Monitor、Profiler、Logic Analyzer、AI Debug，以及 UART/JTAG 数据通道和统一 Web Viewer。
+YiFPGA Studio（原 OpenFPGA Studio）是面向 FPGA 的开放调试与可观测性平台。当前 v1.0 release candidate 以 Xilinx `xcku5p-ffvb676-2-i` 为参考平台，提供 Debug Core、Trace、Monitor、Profiler、Logic Analyzer、AI Debug，以及 UART/JTAG 数据通道和统一 Web Viewer。
 
 当前板级 demo 已在 `xcku5p-ffvb676-2-i` 工程上跑通，默认串口参数为 `115200 8N1`。
 
@@ -181,6 +181,7 @@ python3 tools/viewer/ai_debug_validate.py release
 
 - [YiFPGA 品牌与代码兼容迁移计划](doc/YiFPGA_品牌与代码兼容迁移计划.md)
 - [YF.WP0 YiFPGA 名称与资产冻结记录](doc/YF_WP0_YiFPGA名称与资产冻结记录.md)
+- [YiFPGA 品牌迁移与兼容说明](doc/YiFPGA_品牌迁移说明.md)
 - [v1.0 收口阶段实施计划](doc/OpenFPGA_Studio_v1.0收口阶段实施计划.md)
 - [Debug Protocol v1](doc/OpenFPGA_Debug_Protocol_v1.md)
 - [Debug Core 使用说明](doc/OpenFPGA_Debug_Core_使用说明.md)

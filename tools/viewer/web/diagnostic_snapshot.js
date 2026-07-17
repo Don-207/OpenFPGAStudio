@@ -1,4 +1,4 @@
-/* OpenFPGA Studio M27 Diagnostic Snapshot v1. */
+/* YiFPGA Studio M27 Diagnostic Snapshot v1. */
 (function (root, factory) {
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;

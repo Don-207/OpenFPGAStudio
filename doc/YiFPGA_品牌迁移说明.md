@@ -1,0 +1,26 @@
+# YiFPGA Studio 品牌迁移与兼容说明
+
+`OpenFPGA Studio` 自 2026-07-17 起迁移为 `YiFPGA Studio`。本次变更首先更新用户可见
+品牌，不改变 Debug Protocol v1、JTAG Mailbox、Monitor 寄存器、消息 payload、build ID
+或诊断 schema v1。
+
+## 当前名称
+
+- 产品名称：`YiFPGA Studio`
+- 简称：`YiFPGA`
+- 当前仓库和 Vivado 工程仍使用旧路径，后续工作包再迁移。
+- 既有文档文件名暂时保留，避免破坏链接和自动验证脚本。
+
+## 兼容承诺
+
+- `openfpga.*` schema、`openfpga-diagnosis-v1` 和 `OFD_*` 是 v1 ABI，保持不变。
+- `OpenFPGA*` JavaScript 全局、`openfpga_*` Python/RTL 入口本阶段保持不变。
+- Viewer 继续导入旧 capture、JSONL、VCD、CSV 和 snapshot；解析不依赖文件名。
+- Viewer 新导出的 VCD、CSV 和 JSONL 默认使用 `yifpga-` 前缀。
+- 历史验证记录、产物路径、hash、Git tag 和已发布附件不重命名。
+
+旧 Host 入口至少保留到首个 YiFPGA 正式版本之后的一个 minor release；RTL wrapper、
+Protocol v1 和 schema v1 的移除必须另行进入 major 版本评审，并提前在 Release Notes 预告。
+
+完整边界和后续工作包见
+[`YiFPGA_品牌与代码兼容迁移计划.md`](YiFPGA_品牌与代码兼容迁移计划.md)。

@@ -1,4 +1,4 @@
-# OpenFPGA JTAG Bridge 使用说明
+# YiFPGA Studio JTAG Bridge 使用说明
 
 ## 离线验收
 
