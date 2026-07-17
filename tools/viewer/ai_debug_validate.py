@@ -200,9 +200,9 @@ def validate_board_manifest():
 
 def validate_release_documents():
     documents = [
-        ROOT.parent.parent / "doc" / "OpenFPGA_Studio_第六阶段AIDebug验证记录.md",
-        ROOT.parent.parent / "doc" / "OpenFPGA_Studio_第六阶段AIDebug发布Checklist.md",
-        ROOT.parent.parent / "doc" / "OpenFPGA_AI_Debug_使用说明.md",
+        ROOT.parent.parent / "doc" / "YiFPGA_Studio_第六阶段AIDebug验证记录.md",
+        ROOT.parent.parent / "doc" / "YiFPGA_Studio_第六阶段AIDebug发布Checklist.md",
+        ROOT.parent.parent / "doc" / "YiFPGA_AI_Debug_使用说明.md",
     ]
     missing = [str(path) for path in documents if not path.is_file()]
     if missing:

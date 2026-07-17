@@ -2,7 +2,7 @@
 
 WP3状态标记：`PASS`已有直接证据，`PENDING`仍需执行，`WAIVED`为历史环境已由当前候选复测取代。审计日期：2026-07-16。
 
-- [x] **PASS** `OpenFPGA_Debug_Protocol_v1.md`定义`PROFILER_SNAPSHOT/ALERT` payload。
+- [x] **PASS** `YiFPGA_Debug_Protocol_v1.md`定义`PROFILER_SNAPSHOT/ALERT` payload。
 - [x] **PASS** Parser回归覆盖snapshot、alert、malformed和checksum error。
 - [x] **PASS** M18 Profiler Core XSim通过。
 - [x] **PASS** M19四类Probe XSim通过；新增稳定FIFO level不得重复发出累计metric的断言。

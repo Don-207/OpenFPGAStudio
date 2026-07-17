@@ -18,7 +18,7 @@
   - `Inject Sample` 注入 Monitor read/write response，支持无硬件验收。
 - `tools/viewer/web/styles.css`
   - 沿用现有工程面板风格，新增紧凑表格、pending 行和错误列表样式。
-- `doc/OpenFPGA_Web_Viewer_使用说明.md`
+- `doc/YiFPGA_Web_Viewer_使用说明.md`
   - 补充 Monitor 操作说明。
 
 ## 验收

@@ -2,7 +2,7 @@
 
 ## 1. 阶段目标
 
-根据 `OpenFPGA_Studio_发展规划.docx`，第六阶段定位为 `AI Debug`。
+根据 `YiFPGA_Studio_发展规划.docx`，第六阶段定位为 `AI Debug`。
 
 第六阶段承接前五阶段已经形成的结构化观测能力：
 
@@ -312,9 +312,9 @@ tools/viewer/
     expected/
 
 doc/
-  OpenFPGA_AI_Debug_使用说明.md
-  OpenFPGA_Studio_第六阶段AIDebug验证记录.md
-  OpenFPGA_Studio_第六阶段AIDebug发布Checklist.md
+  YiFPGA_AI_Debug_使用说明.md
+  YiFPGA_Studio_第六阶段AIDebug验证记录.md
+  YiFPGA_Studio_第六阶段AIDebug发布Checklist.md
 ```
 
 若当前 Viewer 仍保持单文件 `app.js`，M27 可以先在现有结构中落地模型和测试；M29 前再按职责拆分，避免一次性重构影响前五阶段回归。
@@ -392,7 +392,7 @@ doc/
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
 - AI Debug 相关 JavaScript 模块。
-- `doc/OpenFPGA_AI_Debug_使用说明.md`
+- `doc/YiFPGA_AI_Debug_使用说明.md`
 - `doc/M30_AI_Debug_Viewer实施计划.md`
 
 完成判据：通过 Inject Sample 或导入 fixture，可以在无硬件、无网络环境下完成一次本地诊断；启用 Mock Provider 后可完成完整 AI 工作流且 UI 保持响应。
@@ -408,8 +408,8 @@ doc/
 
 交付物：
 
-- `doc/OpenFPGA_Studio_第六阶段AIDebug验证记录.md`
-- `doc/OpenFPGA_Studio_第六阶段AIDebug发布Checklist.md`
+- `doc/YiFPGA_Studio_第六阶段AIDebug验证记录.md`
+- `doc/YiFPGA_Studio_第六阶段AIDebug发布Checklist.md`
 - `doc/M31_板级故障注入与第六阶段发布实施计划.md`
 
 完成判据：至少 4 类真实或可控板级异常均能生成完整 snapshot；本地规则给出可复现结果；AI 报告引用有效证据并提供可执行验证步骤；关闭 AI 后前五阶段功能和性能不退化。

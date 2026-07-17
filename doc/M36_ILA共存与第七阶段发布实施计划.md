@@ -69,8 +69,8 @@
 
 ## 5. 交付物
 
-- `doc/OpenFPGA_Studio_第七阶段JTAG高速调试传输验证记录.md`
-- `doc/OpenFPGA_Studio_第七阶段JTAG高速调试传输发布Checklist.md`
+- `doc/YiFPGA_Studio_第七阶段JTAG高速调试传输验证记录.md`
+- `doc/YiFPGA_Studio_第七阶段JTAG高速调试传输发布Checklist.md`
 - 本实施计划
 - 构建、时序、CDC、资源、性能和长稳原始记录
 

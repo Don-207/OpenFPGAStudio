@@ -65,7 +65,7 @@
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_JTAG_Transport_使用说明.md`
+- `doc/YiFPGA_JTAG_Transport_使用说明.md`
 - 本实施计划、性能原始数据与结论
 
 ## 7. 回退策略

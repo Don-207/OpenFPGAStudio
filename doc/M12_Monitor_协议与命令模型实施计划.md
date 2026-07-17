@@ -71,7 +71,7 @@ monitor = {
 
 | 文件 | 内容 |
 | --- | --- |
-| `doc/OpenFPGA_Debug_Protocol_v1.md` | Monitor 类型、payload、状态码、parser 行为和示例帧 |
+| `doc/YiFPGA_Debug_Protocol_v1.md` | Monitor 类型、payload、状态码、parser 行为和示例帧 |
 | `tools/viewer/protocol_parser_test.py` | Monitor parser/encoder 回归测试 |
 | `tools/viewer/web/app.js` | Monitor encoder/parser/pending/timeout model |
 | `doc/M12_Monitor_协议与命令模型实施计划.md` | 本实施计划 |

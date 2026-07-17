@@ -9,7 +9,7 @@
 - 产品名称：`YiFPGA Studio`
 - 简称：`YiFPGA`
 - 当前仓库和 Vivado 工程仍使用旧路径，后续工作包再迁移。
-- 既有文档文件名暂时保留，避免破坏链接和自动验证脚本。
+- 既有品牌文档文件名已统一迁移为 `YiFPGA*`，仓库内链接和自动验证脚本已同步更新。
 
 ## 兼容承诺
 
@@ -17,7 +17,7 @@
 - `OpenFPGA*` JavaScript 全局、`openfpga_*` Python/RTL 入口本阶段保持不变。
 - Viewer 继续导入旧 capture、JSONL、VCD、CSV 和 snapshot；解析不依赖文件名。
 - Viewer 新导出的 VCD、CSV 和 JSONL 默认使用 `yifpga-` 前缀。
-- 历史验证记录、产物路径、hash、Git tag 和已发布附件不重命名。
+- 历史验证文档文件名可使用新品牌；其中记录的产物路径、hash、Git tag 和已发布附件不重命名。
 
 旧 Host 入口至少保留到首个 YiFPGA 正式版本之后的一个 minor release；RTL wrapper、
 Protocol v1 和 schema v1 的移除必须另行进入 major 版本评审，并提前在 Release Notes 预告。

@@ -57,7 +57,7 @@
 
 ## 5. 交付物
 
-- `doc/OpenFPGA_JTAG_Transport_设计说明.md`
+- `doc/YiFPGA_JTAG_Transport_设计说明.md`
 - 本实施计划
 - Host mailbox model、二进制 fixture 与离线测试
 

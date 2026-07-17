@@ -50,7 +50,7 @@ span_begin > span_end > mark > value > drop
 
 ## 4. Payload 编码
 
-Adapter 严格按 `OpenFPGA_Debug_Protocol_v1.md` 编码：
+Adapter 严格按 `YiFPGA_Debug_Protocol_v1.md` 编码：
 
 - `TRACE_SPAN_BEGIN`：`timestamp, trace_id, instance_id, arg0`
 - `TRACE_SPAN_END`：`timestamp, trace_id, instance_id, status, arg0`

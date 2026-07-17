@@ -55,14 +55,16 @@
 
 ### 3.3 历史证据保护
 
-以下内容保持原样，不做机械改名：
+历史文档文件名经用户于 2026-07-17 明确授权，统一使用 `YiFPGA*`，并通过 Git rename 保留
+版本追溯。以下证据正文及产物仍保持原样，不做机械改名：
 
 - 已完成阶段的验证记录中出现的真实命令、路径、工程名和产物名。
 - `prj/OpenFPGAStudio.runs/...` 等证据路径。
 - 既有bitstream、LTX、DCP、CSV、JSONL和VCD文件名及hash。
 - Git tag、commit message、PR正文和已发布release附件。
 
-历史文档可在顶部增加“现品牌为YiFPGA Studio”的说明，但不得改写当时的证据文本。
+历史文档可更新标题和文件名，也可在顶部增加“现品牌为YiFPGA Studio”的说明，但不得
+改写当时的命令、工程路径、产物名、结果和hash。
 
 ## 4. 迁移原则
 
@@ -101,7 +103,7 @@
 
 - 更新README首页、Viewer标题、页面说明、帮助文本和当前使用说明为`YiFPGA Studio`。
 - 首次出现时写明`YiFPGA Studio（原OpenFPGA Studio）`。
-- 新文档文件名使用`YiFPGA_*`；历史验证文档不重命名。
+- 所有品牌文档文件名使用`YiFPGA_*`；历史文档通过Git rename迁移，正文证据保持原样。
 - 新导出文件默认使用`yifpga-*`前缀。
 - Viewer仍能导入旧`openfpga-*`文件，文件内容解析不依赖文件名。
 - 增加品牌迁移说明，列出旧名称支持周期。
@@ -160,6 +162,9 @@ JTAG-only+ILA和performance+ILA。
 门禁：离线回归全部通过；用户提供新工程的综合、实现、DRC、CDC、时序、bitstream和板级结果。
 
 ### YF.WP5：仓库与发布迁移
+
+状态（2026-07-17）：**部分完成**。GitHub 仓库已从 `Don-207/OpenFPGAStudio` 重命名为
+`Don-207/YiFPGAStudio`，本地 `origin` 已同步；外部链接、发布版本和干净clone验收仍待执行。
 
 - GitHub仓库重命名为`YiFPGAStudio`，确认旧URL重定向可用。
 - 更新clone URL、badge、issue/PR模板、release链接和外部文档。

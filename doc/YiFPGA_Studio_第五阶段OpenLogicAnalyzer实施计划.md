@@ -2,7 +2,7 @@
 
 ## 1. 阶段目标
 
-根据 `OpenFPGA_Studio_发展规划.docx`，第五阶段定位为 `Open Logic Analyzer`：
+根据 `YiFPGA_Studio_发展规划.docx`，第五阶段定位为 `Open Logic Analyzer`：
 
 - 提供统一逻辑分析接口，减少对 Vivado ILA、SignalTap 等厂商工具的绑定。
 - 在现有 Debug、Trace、Monitor、Profiler 能力之上，增加可触发、可缓冲、可回放的波形级采样能力。
@@ -262,7 +262,7 @@ UI 原则：
 
 交付物：
 
-- `doc/OpenFPGA_Debug_Protocol_v1.md` Logic Analyzer 扩展章节。
+- `doc/YiFPGA_Debug_Protocol_v1.md` Logic Analyzer 扩展章节。
 - `tools/viewer/protocol_parser_test.py` LA 测试向量。
 - `tools/viewer/web/app.js` LA parser/model。
 - `doc/M22_LogicAnalyzer_协议与捕获模型实施计划.md`
@@ -298,7 +298,7 @@ UI 原则：
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_Web_Viewer_使用说明.md` Logic Analyzer 章节。
+- `doc/YiFPGA_Web_Viewer_使用说明.md` Logic Analyzer 章节。
 - `doc/M24_LogicAnalyzer_Viewer实施计划.md`
 
 ### M25：典型 Probe 与 Board Demo 接入
@@ -331,7 +331,7 @@ UI 原则：
 - `rtl/board/openfpga_debug_board_demo.v` LA 接入。
 - `sim/board/tb_openfpga_debug_board_la.v`
 - `prj/scripts/check_openfpga_la_m25_elab.tcl`
-- `doc/OpenFPGA_LogicAnalyzer_使用说明.md`
+- `doc/YiFPGA_LogicAnalyzer_使用说明.md`
 - `doc/M25_典型Probe与BoardDemo接入实施计划.md`
 
 ### M26：板级验证与第五阶段发布
@@ -345,8 +345,8 @@ UI 原则：
 
 交付物：
 
-- `doc/OpenFPGA_Studio_第五阶段OpenLogicAnalyzer验证记录.md`
-- `doc/OpenFPGA_Studio_第五阶段OpenLogicAnalyzer发布Checklist.md`
+- `doc/YiFPGA_Studio_第五阶段OpenLogicAnalyzer验证记录.md`
+- `doc/YiFPGA_Studio_第五阶段OpenLogicAnalyzer发布Checklist.md`
 - `doc/M26_板级验证与第五阶段发布实施计划.md`
 
 ## 9. 验收场景

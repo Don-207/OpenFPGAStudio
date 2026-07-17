@@ -22,9 +22,9 @@ prj/scripts/
   check_openfpga_profiler_m21_elab.tcl
 
 doc/
-  OpenFPGA_Profiler_使用说明.md
-  OpenFPGA_Studio_第四阶段Profiler验证记录.md
-  OpenFPGA_Studio_第四阶段Profiler发布Checklist.md
+  YiFPGA_Profiler_使用说明.md
+  YiFPGA_Studio_第四阶段Profiler验证记录.md
+  YiFPGA_Studio_第四阶段Profiler发布Checklist.md
 ```
 
 ## 3. Demo 指标
@@ -98,7 +98,7 @@ PASS: OpenFPGA Profiler M21 board demo Vivado RTL elaboration completed
 
 第四阶段发布前至少确认：
 
-- [ ] `OpenFPGA_Debug_Protocol_v1.md` 已补齐 Profiler 类型和 payload。
+- [ ] `YiFPGA_Debug_Protocol_v1.md` 已补齐 Profiler 类型和 payload。
 - [ ] Parser 回归测试通过。
 - [ ] M18 Profiler Core XSim 通过。
 - [ ] M19 Probe XSim 通过。

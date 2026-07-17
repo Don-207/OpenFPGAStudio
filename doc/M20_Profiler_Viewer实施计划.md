@@ -20,7 +20,7 @@ tools/viewer/web/
   styles.css
 
 doc/
-  OpenFPGA_Web_Viewer_使用说明.md
+  YiFPGA_Web_Viewer_使用说明.md
 ```
 
 ## 3. UI 能力

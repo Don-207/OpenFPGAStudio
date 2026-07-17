@@ -15,7 +15,7 @@
 
 | 模块 | 状态 | 说明 |
 | --- | --- | --- |
-| 协议文档 | 已完成 | `OpenFPGA_Debug_Protocol_v1.md` 定义 Trace payload |
+| 协议文档 | 已完成 | `YiFPGA_Debug_Protocol_v1.md` 定义 Trace payload |
 | PC parser 回归 | 已完成 | `protocol_parser_test.py` 覆盖 begin/end/mark/value/drop 和 orphan end |
 | Web Viewer Trace | 已完成 | Trace 视图、样例注入、过滤、详情、JSONL 导出、性能冒烟脚本 |
 | RTL Adapter | 已完成 | payload 编码、优先级、背压、drop 计数 |

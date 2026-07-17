@@ -2,7 +2,7 @@
 
 ## 1. 阶段目标
 
-根据 `OpenFPGA_Studio_发展规划.docx`，第四阶段定位为 `OpenFPGA Profiler`：
+根据 `YiFPGA_Studio_发展规划.docx`，第四阶段定位为 `OpenFPGA Profiler`：
 
 - DDR、PCIe、AXI、FIFO、Latency、Frame Rate 统计。
 - 将已有 Debug、Trace、Monitor 能力扩展为可长期运行的性能画像工具。
@@ -233,7 +233,7 @@ UI 原则：
 
 交付物：
 
-- `doc/OpenFPGA_Debug_Protocol_v1.md` Profiler 扩展章节。
+- `doc/YiFPGA_Debug_Protocol_v1.md` Profiler 扩展章节。
 - `tools/viewer/protocol_parser_test.py` Profiler 测试向量。
 - `tools/viewer/web/app.js` Profiler parser/model。
 - `doc/M17_Profiler_协议与指标模型实施计划.md`
@@ -269,7 +269,7 @@ UI 原则：
 - `rtl/openfpga_debug/openfpga_profiler_frame_probe.v`
 - `rtl/openfpga_debug/openfpga_profiler_latency.v`
 - `sim/openfpga_debug/tb_openfpga_profiler_probes.v`
-- `doc/OpenFPGA_Profiler_Probe接入说明.md`
+- `doc/YiFPGA_Profiler_Probe接入说明.md`
 
 ### M20：Profiler Viewer 视图
 
@@ -284,7 +284,7 @@ UI 原则：
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_Web_Viewer_使用说明.md` Profiler 章节。
+- `doc/YiFPGA_Web_Viewer_使用说明.md` Profiler 章节。
 - `doc/M20_Profiler_Viewer实施计划.md`
 
 ### M21：板级 Demo 与第四阶段发布
@@ -300,9 +300,9 @@ UI 原则：
 - `rtl/board/openfpga_debug_board_demo.v` Profiler 接入。
 - `sim/board/tb_openfpga_debug_board_profiler.v`
 - `prj/scripts/check_openfpga_profiler_m21_elab.tcl`
-- `doc/OpenFPGA_Profiler_使用说明.md`
-- `doc/OpenFPGA_Studio_第四阶段Profiler验证记录.md`
-- `doc/OpenFPGA_Studio_第四阶段Profiler发布Checklist.md`
+- `doc/YiFPGA_Profiler_使用说明.md`
+- `doc/YiFPGA_Studio_第四阶段Profiler验证记录.md`
+- `doc/YiFPGA_Studio_第四阶段Profiler发布Checklist.md`
 - `doc/M21_板级Demo与第四阶段发布实施计划.md`
 
 ## 9. 验收场景

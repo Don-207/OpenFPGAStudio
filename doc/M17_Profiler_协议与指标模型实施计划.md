@@ -109,14 +109,14 @@ P0 静态 metric manifest：
 
 | 文件 | 内容 |
 | --- | --- |
-| `doc/OpenFPGA_Debug_Protocol_v1.md` | Profiler 类型、payload、flags、alert code、示例帧 |
+| `doc/YiFPGA_Debug_Protocol_v1.md` | Profiler 类型、payload、flags、alert code、示例帧 |
 | `tools/viewer/protocol_parser_test.py` | Profiler parser 回归测试 |
 | `tools/viewer/web/app.js` | Profiler parser/model/test hook |
 | `doc/M17_Profiler_协议与指标模型实施计划.md` | 本实施计划 |
 
 ## 8. 当前实现状态
 
-- 已在 `doc/OpenFPGA_Debug_Protocol_v1.md` 补齐 Profiler 类型、payload、flags、alert code、parser 行为和示例帧。
+- 已在 `doc/YiFPGA_Debug_Protocol_v1.md` 补齐 Profiler 类型、payload、flags、alert code、parser 行为和示例帧。
 - 已在 `tools/viewer/web/app.js` 增加 Profiler 静态 metric manifest、parser、latest/history/alert model、malformed counters、JSONL 导出和 `injectProfilerSample()` 测试钩子。
 - 已在 `tools/viewer/protocol_parser_test.py` 增加 Throughput/FIFO/Latency/Alert/未知 metric/错误长度/checksum 错误测试向量。
 
