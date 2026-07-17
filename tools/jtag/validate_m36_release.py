@@ -29,6 +29,7 @@ class RunMetrics:
         self.recv_gaps_ms: list[float] = []
         self.last_data_at: float | None = None
         self.latest_status: dict = {}
+        self.first_status: dict = {}
 
     def observe(self, kind: int, payload: bytes, now: float) -> None:
         if kind == TYPE_DATA:
@@ -39,7 +40,10 @@ class RunMetrics:
             self.last_data_at = now
         elif kind == TYPE_STATUS:
             self.status_records += 1
-            self.latest_status = json.loads(payload)
+            status = json.loads(payload)
+            if not self.first_status:
+                self.first_status = status
+            self.latest_status = status
         elif kind == TYPE_HELLO:
             self.hello_records += 1
             hello = json.loads(payload)
@@ -85,13 +89,15 @@ def main() -> int:
     parser.add_argument("--seconds", type=float, default=1800.0)
     parser.add_argument("--client-reconnects", type=int, default=3)
     parser.add_argument("--min-rate", type=float, default=100_000.0)
+    parser.add_argument("--min-bridge-reconnects", type=int, default=0)
     parser.add_argument("--csv", type=Path, default=Path("m36_soak.csv"))
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
     if args.self_test:
         suite = unittest.defaultTestLoader.loadTestsFromTestCase(MetricsTest)
         return 0 if unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful() else 1
-    if args.seconds <= 0 or args.client_reconnects < 0 or args.min_rate < 0:
+    if (args.seconds <= 0 or args.client_reconnects < 0 or args.min_rate < 0 or
+            args.min_bridge_reconnects < 0):
         parser.error("seconds/min-rate must be positive and reconnects non-negative")
 
     metrics = RunMetrics()
@@ -104,6 +110,7 @@ def main() -> int:
     cpu_percent = 100.0 * (time.process_time() - cpu_before) / max(elapsed, 1e-9)
     rate = metrics.payload_bytes / max(elapsed, 1e-9)
     status = metrics.latest_status
+    first_status = metrics.first_status
     row = {
         "seconds": f"{elapsed:.3f}", "payload_bytes": metrics.payload_bytes,
         "bytes_per_second": f"{rate:.3f}",
@@ -114,7 +121,9 @@ def main() -> int:
         "client_reconnects": args.client_reconnects,
         "hello_records": metrics.hello_records, "session_records": metrics.session_records,
         "overflow_count": status.get("overflow_count", ""),
+        "overflow_first": first_status.get("overflow_count", ""),
         "dropped_bytes": status.get("dropped_bytes", ""),
+        "dropped_first": first_status.get("dropped_bytes", ""),
         "buffer_used": status.get("buffer_used", ""),
         "bridge_reconnects": status.get("reconnects", ""),
         "slow_clients": status.get("slow_clients", ""),
@@ -134,6 +143,14 @@ def main() -> int:
         failures.append(f"throughput {rate:.1f} B/s is below {args.min_rate:.1f} B/s")
     if status.get("last_error"):
         failures.append(f"Bridge last_error={status['last_error']}")
+    if (first_status and
+            (status.get("overflow_count") != first_status.get("overflow_count") or
+             status.get("dropped_bytes") != first_status.get("dropped_bytes"))):
+        failures.append("drop/overflow counters grew during validation window")
+    if status.get("reconnects", 0) < args.min_bridge_reconnects:
+        failures.append(
+            f"Bridge reconnects {status.get('reconnects', 0)} is below "
+            f"{args.min_bridge_reconnects}")
     if failures:
         raise RuntimeError("; ".join(failures))
     return 0

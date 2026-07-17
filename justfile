@@ -159,6 +159,10 @@ m36-ila-bitstream:
 m36-perf-ila-bitstream:
     {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m36_ila_bitstream.tcl -tclargs perf
 
+# Strict functional JTAG-only image: UART disabled, normal packetizer source, ILA retained.
+m36-jtag-only-ila-bitstream:
+    {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m36_ila_bitstream.tcl -tclargs jtag_only
+
 # Hardware operation; exact cable target filter and separate confirmation required.
 m36-program target:
     {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}}
@@ -167,6 +171,10 @@ m36-program target:
 m36-perf-program target:
     {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}} perf
 
+# Hardware operation: program the strict functional JTAG-only+ILA image.
+m36-jtag-only-program target:
+    {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}} jtag_only
+
 # Hardware operation: exact target suffix and output file name are mandatory.
 m36-ila-capture target output="m36_ila_capture.csv":
     {{vivado}} -mode batch -source prj/scripts/capture_openfpga_jtag_m36_ila.tcl -tclargs {{target}} {{output}}
@@ -174,6 +182,22 @@ m36-ila-capture target output="m36_ila_capture.csv":
 # Validate a running real-board Bridge; defaults to the 30-minute release gate.
 m36-soak seconds="1800" reconnects="3" output="prj/OpenFPGAStudio.runs/m36/m36_soak.csv":
     {{python}} tools/jtag/validate_m36_release.py --seconds {{seconds}} --client-reconnects {{reconnects}} --csv {{output}}
+
+# Sample the Bridge process itself; obtain pid from pgrep after starting the Bridge.
+m36-bridge-rss pid seconds="60" interval="5" output="prj/OpenFPGAStudio.runs/m36/m36_bridge_rss.csv":
+    {{python}} tools/jtag/sample_process_rss.py --pid {{pid}} --seconds {{seconds}} --interval {{interval}} --csv {{output}}
+
+# M36 strict JTAG-only board validation: UART RX commands, JTAG responses/data.
+m36-jtag-only-validate port="/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0":
+    {{python}} tools/jtag/validate_jtag_only_board.py --port {{port}}
+
+# Compare simultaneously captured UART and JTAG raw Debug Protocol streams.
+m36-dual-compare uart jtag:
+    {{python}} tools/jtag/compare_transport_captures.py {{uart}} {{jtag}}
+
+# Hardware operation: reset the exactly matched FT232H cable three times.
+m36-ftdi-reset count="3" interval="3":
+    {{python}} tools/jtag/reset_usb_device.py --vendor 0x0403 --product 0x6014 --count {{count}} --interval {{interval}}
 
 # M26 fast, hardware-free release regression.
 m26-check: parser-test viewer-test debug-core-sim la-validator-self-test la-core-sim la-board-sim

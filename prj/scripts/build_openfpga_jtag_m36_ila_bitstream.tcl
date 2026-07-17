@@ -5,16 +5,25 @@ set rtl_debug [file join $repo_root rtl openfpga_debug]
 set rtl_vendor [file join $repo_root rtl vendor xilinx]
 set part_name xcku5p-ffvb676-2-i
 set perf_mode 0
+set jtag_only_mode 0
 set reuse_synth 0
 foreach arg $argv {
     if {$arg eq "perf"} { set perf_mode 1 }
+    if {$arg eq "jtag_only"} { set jtag_only_mode 1 }
     if {$arg eq "reuse"} { set reuse_synth 1 }
-    if {$arg ne "perf" && $arg ne "reuse"} { error "Unknown M36 build mode: $arg" }
+    if {$arg ne "perf" && $arg ne "jtag_only" && $arg ne "reuse"} {
+        error "Unknown M36 build mode: $arg"
+    }
 }
+if {$perf_mode && $jtag_only_mode} { error "perf and jtag_only are mutually exclusive" }
 if {$perf_mode} {
     set enable_uart 0
     set build_name m36_perf_ila
     set artifact_stem openfpga_debug_board_demo_m36_perf_ila
+} elseif {$jtag_only_mode} {
+    set enable_uart 0
+    set build_name m36_jtag_only_ila
+    set artifact_stem openfpga_debug_board_demo_m36_jtag_only_ila
 } else {
     set enable_uart 1
     set build_name m36_ila
@@ -103,6 +112,7 @@ puts $manifest "part=$part_name"
 puts $manifest "enable_uart=$enable_uart"
 puts $manifest "enable_jtag=1"
 puts $manifest "jtag_perf_mode=$perf_mode"
+puts $manifest "jtag_only_mode=$jtag_only_mode"
 puts $manifest "user_chain=2"
 puts $manifest "bscan_count=$bscan_count"
 puts $manifest "ila_count=[llength [get_debug_cores u_ila_monitor]]"

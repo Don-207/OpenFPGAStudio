@@ -1,7 +1,9 @@
 # Program the M36 JTAG+ILA image; an exact cable target filter is mandatory.
 set script_dir [file normalize [file dirname [info script]]]
 set repo_root [file normalize [file join $script_dir .. ..]]
-if {$argc < 1 || $argc > 2} { error "Pass exact target and optional 'perf' mode" }
+if {$argc < 1 || $argc > 2} {
+    error "Pass exact target and optional 'perf' or 'jtag_only' mode"
+}
 set mode [expr {$argc == 2 ? [lindex $argv 1] : "normal"}]
 if {$mode eq "perf"} {
     set out_dir [file join $repo_root prj OpenFPGAStudio.runs m36_perf_ila]
@@ -9,6 +11,9 @@ if {$mode eq "perf"} {
 } elseif {$mode eq "normal"} {
     set out_dir [file join $repo_root prj OpenFPGAStudio.runs m36_ila]
     set stem openfpga_debug_board_demo_m36_ila
+} elseif {$mode eq "jtag_only"} {
+    set out_dir [file join $repo_root prj OpenFPGAStudio.runs m36_jtag_only_ila]
+    set stem openfpga_debug_board_demo_m36_jtag_only_ila
 } else { error "Unknown M36 program mode: $mode" }
 set bit_file [file join $out_dir ${stem}.bit]
 set ltx_file [file join $out_dir ${stem}.ltx]

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import os
+from pathlib import Path
 import select
 import termios
 import time
@@ -478,11 +479,13 @@ def profiler_soak(port: str, baud: int, timeout: float, duration: float) -> None
     print("PASS: UART Profiler board soak validation")
 
 
-def validate(port: str, baud: int, duration: float, minimum: int) -> None:
+def validate(port: str, baud: int, duration: float, minimum: int,
+             capture: Path | None = None) -> None:
     fd = os.open(port, os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
     decoder = Decoder()
     byte_count = 0
     started = time.monotonic()
+    capture_file = capture.open("wb") if capture else None
     try:
         configure(fd, baud)
         deadline = started + duration
@@ -490,9 +493,13 @@ def validate(port: str, baud: int, duration: float, minimum: int) -> None:
             readable, _, _ = select.select([fd], [], [], min(0.25, deadline-time.monotonic()))
             if readable:
                 data = os.read(fd, 4096)
+                if capture_file:
+                    capture_file.write(data)
                 byte_count += len(data)
                 decoder.feed(data)
     finally:
+        if capture_file:
+            capture_file.close()
         os.close(fd)
     elapsed = max(time.monotonic() - started, 1e-9)
     counts = Counter(TYPE_NAMES.get(kind, f"0x{kind:02x}") for kind, _ in decoder.frames)
@@ -535,6 +542,7 @@ def main() -> int:
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--duration", type=float, default=5.0)
     parser.add_argument("--minimum-frames", type=int, default=10)
+    parser.add_argument("--capture", type=Path)
     parser.add_argument("--monitor-read-address", type=lambda value: int(value, 0))
     parser.add_argument("--monitor-timeout", type=float, default=2.0)
     parser.add_argument("--monitor-safe-suite", action="store_true")
@@ -554,7 +562,7 @@ def main() -> int:
     elif args.monitor_safe_suite:
         monitor_safe_suite(args.port, args.baud, args.monitor_timeout)
     elif args.monitor_read_address is None:
-        validate(args.port, args.baud, args.duration, args.minimum_frames)
+        validate(args.port, args.baud, args.duration, args.minimum_frames, args.capture)
     else:
         monitor_read(args.port, args.baud, args.monitor_read_address, args.monitor_timeout)
     return 0
