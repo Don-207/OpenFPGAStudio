@@ -1,4 +1,4 @@
-# OpenFPGA JTAG Transport 使用说明
+# YiFPGA Studio JTAG Transport 使用说明
 
 ## 启动与连接
 

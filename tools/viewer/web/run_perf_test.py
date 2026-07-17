@@ -321,7 +321,7 @@ def free_local_port():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run the headless OpenFPGA Viewer stress test")
+    parser = argparse.ArgumentParser(description="Run the headless YiFPGA Studio Viewer stress test")
     parser.add_argument("--browser", help="Chromium-compatible browser executable")
     parser.add_argument("--debug-port", type=int, help="CDP port; default chooses a free local port")
     return parser.parse_args()

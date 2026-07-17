@@ -1,4 +1,4 @@
-# OpenFPGA Logic Analyzer 使用说明
+# YiFPGA Studio Logic Analyzer 使用说明
 
 ## P0 能力
 

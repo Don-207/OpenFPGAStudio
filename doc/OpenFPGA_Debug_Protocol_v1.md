@@ -1,8 +1,8 @@
-# OpenFPGA Debug Protocol v1
+# YiFPGA Studio Debug Protocol v1
 
 ## 1. 设计目标
 
-OpenFPGA Debug Protocol v1 是第一阶段 Debug Core、UART Transport、Qt Viewer 和 Web Viewer 的共同协议。
+YiFPGA Studio Debug Protocol v1（原 OpenFPGA Debug Protocol v1）是 Debug Core、UART/JTAG Transport 和 Viewer 的共同协议。本次品牌迁移不改变任何 wire format、版本号或消息语义。
 
 设计原则：
 

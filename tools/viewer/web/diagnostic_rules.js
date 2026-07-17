@@ -1,4 +1,4 @@
-/* OpenFPGA Studio M28 deterministic local diagnostic rules v1. */
+/* YiFPGA Studio M28 deterministic local diagnostic rules v1. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;

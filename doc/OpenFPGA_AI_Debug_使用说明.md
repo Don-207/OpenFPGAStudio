@@ -1,4 +1,4 @@
-# OpenFPGA AI Debug 使用说明
+# YiFPGA Studio AI Debug 使用说明
 
 AI Debug 将当前 Viewer 会话整理为不可变诊断快照，先运行本地确定性规则，再由用户选择是否把脱敏、裁剪后的上下文交给 Provider。AI 结论不会覆盖本地 finding，也不会自动执行建议。
 

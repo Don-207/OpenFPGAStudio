@@ -1,4 +1,4 @@
-# OpenFPGA Profiler Probe Integration Notes
+# YiFPGA Studio Profiler Probe Integration Notes
 
 M19 adds four reusable profiler probes that expose the same metric shape used by
 the M18 profiler path:

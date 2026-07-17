@@ -1,8 +1,8 @@
-# OpenFPGA JTAG Transport 设计说明
+# YiFPGA Studio JTAG Transport 设计说明
 
 ## 1. 范围
 
-JTAG Transport v1 将完整、未经重编码的 OpenFPGA Debug Protocol v1 byte stream 从 FPGA 搬运到 Host。Transport 不解析业务帧。P0 仅定义 FPGA 到 Host 数据面；Monitor/LA 反向控制留作 P1。
+JTAG Transport v1 将完整、未经重编码的 YiFPGA Studio Debug Protocol v1 byte stream 从 FPGA 搬运到 Host。Transport 不解析业务帧。P0 仅定义 FPGA 到 Host 数据面；Monitor/LA 反向控制留作 P1。
 
 ```text
 Debug Packetizer -> Transport Router -> BRAM Ring Buffer -> JTAG Mailbox
@@ -95,4 +95,3 @@ Header 发布必须是一致快照；RTL 可使用握手快照或保证 Host 可
 ## 8. 可执行契约
 
 参考实现位于 `tools/jtag/mailbox_model.py`，共享向量位于 `tools/jtag/fixtures/m32_mailbox_vectors.json`。M33 RTL 和 M34 Host Bridge 对边界行为有歧义时，以本说明和参考模型测试为准；ABI 变化必须提升 `transport_version`。
-

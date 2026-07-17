@@ -1,8 +1,8 @@
-# OpenFPGA Debug Core 使用说明
+# YiFPGA Studio Debug Core 使用说明
 
 ## 1. 适用范围
 
-本文说明第一阶段 `OpenFPGA Debug Core` 的 RTL 接入方式。当前实现为 FPGA 到 PC 的单向 UART 调试链路，不包含 PC 到 FPGA 的寄存器读写或控制命令。
+本文说明 YiFPGA Studio Debug Core（原 `OpenFPGA Debug Core`）的 RTL 接入方式。当前实现为 FPGA 到 PC 的单向 UART 调试链路，不包含 PC 到 FPGA 的寄存器读写或控制命令。
 
 ## 2. 文件清单
 
