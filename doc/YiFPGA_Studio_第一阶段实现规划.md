@@ -259,7 +259,7 @@ tools/viewer/
 
 交付物：
 
-- `doc/OpenFPGA_Debug_Protocol_v1.md`
+- `doc/YiFPGA_Debug_Protocol_v1.md`
 - RTL 模块空壳和顶层端口定义。
 - Qt Viewer 可启动并能列出串口。
 
@@ -501,7 +501,7 @@ P2：
 M1 已拆分为独立实施计划，详见：
 
 - `doc/M1_协议与工程骨架实施计划.md`
-- `doc/OpenFPGA_Debug_Protocol_v1.md`
+- `doc/YiFPGA_Debug_Protocol_v1.md`
 
 M1 上位机策略调整为：
 
@@ -573,9 +573,9 @@ M6 已拆分为独立实施计划，详见：
 M6 当前新增整理内容：
 
 - `README.md`：快速开始、仿真、板级串口验证入口。
-- `doc/OpenFPGA_Debug_Core_使用说明.md`：Debug Core RTL 接入说明。
-- `doc/OpenFPGA_Web_Viewer_使用说明.md`：Web Viewer 使用说明。
-- `doc/OpenFPGA_Studio_板级验证记录.md`：KU5P 板级管脚和 COM6 短时验证记录。
+- `doc/YiFPGA_Debug_Core_使用说明.md`：Debug Core RTL 接入说明。
+- `doc/YiFPGA_Web_Viewer_使用说明.md`：Web Viewer 使用说明。
+- `doc/YiFPGA_Studio_板级验证记录.md`：KU5P 板级管脚和 COM6 短时验证记录。
 - `tools/viewer/serial_validate.ps1`：命令行串口协议验收脚本。
 
 第一阶段当前状态：

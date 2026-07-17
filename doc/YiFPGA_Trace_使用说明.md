@@ -34,7 +34,7 @@ SOF + VERSION + TYPE + LEN + PAYLOAD + XOR_CHECKSUM
 | `0x13` | `TRACE_VALUE` | `u32 timestamp, u16 trace_id, u16 value_id, u32 value` |
 | `0x14` | `TRACE_DROP` | `u32 timestamp, u16 trace_id, u32 drop_count` |
 
-多字节字段为 little-endian。详细协议见 `doc/OpenFPGA_Debug_Protocol_v1.md`。
+多字节字段为 little-endian。详细协议见 `doc/YiFPGA_Debug_Protocol_v1.md`。
 
 常用语义：
 

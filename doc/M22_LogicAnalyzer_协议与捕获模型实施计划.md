@@ -153,7 +153,7 @@ P0 约束：
 
 | 文件 | 内容 |
 | --- | --- |
-| `doc/OpenFPGA_Debug_Protocol_v1.md` | Logic Analyzer 类型、payload、flags、状态、示例帧 |
+| `doc/YiFPGA_Debug_Protocol_v1.md` | Logic Analyzer 类型、payload、flags、状态、示例帧 |
 | `tools/viewer/protocol_parser_test.py` | LA parser 回归测试向量 |
 | `tools/viewer/web/app.js` | LA parser、capture model、测试钩子、JSONL 导出 |
 | `doc/M22_LogicAnalyzer_协议与捕获模型实施计划.md` | 本实施计划 |
@@ -184,7 +184,7 @@ api.injectLogicAnalyzerSample();
 
 ## 9. 当前实现状态
 
-- 已在 `doc/OpenFPGA_Debug_Protocol_v1.md` 补齐 Logic Analyzer `0x40..0x46` 类型、payload、flags、state 和 parser 行为。
+- 已在 `doc/YiFPGA_Debug_Protocol_v1.md` 补齐 Logic Analyzer `0x40..0x46` 类型、payload、flags、state 和 parser 行为。
 - 已在 `tools/viewer/protocol_parser_test.py` 增加 LA parser/model、payload helper 和回归向量，覆盖完整 capture、trigger event、status、分片 sample、缺片、乱序、错误长度、非法 sample packing 和保留 LA type。
 - 已在 `tools/viewer/web/app.js` 增加 LA type、Monitor register map、capture model、parser、malformed/missing/out-of-order counters、JSONL 导出记录和 `injectLogicAnalyzerSample()` 测试钩子。
 

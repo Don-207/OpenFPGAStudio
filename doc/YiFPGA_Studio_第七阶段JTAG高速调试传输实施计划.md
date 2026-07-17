@@ -254,7 +254,7 @@ Web Viewer 增加 JTAG Bridge 连接选项：
 
 交付物：
 
-- `doc/OpenFPGA_JTAG_Transport_设计说明.md`
+- `doc/YiFPGA_JTAG_Transport_设计说明.md`
 - `doc/M32_Transport抽象与JTAGMailbox协议实施计划.md`
 - Host mailbox model/test fixture。
 
@@ -310,7 +310,7 @@ Web Viewer 增加 JTAG Bridge 连接选项：
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_JTAG_Transport_使用说明.md`
+- `doc/YiFPGA_JTAG_Transport_使用说明.md`
 - `doc/M35_Viewer接入与JTAG性能优化实施计划.md`
 
 ### M36：ILA 共存、板级长稳与第七阶段发布
@@ -324,8 +324,8 @@ Web Viewer 增加 JTAG Bridge 连接选项：
 
 交付物：
 
-- `doc/OpenFPGA_Studio_第七阶段JTAG高速调试传输验证记录.md`
-- `doc/OpenFPGA_Studio_第七阶段JTAG高速调试传输发布Checklist.md`
+- `doc/YiFPGA_Studio_第七阶段JTAG高速调试传输验证记录.md`
+- `doc/YiFPGA_Studio_第七阶段JTAG高速调试传输发布Checklist.md`
 - `doc/M36_ILA共存与第七阶段发布实施计划.md`
 
 ## 10. 验收计划

@@ -25,7 +25,7 @@ tools/viewer/web/diagnostic_rules.js
 tools/viewer/web/ai_provider.js
 tools/viewer/web/diagnosis_validator.js
 tools/viewer/web/run_perf_test.py
-doc/OpenFPGA_AI_Debug_使用说明.md
+doc/YiFPGA_AI_Debug_使用说明.md
 doc/M30_AI_Debug_Viewer实施计划.md
 ```
 
@@ -152,7 +152,7 @@ M30 已完成页面会话级 AI Debug 工作流实现。
   - 新增 AI Debug 页面区域及 Scope、Preview、Analyze、Findings、Hypotheses、Actions、Feedback、History 和 Export 控件。
   - Trace、Monitor、Profiler 和 Logic Analyzer 增加 Diagnose 入口。
   - `Clear` 同时清理 AI Debug 页面会话；切换普通视图不会丢失当前报告。
-- `doc/OpenFPGA_AI_Debug_使用说明.md`
+- `doc/YiFPGA_AI_Debug_使用说明.md`
   - 记录操作流程、证据语义、隐私授权、离线降级、导出和禁止自动操作边界。
 - `tools/viewer/web/run_perf_test.py`
   - 在原有 11,192 frame Viewer 压力回归后执行真实浏览器 AI Debug 工作流。

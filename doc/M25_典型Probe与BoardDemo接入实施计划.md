@@ -23,7 +23,7 @@ prj/scripts/
   check_openfpga_la_m25_elab.tcl
 
 doc/
-  OpenFPGA_LogicAnalyzer_使用说明.md
+  YiFPGA_LogicAnalyzer_使用说明.md
   M25_典型Probe与BoardDemo接入实施计划.md
 ```
 
@@ -147,7 +147,7 @@ PASS: OpenFPGA Logic Analyzer M25 board demo Vivado RTL elaboration completed
 
 ## 9. 使用说明
 
-`doc/OpenFPGA_LogicAnalyzer_使用说明.md` 至少包含：
+`doc/YiFPGA_LogicAnalyzer_使用说明.md` 至少包含：
 
 - LA P0 能力边界。
 - Monitor register map。
@@ -173,7 +173,7 @@ PASS: OpenFPGA Logic Analyzer M25 board demo Vivado RTL elaboration completed
 - Debug TX path 已增加 LA readout 消息源；Monitor response 最高优先级，LA finite readout 优先于连续 Trace/Profiler，避免 capture readout starvation。
 - 新增 `sim/board/tb_openfpga_debug_board_la.v`，覆盖 UART Monitor 配置、arm、force trigger、start readout、LA header/trigger/data/status 帧、clear。
 - 新增 `prj/scripts/check_openfpga_la_m25_elab.tcl`，用于 Vivado RTL elaboration 检查。
-- 新增 `doc/OpenFPGA_LogicAnalyzer_使用说明.md`。
+- 新增 `doc/YiFPGA_LogicAnalyzer_使用说明.md`。
 
 已运行并通过：
 

@@ -2,7 +2,7 @@
 
 ## 1. 阶段目标
 
-根据 `OpenFPGA_Studio_发展规划.docx` 中的第二阶段目标，第二阶段定位为 `OpenFPGA Trace`：
+根据 `YiFPGA_Studio_发展规划.docx` 中的第二阶段目标，第二阶段定位为 `OpenFPGA Trace`：
 
 - 模块时间轴可视化。
 - DMA、Frame、FIFO、Interrupt 过程可视化。
@@ -235,7 +235,7 @@ Web Viewer 新增 `Trace` 视图：
 
 交付物：
 
-- `doc/OpenFPGA_Debug_Protocol_v1.md` Trace 扩展章节。
+- `doc/YiFPGA_Debug_Protocol_v1.md` Trace 扩展章节。
 - `tools/viewer/protocol_parser_test.py` Trace 测试。
 - `tools/viewer/web/app.js` Trace parser 和 state model。
 
@@ -253,7 +253,7 @@ Web Viewer 新增 `Trace` 视图：
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_Web_Viewer_使用说明.md` Trace 章节。
+- `doc/YiFPGA_Web_Viewer_使用说明.md` Trace 章节。
 
 ### M9：RTL Trace Adapter
 
@@ -296,9 +296,9 @@ Web Viewer 新增 `Trace` 视图：
 
 交付物：
 
-- `doc/OpenFPGA_Trace_使用说明.md`
-- `doc/OpenFPGA_Studio_第二阶段Trace验证记录.md`
-- `doc/OpenFPGA_Studio_第二阶段Trace发布Checklist.md`
+- `doc/YiFPGA_Trace_使用说明.md`
+- `doc/YiFPGA_Studio_第二阶段Trace验证记录.md`
+- `doc/YiFPGA_Studio_第二阶段Trace发布Checklist.md`
 - `doc/M11_第二阶段整理与发布实施计划.md`
 
 ## 8. 验收场景

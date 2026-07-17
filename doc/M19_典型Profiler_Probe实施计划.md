@@ -24,7 +24,7 @@ sim/openfpga_debug/
   tb_openfpga_profiler_probes.v
 
 doc/
-  OpenFPGA_Profiler_Probe接入说明.md
+  YiFPGA_Profiler_Probe接入说明.md
 ```
 
 ## 3. Probe 定义

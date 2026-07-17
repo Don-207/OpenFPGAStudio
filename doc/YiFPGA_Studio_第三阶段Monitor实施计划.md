@@ -2,7 +2,7 @@
 
 ## 1. 阶段目标
 
-根据 `OpenFPGA_Studio_发展规划.docx`，第三阶段定位为 `OpenFPGA Monitor`：
+根据 `YiFPGA_Studio_发展规划.docx`，第三阶段定位为 `OpenFPGA Monitor`：
 
 - 寄存器浏览。
 - 变量监视。
@@ -304,7 +304,7 @@ Web Viewer 新增 `Monitor` 视图：
 
 交付物：
 
-- `doc/OpenFPGA_Debug_Protocol_v1.md` Monitor 扩展章节。
+- `doc/YiFPGA_Debug_Protocol_v1.md` Monitor 扩展章节。
 - `tools/viewer/protocol_parser_test.py` Monitor 测试向量。
 - `tools/viewer/web/app.js` Monitor parser/encoder model。
 - `doc/M12_Monitor_协议与命令模型实施计划.md`
@@ -394,7 +394,7 @@ Web Viewer 新增 `Monitor` 视图：
 - `tools/viewer/web/index.html`
 - `tools/viewer/web/app.js`
 - `tools/viewer/web/styles.css`
-- `doc/OpenFPGA_Web_Viewer_使用说明.md` Monitor 章节。
+- `doc/YiFPGA_Web_Viewer_使用说明.md` Monitor 章节。
 - `doc/M15_Monitor_Viewer实施计划.md`
 
 验收：
@@ -408,7 +408,7 @@ Web Viewer 新增 `Monitor` 视图：
 
 - Web Viewer 已新增 Monitor 面板、寄存器表、Read/Write/Trigger、轮询和错误列表。
 - `Inject Sample` 已加入 Monitor read/write response，JSONL 导出包含 Monitor history/error。
-- `OpenFPGA_Web_Viewer_使用说明.md` 已补充 Monitor 章节。
+- `YiFPGA_Web_Viewer_使用说明.md` 已补充 Monitor 章节。
 
 ### M16：板级 Demo 与第三阶段发布
 
@@ -424,9 +424,9 @@ Web Viewer 新增 `Monitor` 视图：
 - `rtl/board/openfpga_debug_board_demo.v` Monitor 接入。
 - `sim/board/tb_openfpga_debug_board_monitor.v`
 - `prj/scripts/check_openfpga_monitor_m16_elab.tcl`
-- `doc/OpenFPGA_Monitor_使用说明.md`
-- `doc/OpenFPGA_Studio_第三阶段Monitor验证记录.md`
-- `doc/OpenFPGA_Studio_第三阶段Monitor发布Checklist.md`
+- `doc/YiFPGA_Monitor_使用说明.md`
+- `doc/YiFPGA_Studio_第三阶段Monitor验证记录.md`
+- `doc/YiFPGA_Studio_第三阶段Monitor发布Checklist.md`
 
 验收：
 
