@@ -105,6 +105,28 @@ just monitor-soak /dev/ttyUSB1 115200 1800 1
 
 性能专用数据源的吞吐不得代替普通功能流的功能完整性证据。
 
+2026-07-17 补充：M36 normal build 的 JTAG 普通功能流已取得 Debug/Trace/Profiler/LA
+原始捕获，14,051 帧且 JTAG checksum/version error 为 0；Bridge RSS 30 秒采样无增长。
+双输出窗口的字节数与类型分布接近，但 UART 出现 checksum error 且 drop 计数增长，故
+双输出完整性、3 次物理重连和真正并发 ILA/USER2 仍是 WP5 未关闭项。普通功能镜像约
+0.884 KB/s，不纳入 100 KB/s 承诺；性能门槛仍仅适用于 performance build。
+
+同日已完成严格功能 JTAG-only+ILA 构建：`ENABLE_UART=0`、`JTAG_PERF_MODE=0`，
+WNS `+3.003 ns`、TNS `0`、WHS `+0.013 ns`、DRC `0 error`。该结果只关闭构建缺口，
+板级 JTAG-only 功能闭环仍以下载和实测结果为准。
+
+严格 JTAG-only 镜像随后完成精确目标下载与板级验证：UART RX 命令经 JTAG 返回
+Monitor 响应，并收到 Debug、Trace、Profiler、LA 全部功能类型；完整 capture 9,112 帧，
+checksum/version/sync error 均为 0，配置恢复成功。V1.WP5 的 JTAG-only 功能闭环据此关闭。
+
+随后完成 FT232H cable 三次物理断线恢复：Bridge reconnects=3，90.032 秒持续收到
+51,428 B，session 未变化且 overflow/drop/slow-client 均为 0。V1.WP5 的物理重连项据此关闭。
+
+normal 双输出最终复核中，UART 3,360 帧与 JTAG 逐帧按序匹配，对齐率 100%，两路
+checksum/version error 均为 0，drop/overflow 在受控窗口内不增长。Hardware Manager raw
+USER-DR adapter 当前未实现，v1.0 将同线缆真并发明确列为不支持；独立 chain 与释放线缆后
+交替恢复已经验证。V1.WP5 据此按已冻结发布边界完成收口。
+
 ### V1.WP6：统一回归与发布包
 
 离线门禁至少包括：

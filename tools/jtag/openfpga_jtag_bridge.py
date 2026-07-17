@@ -191,6 +191,7 @@ class Bridge:
             try:
                 if not await self.pump_once():
                     await asyncio.sleep(idle_interval)
+                self.stats.last_error = ""
                 backoff = idle_interval
             except Exception as exc:
                 self.stats.last_error = str(exc)
@@ -214,6 +215,7 @@ class Bridge:
             await self._backend_call(self.backend.close)
             raise TargetSelectionError("target build identity changed during reconnect")
         self.stats.reconnects += 1
+        self.stats.last_error = ""
 
     async def publish_status(self, interval: float) -> None:
         while not self._stopping:
