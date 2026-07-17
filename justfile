@@ -176,7 +176,7 @@ m36-soak seconds="1800" reconnects="3" output="prj/OpenFPGAStudio.runs/m36/m36_s
     {{python}} tools/jtag/validate_m36_release.py --seconds {{seconds}} --client-reconnects {{reconnects}} --csv {{output}}
 
 # M26 fast, hardware-free release regression.
-m26-check: parser-test viewer-test la-validator-self-test la-core-sim la-board-sim
+m26-check: parser-test viewer-test debug-core-sim la-validator-self-test la-core-sim la-board-sim
 
 # M27 hardware-free Diagnostic Snapshot schema, fixture and integrity regression.
 m27-check: parser-test
@@ -218,6 +218,12 @@ viewer-test:
 la-validator-self-test:
     {{python}} tools/viewer/logic_analyzer_validate.py --self-test
 
+# Debug Core arbitration/drop semantics shared by Trace, Profiler and LA.
+debug-core-sim:
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/*.vh rtl/openfpga_debug/*.v sim/openfpga_debug/tb_openfpga_debug_m3.v
+    {{xelab}} tb_openfpga_debug_m3 -s tb_openfpga_debug_m3_wp3_drop_fix_sim
+    {{xsim}} tb_openfpga_debug_m3_wp3_drop_fix_sim -runall
+
 la-core-sim:
     {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v sim/openfpga_debug/tb_openfpga_la_core.v
     {{xelab}} tb_openfpga_la_core -s tb_openfpga_la_core_wp3_sim
@@ -248,3 +254,7 @@ la-program target:
 # Hardware operation; install pyserial first if unavailable.
 la-board-validate port baud="115200":
     {{python}} tools/viewer/logic_analyzer_validate.py --port {{port}} --baud {{baud}}
+
+# Periodic LA capture/readout coexistence gate; defaults to 30 minutes.
+la-soak port baud="115200" seconds="1800" interval="30":
+    {{python}} tools/viewer/logic_analyzer_validate.py --port {{port}} --baud {{baud}} --soak-duration {{seconds}} --soak-interval {{interval}}

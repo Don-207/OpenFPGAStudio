@@ -45,61 +45,81 @@ module openfpga_trace_adapter (
 );
 
 wire [2:0] input_count;
+reg        incoming_valid;
+reg [7:0]  incoming_type;
+reg [7:0]  incoming_len;
+reg [255:0] incoming_payload;
 
 assign input_count = {2'b0, span_begin_valid} + {2'b0, span_end_valid} +
                      {2'b0, mark_valid} + {2'b0, value_valid} +
                      {2'b0, drop_valid};
-assign trace_ready = msg_ready && (input_count <= 3'd1);
+assign trace_ready = (!msg_valid || msg_ready) && (input_count <= 3'd1);
 assign trace_accepted = msg_valid && msg_ready;
-assign trace_dropped = (input_count != 3'd0) &&
-                       (!trace_accepted || (input_count > {2'b0, trace_accepted}));
+assign trace_dropped = (input_count > 3'd1) ||
+                       ((input_count != 3'd0) && msg_valid && !msg_ready);
 
 always @(*) begin
-    msg_valid = 1'b0;
-    msg_type = 8'd0;
-    payload_len = 8'd0;
-    payload_flat = 256'd0;
+    incoming_valid = 1'b0;
+    incoming_type = 8'd0;
+    incoming_len = 8'd0;
+    incoming_payload = 256'd0;
 
     if (span_begin_valid) begin
-        msg_valid = 1'b1;
-        msg_type = `OFD_TYPE_TRACE_SPAN_BEGIN;
-        payload_len = `OFD_TRACE_LEN_SPAN_BEGIN;
-        payload_flat[31:0] = timestamp;
-        payload_flat[47:32] = span_begin_trace_id;
-        payload_flat[63:48] = span_begin_instance_id;
-        payload_flat[95:64] = span_begin_arg0;
+        incoming_valid = 1'b1;
+        incoming_type = `OFD_TYPE_TRACE_SPAN_BEGIN;
+        incoming_len = `OFD_TRACE_LEN_SPAN_BEGIN;
+        incoming_payload[31:0] = timestamp;
+        incoming_payload[47:32] = span_begin_trace_id;
+        incoming_payload[63:48] = span_begin_instance_id;
+        incoming_payload[95:64] = span_begin_arg0;
     end else if (span_end_valid) begin
-        msg_valid = 1'b1;
-        msg_type = `OFD_TYPE_TRACE_SPAN_END;
-        payload_len = `OFD_TRACE_LEN_SPAN_END;
-        payload_flat[31:0] = timestamp;
-        payload_flat[47:32] = span_end_trace_id;
-        payload_flat[63:48] = span_end_instance_id;
-        payload_flat[71:64] = span_end_status;
-        payload_flat[103:72] = span_end_arg0;
+        incoming_valid = 1'b1;
+        incoming_type = `OFD_TYPE_TRACE_SPAN_END;
+        incoming_len = `OFD_TRACE_LEN_SPAN_END;
+        incoming_payload[31:0] = timestamp;
+        incoming_payload[47:32] = span_end_trace_id;
+        incoming_payload[63:48] = span_end_instance_id;
+        incoming_payload[71:64] = span_end_status;
+        incoming_payload[103:72] = span_end_arg0;
     end else if (mark_valid) begin
-        msg_valid = 1'b1;
-        msg_type = `OFD_TYPE_TRACE_MARK;
-        payload_len = `OFD_TRACE_LEN_MARK;
-        payload_flat[31:0] = timestamp;
-        payload_flat[47:32] = mark_trace_id;
-        payload_flat[55:48] = mark_level;
-        payload_flat[87:56] = mark_arg0;
+        incoming_valid = 1'b1;
+        incoming_type = `OFD_TYPE_TRACE_MARK;
+        incoming_len = `OFD_TRACE_LEN_MARK;
+        incoming_payload[31:0] = timestamp;
+        incoming_payload[47:32] = mark_trace_id;
+        incoming_payload[55:48] = mark_level;
+        incoming_payload[87:56] = mark_arg0;
     end else if (value_valid) begin
-        msg_valid = 1'b1;
-        msg_type = `OFD_TYPE_TRACE_VALUE;
-        payload_len = `OFD_TRACE_LEN_VALUE;
-        payload_flat[31:0] = timestamp;
-        payload_flat[47:32] = value_trace_id;
-        payload_flat[63:48] = value_id;
-        payload_flat[95:64] = value_data;
+        incoming_valid = 1'b1;
+        incoming_type = `OFD_TYPE_TRACE_VALUE;
+        incoming_len = `OFD_TRACE_LEN_VALUE;
+        incoming_payload[31:0] = timestamp;
+        incoming_payload[47:32] = value_trace_id;
+        incoming_payload[63:48] = value_id;
+        incoming_payload[95:64] = value_data;
     end else if (drop_valid) begin
-        msg_valid = 1'b1;
-        msg_type = `OFD_TYPE_TRACE_DROP;
-        payload_len = `OFD_TRACE_LEN_DROP;
-        payload_flat[31:0] = timestamp;
-        payload_flat[47:32] = drop_trace_id;
-        payload_flat[79:48] = drop_count;
+        incoming_valid = 1'b1;
+        incoming_type = `OFD_TYPE_TRACE_DROP;
+        incoming_len = `OFD_TRACE_LEN_DROP;
+        incoming_payload[31:0] = timestamp;
+        incoming_payload[47:32] = drop_trace_id;
+        incoming_payload[79:48] = drop_count;
+    end
+end
+
+always @(posedge clk) begin
+    if (rst) begin
+        msg_valid <= 1'b0;
+        msg_type <= 8'd0;
+        payload_len <= 8'd0;
+        payload_flat <= 256'd0;
+    end else if (!msg_valid || msg_ready) begin
+        msg_valid <= incoming_valid;
+        if (incoming_valid) begin
+            msg_type <= incoming_type;
+            payload_len <= incoming_len;
+            payload_flat <= incoming_payload;
+        end
     end
 end
 

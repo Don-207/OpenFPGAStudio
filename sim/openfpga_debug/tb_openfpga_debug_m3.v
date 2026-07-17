@@ -52,13 +52,14 @@ wire       core_busy;
 wire [15:0] core_buffer_used;
 wire [15:0] core_drop_count;
 wire [15:0] core_packet_count;
+reg         core_la_msg_valid = 1'b0;
+wire        core_la_msg_ready;
 
 openfpga_debug_ring_buffer #(
     .ADDR_WIDTH(2)
 ) u_ring_buffer_direct (
     .clk(clk),
     .rst(rst),
-    .uart_rx(1'b1),
     .wr_valid(rb_wr_valid),
     .wr_type(rb_wr_type),
     .wr_len(rb_wr_len),
@@ -164,6 +165,14 @@ openfpga_debug_top #(
     .profiler_msg_len(8'd0),
     .profiler_msg_payload(256'd0),
     .profiler_msg_ready(),
+    .la_status_set(32'd0),
+    .la_capture_id(32'd0),
+    .la_msg_valid(core_la_msg_valid),
+    .la_msg_type(8'h40),
+    .la_msg_len(8'd24),
+    .la_msg_payload(256'hA5A5),
+    .la_msg_ready(core_la_msg_ready),
+    .transport_byte_ready(1'b1),
     .uart_tx(core_uart_tx),
     .busy(core_busy),
     .buffer_used(core_buffer_used),
@@ -329,10 +338,14 @@ initial begin
     for (i = 0; i < 8; i = i + 1) begin
         core_send_event(16'h3000 + i[15:0]);
     end
+    core_la_msg_valid = 1'b1;
     repeat (20) @(posedge clk);
     #1;
+    core_la_msg_valid = 1'b0;
     check(core_packet_count == 16'd5, "core packet_count should include only accepted burst messages");
     check(core_drop_count == 16'd3, "core drop_count should count full-buffer drops");
+    check(!core_la_msg_ready, "held LA message should remain backpressured while buffer is full");
+    check(core_drop_count == 16'd3, "held ready/valid message must not repeatedly increment drop_count");
 
     if (errors == 0) begin
         $display("PASS: OpenFPGA Debug M3 ring buffer, packet order, and overflow checks passed");

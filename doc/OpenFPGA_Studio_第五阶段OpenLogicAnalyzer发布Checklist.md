@@ -18,10 +18,10 @@
 - [x] 修复后重新实现 timing closure：WNS +3.945 ns，TNS 0，setup/hold/pulse-width 均 0 failing endpoints。
 - [x] 指定 JTAG target `Digilent/210512180081` / `xcku5p_0` 下载成功。
 - [x] COM8 真实串口 arm、force-trigger、readout、clear 和 capture_id 递增通过，checksum errors=0。
-- [ ] Viewer 波形、触发线和通道名通过。
-- [ ] VCD/JSONL 导出文件人工检查通过。
-- [ ] stop/clear/re-arm 和 capture_id 递增通过。
-- [ ] Debug/Trace/Monitor/Profiler/LA 30 分钟共存长稳通过。
+- [x] Windows Edge Viewer 波形、触发位置和 11 路通道名通过：capture_id=0x3F，64 samples，13/13 chunks，malformed=0。
+- [x] VCD/JSONL 导出文件人工检查通过：capture_id=0x42，divisor=50000，64 samples，13/13 chunks，解析计数全零。
+- [x] stop/clear/re-arm 和 capture_id 递增通过。
+- [x] Debug/Trace/Monitor/Profiler/LA 30 分钟共存长稳通过：62 次采集，drop/checksum/overflow/malformed=0。
 
 ## P0 已知限制
 
