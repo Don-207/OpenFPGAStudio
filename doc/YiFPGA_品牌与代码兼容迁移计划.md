@@ -208,8 +208,14 @@ ILA 镜像一致，均位于 Vivado dbg_hub。BIT/LTX 均存在，产物 SHA-256
 时序和产物核验。用户同日执行 `just m36-program 'Digilent/210512180081'`
 下载 normal 镜像：Vivado 报告 startup status `HIGH`，目标设备为 `xcku5p_0`，
 且刷新后精确枚举 1 个 ILA core，脚本输出 `PASS`。这确认 normal 产物可成功
-加载且 probes 可被 Vivado Hardware Manager 识别；尚待 normal 数据通路/ILA 采集、
-performance 与 JTAG-only 候选镜像板级验证及最终签署。
+加载且 probes 可被 Vivado Hardware Manager 识别。随后执行
+`just m36-ila-capture 'Digilent/210512180081'`：ILA 在预期的 index 512 触发，
+生成 1,024 个样本的 `m36_ila_capture.csv`，未发现缺样或多重触发行，文件
+SHA-256 为 `6d631f887d30b716beabc632dc9e46a06104528fe50e97667c1636eb20fa9fc0`。
+本次为 UART RX 空闲电平立即触发，64-bit probe 全窗口保持
+`0x2a04000000000000`，因此证明 ILA 触发、上传和 CSV 导出链路正常，
+不单独证明业务数据活动。尚待 normal 数据通路、performance 与 JTAG-only
+候选镜像板级验证及最终签署。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
