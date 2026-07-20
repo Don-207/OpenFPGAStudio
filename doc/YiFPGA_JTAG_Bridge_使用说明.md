@@ -74,7 +74,7 @@ python3 tools/jtag/yifpga_jtag_bridge.py --backend xilinx --list-targets
 Python/Vivado 常驻进程、目标枚举、显式选择、结构化错误和退出清理已经实现。FPGA 端
 `BSCANE2` USER-DR 命令引擎及真实 payload shift 已通过 Direct FTDI 路径验证；缺口仅在
 Vivado Hardware Manager Tcl 没有可移植的任意 USER data-register raw shift 命令。因此当前
-`openfpga_jtag_read.tcl` 会明确报错，不会提交或伪造数据。真板 Bridge 应使用 Direct FTDI
+`yifpga_jtag_read.tcl` 会明确报错，不会提交或伪造数据。真板 Bridge 应使用 Direct FTDI
 backend，或另行评估 XSDB/XVC/正式 API。
 
 Mailbox RTL 已使用“工作读指针/提交读指针”分离事务：payload 读取只推进工作指针，完整

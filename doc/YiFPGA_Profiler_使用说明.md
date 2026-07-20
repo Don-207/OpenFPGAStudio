@@ -42,11 +42,11 @@ Profiler 帧复用 Debug Protocol v1：
 ## 4. 仿真与 Elaboration
 
 ```powershell
-xvlog -d OPENFPGA_DEBUG_SIM -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_trace_pkg.vh rtl\openfpga_debug\openfpga_monitor_pkg.vh rtl\openfpga_debug\openfpga_profiler_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_debug_uart_rx.v rtl\openfpga_debug\openfpga_debug_command_parser.v rtl\openfpga_debug\openfpga_trace_adapter.v rtl\openfpga_debug\openfpga_trace_dma_probe.v rtl\openfpga_debug\openfpga_trace_frame_probe.v rtl\openfpga_debug\openfpga_trace_fifo_probe.v rtl\openfpga_debug\openfpga_trace_irq_probe.v rtl\openfpga_debug\openfpga_monitor_reg_bank.v rtl\openfpga_debug\openfpga_monitor_core.v rtl\openfpga_debug\openfpga_monitor_adapter.v rtl\openfpga_debug\openfpga_profiler_counter.v rtl\openfpga_debug\openfpga_profiler_core.v rtl\openfpga_debug\openfpga_profiler_adapter.v rtl\openfpga_debug\openfpga_profiler_axis_probe.v rtl\openfpga_debug\openfpga_profiler_fifo_probe.v rtl\openfpga_debug\openfpga_profiler_frame_probe.v rtl\openfpga_debug\openfpga_profiler_latency.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v rtl\board\openfpga_debug_board_demo.v sim\board\tb_openfpga_debug_board_profiler.v
-xelab tb_openfpga_debug_board_profiler -s tb_openfpga_debug_board_profiler_sim
-xsim tb_openfpga_debug_board_profiler_sim -runall
+xvlog -d OPENFPGA_DEBUG_SIM -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_trace_pkg.vh rtl\yifpga_debug\yifpga_monitor_pkg.vh rtl\yifpga_debug\yifpga_profiler_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_debug_uart_rx.v rtl\yifpga_debug\yifpga_debug_command_parser.v rtl\yifpga_debug\yifpga_trace_adapter.v rtl\yifpga_debug\yifpga_trace_dma_probe.v rtl\yifpga_debug\yifpga_trace_frame_probe.v rtl\yifpga_debug\yifpga_trace_fifo_probe.v rtl\yifpga_debug\yifpga_trace_irq_probe.v rtl\yifpga_debug\yifpga_monitor_reg_bank.v rtl\yifpga_debug\yifpga_monitor_core.v rtl\yifpga_debug\yifpga_monitor_adapter.v rtl\yifpga_debug\yifpga_profiler_counter.v rtl\yifpga_debug\yifpga_profiler_core.v rtl\yifpga_debug\yifpga_profiler_adapter.v rtl\yifpga_debug\yifpga_profiler_axis_probe.v rtl\yifpga_debug\yifpga_profiler_fifo_probe.v rtl\yifpga_debug\yifpga_profiler_frame_probe.v rtl\yifpga_debug\yifpga_profiler_latency.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v rtl\board\yifpga_debug_board_demo.v sim\board\tb_yifpga_debug_board_profiler.v
+xelab tb_yifpga_debug_board_profiler -s tb_yifpga_debug_board_profiler_sim
+xsim tb_yifpga_debug_board_profiler_sim -runall
 ```
 
 ```powershell
-vivado -mode batch -source prj/scripts/check_openfpga_profiler_m21_elab.tcl
+vivado -mode batch -source prj/scripts/check_yifpga_profiler_m21_elab.tcl
 ```

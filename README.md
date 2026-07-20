@@ -30,9 +30,9 @@ v1.0只承诺Xilinx参考实现；Intel/Lattice/国产FPGA、PCIe/Ethernet/USB/S
 ## 目录
 
 ```text
-rtl/openfpga_debug/        Debug Core RTL
+rtl/yifpga_debug/        Debug Core RTL
 rtl/board/                 xcku5p board demo top
-sim/openfpga_debug/        Debug Core protocol/ring-buffer tests
+sim/yifpga_debug/        Debug Core protocol/ring-buffer tests
 sim/board/                 Board demo UART test
 tools/viewer/web/          Web Viewer
 tools/viewer/              Parser tests and serial validation helper
@@ -45,15 +45,15 @@ prj/                       Vivado project, constraints, scripts, generated runs
 1. 打开 Vivado 工程：
 
 ```powershell
-vivado prj\OpenFPGAStudio.xpr
+vivado prj\YiFPGAStudio.xpr
 ```
 
-2. 确认顶层为 `openfpga_debug_board_demo`，器件为 `xcku5p-ffvb676-2-i`。
+2. 确认顶层为 `yifpga_debug_board_demo`，器件为 `xcku5p-ffvb676-2-i`。
 
 3. 使用当前约束文件生成 bitstream：
 
 ```text
-prj/constraints/openfpga_debug_board_demo.xdc
+prj/constraints/yifpga_debug_board_demo.xdc
 ```
 
 4. 下载 bitstream 后，打开 Web Viewer：
@@ -100,47 +100,47 @@ just release-check
 M2 协议/UART 基础测试：
 
 ```powershell
-xvlog -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v sim\openfpga_debug\tb_openfpga_debug_protocol.v
-xelab tb_openfpga_debug_protocol -s tb_openfpga_debug_protocol_sim
-xsim tb_openfpga_debug_protocol_sim -runall
+xvlog -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v sim\yifpga_debug\tb_yifpga_debug_protocol.v
+xelab tb_yifpga_debug_protocol -s tb_yifpga_debug_protocol_sim
+xsim tb_yifpga_debug_protocol_sim -runall
 ```
 
 M3 ring buffer/debug core 测试：
 
 ```powershell
-xvlog -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v sim\openfpga_debug\tb_openfpga_debug_m3.v
-xelab tb_openfpga_debug_m3 -s tb_openfpga_debug_m3_sim
-xsim tb_openfpga_debug_m3_sim -runall
+xvlog -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v sim\yifpga_debug\tb_yifpga_debug_m3.v
+xelab tb_yifpga_debug_m3 -s tb_yifpga_debug_m3_sim
+xsim tb_yifpga_debug_m3_sim -runall
 ```
 
 M5 board demo UART 输出测试：
 
 ```powershell
-xvlog -d OPENFPGA_DEBUG_SIM -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v rtl\board\openfpga_debug_board_demo.v sim\board\tb_openfpga_debug_board_demo.v
-xelab tb_openfpga_debug_board_demo -s tb_openfpga_debug_board_demo_sim
-xsim tb_openfpga_debug_board_demo_sim -runall
+xvlog -d OPENFPGA_DEBUG_SIM -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v rtl\board\yifpga_debug_board_demo.v sim\board\tb_yifpga_debug_board_demo.v
+xelab tb_yifpga_debug_board_demo -s tb_yifpga_debug_board_demo_sim
+xsim tb_yifpga_debug_board_demo_sim -runall
 ```
 
 M9 Trace Adapter 测试：
 
 ```powershell
-xvlog -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_trace_pkg.vh rtl\openfpga_debug\openfpga_trace_adapter.v sim\openfpga_debug\tb_openfpga_trace_adapter.v
-xelab tb_openfpga_trace_adapter -s tb_openfpga_trace_adapter_sim
-xsim tb_openfpga_trace_adapter_sim -runall
+xvlog -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_trace_pkg.vh rtl\yifpga_debug\yifpga_trace_adapter.v sim\yifpga_debug\tb_yifpga_trace_adapter.v
+xelab tb_yifpga_trace_adapter -s tb_yifpga_trace_adapter_sim
+xsim tb_yifpga_trace_adapter_sim -runall
 ```
 
 M10 Trace board demo 测试：
 
 ```powershell
-xvlog -d OPENFPGA_DEBUG_SIM -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_trace_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_trace_adapter.v rtl\openfpga_debug\openfpga_trace_dma_probe.v rtl\openfpga_debug\openfpga_trace_frame_probe.v rtl\openfpga_debug\openfpga_trace_fifo_probe.v rtl\openfpga_debug\openfpga_trace_irq_probe.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v rtl\board\openfpga_debug_board_demo.v sim\board\tb_openfpga_debug_board_demo.v
-xelab tb_openfpga_debug_board_demo -s tb_openfpga_debug_board_demo_m10_sim
-xsim tb_openfpga_debug_board_demo_m10_sim -runall
+xvlog -d OPENFPGA_DEBUG_SIM -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_trace_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_trace_adapter.v rtl\yifpga_debug\yifpga_trace_dma_probe.v rtl\yifpga_debug\yifpga_trace_frame_probe.v rtl\yifpga_debug\yifpga_trace_fifo_probe.v rtl\yifpga_debug\yifpga_trace_irq_probe.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v rtl\board\yifpga_debug_board_demo.v sim\board\tb_yifpga_debug_board_demo.v
+xelab tb_yifpga_debug_board_demo -s tb_yifpga_debug_board_demo_m10_sim
+xsim tb_yifpga_debug_board_demo_m10_sim -runall
 ```
 
 M10 Trace Vivado elaboration：
 
 ```powershell
-vivado -mode batch -source prj/scripts/check_openfpga_trace_m10_elab.tcl
+vivado -mode batch -source prj/scripts/check_yifpga_trace_m10_elab.tcl
 ```
 
 PC parser 测试：

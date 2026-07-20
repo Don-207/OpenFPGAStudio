@@ -97,10 +97,10 @@ trace_drop_count
 
 | 文件 | 用途 |
 | --- | --- |
-| `rtl/openfpga_debug/openfpga_trace_dma_probe.v` | DMA start/done/error/timeout 转 span 和 mark |
-| `rtl/openfpga_debug/openfpga_trace_frame_probe.v` | Frame start/end/drop 转 span 和 mark |
-| `rtl/openfpga_debug/openfpga_trace_fifo_probe.v` | FIFO level/almost_full/overflow 转 value 和 mark |
-| `rtl/openfpga_debug/openfpga_trace_irq_probe.v` | IRQ assert/clear 边沿转 mark |
+| `rtl/yifpga_debug/yifpga_trace_dma_probe.v` | DMA start/done/error/timeout 转 span 和 mark |
+| `rtl/yifpga_debug/yifpga_trace_frame_probe.v` | Frame start/end/drop 转 span 和 mark |
+| `rtl/yifpga_debug/yifpga_trace_fifo_probe.v` | FIFO level/almost_full/overflow 转 value 和 mark |
+| `rtl/yifpga_debug/yifpga_trace_irq_probe.v` | IRQ assert/clear 边沿转 mark |
 
 Probe 只做边沿检测和字段映射，不承担复杂业务状态机。复杂的节流、优先级和实例号分配建议留在用户逻辑中。
 
@@ -146,23 +146,23 @@ python tools\viewer\web\run_perf_test.py
 M9 Trace Adapter 仿真：
 
 ```powershell
-xvlog -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_trace_pkg.vh rtl\openfpga_debug\openfpga_trace_adapter.v sim\openfpga_debug\tb_openfpga_trace_adapter.v
-xelab tb_openfpga_trace_adapter -s tb_openfpga_trace_adapter_sim
-xsim tb_openfpga_trace_adapter_sim -runall
+xvlog -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_trace_pkg.vh rtl\yifpga_debug\yifpga_trace_adapter.v sim\yifpga_debug\tb_yifpga_trace_adapter.v
+xelab tb_yifpga_trace_adapter -s tb_yifpga_trace_adapter_sim
+xsim tb_yifpga_trace_adapter_sim -runall
 ```
 
 M10 board demo 仿真：
 
 ```powershell
-xvlog -d OPENFPGA_DEBUG_SIM -i rtl\openfpga_debug rtl\openfpga_debug\openfpga_debug_pkg.vh rtl\openfpga_debug\openfpga_trace_pkg.vh rtl\openfpga_debug\openfpga_debug_timestamp.v rtl\openfpga_debug\openfpga_debug_ring_buffer.v rtl\openfpga_debug\openfpga_debug_packetizer.v rtl\openfpga_debug\openfpga_debug_uart_tx.v rtl\openfpga_debug\openfpga_trace_adapter.v rtl\openfpga_debug\openfpga_trace_dma_probe.v rtl\openfpga_debug\openfpga_trace_frame_probe.v rtl\openfpga_debug\openfpga_trace_fifo_probe.v rtl\openfpga_debug\openfpga_trace_irq_probe.v rtl\openfpga_debug\openfpga_debug_core.v rtl\openfpga_debug\openfpga_debug_top.v rtl\board\openfpga_debug_board_demo.v sim\board\tb_openfpga_debug_board_demo.v
-xelab tb_openfpga_debug_board_demo -s tb_openfpga_debug_board_demo_m10_sim
-xsim tb_openfpga_debug_board_demo_m10_sim -runall
+xvlog -d OPENFPGA_DEBUG_SIM -i rtl\yifpga_debug rtl\yifpga_debug\yifpga_debug_pkg.vh rtl\yifpga_debug\yifpga_trace_pkg.vh rtl\yifpga_debug\yifpga_debug_timestamp.v rtl\yifpga_debug\yifpga_debug_ring_buffer.v rtl\yifpga_debug\yifpga_debug_packetizer.v rtl\yifpga_debug\yifpga_debug_uart_tx.v rtl\yifpga_debug\yifpga_trace_adapter.v rtl\yifpga_debug\yifpga_trace_dma_probe.v rtl\yifpga_debug\yifpga_trace_frame_probe.v rtl\yifpga_debug\yifpga_trace_fifo_probe.v rtl\yifpga_debug\yifpga_trace_irq_probe.v rtl\yifpga_debug\yifpga_debug_core.v rtl\yifpga_debug\yifpga_debug_top.v rtl\board\yifpga_debug_board_demo.v sim\board\tb_yifpga_debug_board_demo.v
+xelab tb_yifpga_debug_board_demo -s tb_yifpga_debug_board_demo_m10_sim
+xsim tb_yifpga_debug_board_demo_m10_sim -runall
 ```
 
 Vivado RTL elaboration：
 
 ```powershell
-vivado -mode batch -source prj/scripts/check_openfpga_trace_m10_elab.tcl
+vivado -mode batch -source prj/scripts/check_yifpga_trace_m10_elab.tcl
 ```
 
 ## 7. 调试建议

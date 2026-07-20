@@ -26,9 +26,11 @@ HISTORY_MARKERS = (
     "qualification", "release_check",
 )
 GENERATED_PREFIXES = (
-    "prj/OpenFPGAStudio.cache/", "prj/OpenFPGAStudio.hw/",
+    "prj/YiFPGAStudio.cache/", "prj/YiFPGAStudio.hw/",
     "prj/OpenFPGAStudio.ioplanning/", "prj/OpenFPGAStudio.ip_user_files/",
-    "prj/OpenFPGAStudio.runs/", "prj/OpenFPGAStudio.sim/",
+    "prj/YiFPGAStudio.runs/", "prj/YiFPGAStudio.sim/",
+    "prj/YiFPGAStudio.cache/", "prj/YiFPGAStudio.hw/",
+    "prj/YiFPGAStudio.runs/", "prj/YiFPGAStudio.sim/",
 )
 
 

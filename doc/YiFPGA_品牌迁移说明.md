@@ -8,7 +8,7 @@
 
 - 产品名称：`YiFPGA Studio`
 - 简称：`YiFPGA`
-- 当前仓库和 Vivado 工程仍使用旧路径，后续工作包再迁移。
+- 当前 RTL、仿真、Tcl 和 Vivado 工程入口已迁移到 YiFPGA 路径；旧 Tcl 名称保留兼容 wrapper。
 - 既有品牌文档文件名已统一迁移为 `YiFPGA*`，仓库内链接和自动验证脚本已同步更新。
 
 ## 兼容承诺

@@ -9,20 +9,20 @@
 核心 RTL：
 
 ```text
-rtl/openfpga_debug/openfpga_debug_pkg.vh
-rtl/openfpga_debug/openfpga_debug_timestamp.v
-rtl/openfpga_debug/openfpga_debug_ring_buffer.v
-rtl/openfpga_debug/openfpga_debug_packetizer.v
-rtl/openfpga_debug/openfpga_debug_uart_tx.v
-rtl/openfpga_debug/openfpga_debug_core.v
-rtl/openfpga_debug/openfpga_debug_top.v
+rtl/yifpga_debug/yifpga_debug_pkg.vh
+rtl/yifpga_debug/yifpga_debug_timestamp.v
+rtl/yifpga_debug/yifpga_debug_ring_buffer.v
+rtl/yifpga_debug/yifpga_debug_packetizer.v
+rtl/yifpga_debug/yifpga_debug_uart_tx.v
+rtl/yifpga_debug/yifpga_debug_core.v
+rtl/yifpga_debug/yifpga_debug_top.v
 ```
 
 板级 demo：
 
 ```text
-rtl/board/openfpga_debug_board_demo.v
-prj/constraints/openfpga_debug_board_demo.xdc
+rtl/board/yifpga_debug_board_demo.v
+prj/constraints/yifpga_debug_board_demo.xdc
 ```
 
 ## 3. 顶层接口
@@ -35,7 +35,7 @@ yifpga_debug_top #(
     .CLK_FREQ_HZ(100000000),
     .UART_BAUD(115200),
     .BUFFER_ADDR_WIDTH(4)
-) u_openfpga_debug (
+) u_yifpga_debug (
     .clk(clk),
     .rst(rst),
 
@@ -131,7 +131,8 @@ status_valid
 
 ## 6. 板级 demo 说明
 
-`openfpga_debug_board_demo` 使用：
+`yifpga_debug_board_demo` 使用；旧 `openfpga_debug_board_demo` 顶层仍由同一源码中的 wrapper
+提供：
 
 - `clk_p/clk_n`：100 MHz 差分输入。
 - `reset_n`：低有效复位。
@@ -143,7 +144,7 @@ status_valid
 当前 KU5P 板卡约束来自厂家 `pin.xdc`，已经固化在：
 
 ```text
-prj/constraints/openfpga_debug_board_demo.xdc
+prj/constraints/yifpga_debug_board_demo.xdc
 ```
 
 ## 7. 已知限制

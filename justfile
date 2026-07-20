@@ -22,22 +22,22 @@ release-check: m27-check m28-check m29-check m30-check m32-check m36-check
 
 # Second-stage Trace RTL adapter payload/handshake regression.
 trace-adapter-sim:
-    {{xvlog}} -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_trace_adapter.v sim/openfpga_debug/tb_openfpga_trace_adapter.v
-    {{xelab}} tb_openfpga_trace_adapter -s tb_openfpga_trace_adapter_wp3_sim
-    {{xsim}} tb_openfpga_trace_adapter_wp3_sim -runall
+    {{xvlog}} -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_trace_pkg.vh rtl/yifpga_debug/yifpga_trace_adapter.v sim/yifpga_debug/tb_yifpga_trace_adapter.v
+    {{xelab}} tb_yifpga_trace_adapter -s tb_yifpga_trace_adapter_wp3_sim
+    {{xsim}} tb_yifpga_trace_adapter_wp3_sim -runall
 
 # Second-stage board demo coexistence regression for Debug and Trace frames.
 trace-board-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_demo.v
-    {{xelab}} tb_openfpga_debug_board_demo -s tb_openfpga_debug_board_demo_wp3_sim
-    {{xsim}} tb_openfpga_debug_board_demo_wp3_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_debug_pkg.vh rtl/yifpga_debug/yifpga_trace_pkg.vh rtl/yifpga_debug/yifpga_monitor_pkg.vh rtl/yifpga_debug/yifpga_profiler_pkg.vh rtl/yifpga_debug/yifpga_la_pkg.vh rtl/yifpga_debug/yifpga_debug_timestamp.v rtl/yifpga_debug/yifpga_debug_ring_buffer.v rtl/yifpga_debug/yifpga_debug_packetizer.v rtl/yifpga_debug/yifpga_debug_uart_tx.v rtl/yifpga_debug/yifpga_debug_uart_rx.v rtl/yifpga_debug/yifpga_debug_command_parser.v rtl/yifpga_debug/yifpga_trace_adapter.v rtl/yifpga_debug/yifpga_trace_dma_probe.v rtl/yifpga_debug/yifpga_trace_frame_probe.v rtl/yifpga_debug/yifpga_trace_fifo_probe.v rtl/yifpga_debug/yifpga_trace_irq_probe.v rtl/yifpga_debug/yifpga_monitor_reg_bank.v rtl/yifpga_debug/yifpga_monitor_core.v rtl/yifpga_debug/yifpga_monitor_adapter.v rtl/yifpga_debug/yifpga_profiler_counter.v rtl/yifpga_debug/yifpga_profiler_core.v rtl/yifpga_debug/yifpga_profiler_adapter.v rtl/yifpga_debug/yifpga_profiler_axis_probe.v rtl/yifpga_debug/yifpga_profiler_fifo_probe.v rtl/yifpga_debug/yifpga_profiler_frame_probe.v rtl/yifpga_debug/yifpga_profiler_latency.v rtl/yifpga_debug/yifpga_la_probe_pack.v rtl/yifpga_debug/yifpga_la_trigger.v rtl/yifpga_debug/yifpga_la_core.v rtl/yifpga_debug/yifpga_la_adapter.v rtl/yifpga_debug/yifpga_debug_core.v rtl/yifpga_debug/yifpga_debug_top.v rtl/board/yifpga_debug_board_demo.v sim/board/tb_yifpga_debug_board_demo.v
+    {{xelab}} tb_yifpga_debug_board_demo -s tb_yifpga_debug_board_demo_wp3_sim
+    {{xsim}} tb_yifpga_debug_board_demo_wp3_sim -runall
 
 # Current-source Trace software/RTL regression; Vivado elaboration and real board remain separate.
 trace-check: parser-test viewer-test trace-adapter-sim trace-board-sim
 
 # YF.WP3 old/new RTL naming equivalence; behavioral simulation only.
 rtl-naming-equivalence-sim:
-    {{xvlog}} -sv -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/*.vh rtl/openfpga_debug/*.v rtl/board/openfpga_debug_board_demo.v sim/openfpga_debug/tb_yifpga_trace_naming_equivalence.sv sim/board/tb_yifpga_board_naming_equivalence.sv
+    {{xvlog}} -sv -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/*.vh rtl/yifpga_debug/*.v rtl/board/yifpga_debug_board_demo.v sim/yifpga_debug/tb_yifpga_trace_naming_equivalence.sv sim/board/tb_yifpga_board_naming_equivalence.sv
     {{xelab}} tb_yifpga_trace_naming_equivalence -s tb_yifpga_trace_naming_equivalence_sim
     {{xsim}} tb_yifpga_trace_naming_equivalence_sim -runall
     {{xelab}} tb_yifpga_board_naming_equivalence -s tb_yifpga_board_naming_equivalence_sim
@@ -45,15 +45,15 @@ rtl-naming-equivalence-sim:
 
 # Fourth-stage Profiler core snapshot/alert regression.
 profiler-core-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_core.v sim/openfpga_debug/tb_openfpga_profiler_core.v
-    {{xelab}} tb_openfpga_profiler_core -s tb_openfpga_profiler_core_wp3_sim
-    {{xsim}} tb_openfpga_profiler_core_wp3_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_profiler_pkg.vh rtl/yifpga_debug/yifpga_profiler_core.v sim/yifpga_debug/tb_yifpga_profiler_core.v
+    {{xelab}} tb_yifpga_profiler_core -s tb_yifpga_profiler_core_wp3_sim
+    {{xsim}} tb_yifpga_profiler_core_wp3_sim -runall
 
 # Fourth-stage board demo coexistence and control regression on current RTL.
 profiler-board-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_profiler.v
-    {{xelab}} tb_openfpga_debug_board_profiler -s tb_openfpga_debug_board_profiler_wp3_sim
-    {{xsim}} tb_openfpga_debug_board_profiler_wp3_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_debug_pkg.vh rtl/yifpga_debug/yifpga_trace_pkg.vh rtl/yifpga_debug/yifpga_monitor_pkg.vh rtl/yifpga_debug/yifpga_profiler_pkg.vh rtl/yifpga_debug/yifpga_la_pkg.vh rtl/yifpga_debug/yifpga_debug_timestamp.v rtl/yifpga_debug/yifpga_debug_ring_buffer.v rtl/yifpga_debug/yifpga_debug_packetizer.v rtl/yifpga_debug/yifpga_debug_uart_tx.v rtl/yifpga_debug/yifpga_debug_uart_rx.v rtl/yifpga_debug/yifpga_debug_command_parser.v rtl/yifpga_debug/yifpga_trace_adapter.v rtl/yifpga_debug/yifpga_trace_dma_probe.v rtl/yifpga_debug/yifpga_trace_frame_probe.v rtl/yifpga_debug/yifpga_trace_fifo_probe.v rtl/yifpga_debug/yifpga_trace_irq_probe.v rtl/yifpga_debug/yifpga_monitor_reg_bank.v rtl/yifpga_debug/yifpga_monitor_core.v rtl/yifpga_debug/yifpga_monitor_adapter.v rtl/yifpga_debug/yifpga_profiler_counter.v rtl/yifpga_debug/yifpga_profiler_core.v rtl/yifpga_debug/yifpga_profiler_adapter.v rtl/yifpga_debug/yifpga_profiler_axis_probe.v rtl/yifpga_debug/yifpga_profiler_fifo_probe.v rtl/yifpga_debug/yifpga_profiler_frame_probe.v rtl/yifpga_debug/yifpga_profiler_latency.v rtl/yifpga_debug/yifpga_la_probe_pack.v rtl/yifpga_debug/yifpga_la_trigger.v rtl/yifpga_debug/yifpga_la_core.v rtl/yifpga_debug/yifpga_la_adapter.v rtl/yifpga_debug/yifpga_debug_core.v rtl/yifpga_debug/yifpga_debug_top.v rtl/board/yifpga_debug_board_demo.v sim/board/tb_yifpga_debug_board_profiler.v
+    {{xelab}} tb_yifpga_debug_board_profiler -s tb_yifpga_debug_board_profiler_wp3_sim
+    {{xsim}} tb_yifpga_debug_board_profiler_wp3_sim -runall
 
 # Current-source Profiler software/RTL regression; Vivado and real board remain separate.
 profiler-check: parser-test viewer-test profiler-core-sim profiler-probes-sim profiler-board-sim
@@ -64,19 +64,19 @@ m32-check:
 
 # M33 hardware-free SystemVerilog transport regression.
 m33-sim:
-    xvlog -sv rtl/openfpga_debug/openfpga_transport_router.sv rtl/openfpga_debug/openfpga_jtag_ring_buffer.sv rtl/openfpga_debug/openfpga_jtag_mailbox.sv rtl/openfpga_debug/openfpga_jtag_transport.sv sim/openfpga_debug/tb_openfpga_jtag_transport.sv
-    xelab tb_openfpga_jtag_transport -s tb_openfpga_jtag_transport_sim
-    xsim tb_openfpga_jtag_transport_sim -runall
+    xvlog -sv rtl/yifpga_debug/yifpga_transport_router.sv rtl/yifpga_debug/yifpga_jtag_ring_buffer.sv rtl/yifpga_debug/yifpga_jtag_mailbox.sv rtl/yifpga_debug/yifpga_jtag_transport.sv sim/yifpga_debug/tb_yifpga_jtag_transport.sv
+    xelab tb_yifpga_jtag_transport -s tb_yifpga_jtag_transport_sim
+    xsim tb_yifpga_jtag_transport_sim -runall
 
 # M33/M34 generic USER-DR command and transaction regression.
 m34-user-dr-sim:
-    xvlog -sv rtl/openfpga_debug/openfpga_jtag_user_dr.sv sim/openfpga_debug/tb_openfpga_jtag_user_dr.sv
-    xelab tb_openfpga_jtag_user_dr -s tb_openfpga_jtag_user_dr_sim
-    xsim tb_openfpga_jtag_user_dr_sim -runall
+    xvlog -sv rtl/yifpga_debug/yifpga_jtag_user_dr.sv sim/yifpga_debug/tb_yifpga_jtag_user_dr.sv
+    xelab tb_yifpga_jtag_user_dr -s tb_yifpga_jtag_user_dr_sim
+    xsim tb_yifpga_jtag_user_dr_sim -runall
 
 # Requires Vivado; elaborates the complete BSCANE2-to-mailbox integration only.
 m34-user-dr-elab:
-    {{vivado}} -mode batch -source prj/scripts/check_openfpga_jtag_m34_user_dr_elab.tcl
+    {{vivado}} -mode batch -source prj/scripts/check_yifpga_jtag_m34_user_dr_elab.tcl
 
 # Hardware operation: requires the Digilent FT232H cable and programmed M34 image.
 m34-board-validate:
@@ -112,7 +112,7 @@ m34-jtag-benchmark:
 
 # Requires confirmation before running (Vivado RTL elaboration/CDC gate).
 m33-elab:
-    {{vivado}} -mode batch -source prj/scripts/check_openfpga_jtag_m33_elab.tcl
+    {{vivado}} -mode batch -source prj/scripts/check_yifpga_jtag_m33_elab.tcl
 
 # M34 hardware-free Host Bridge regression.
 m34-check:
@@ -138,17 +138,17 @@ m36-perf-ftdi-bridge tck="6000000" block="1024":
     {{python}} tools/jtag/yifpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}} --build-id 0x4d350001
 
 m35-perf-source-sim:
-    xvlog -sv rtl/openfpga_debug/openfpga_jtag_perf_source.sv sim/openfpga_debug/tb_openfpga_jtag_perf_source.sv
-    xelab tb_openfpga_jtag_perf_source -s tb_openfpga_jtag_perf_source_sim
-    xsim tb_openfpga_jtag_perf_source_sim -runall
+    xvlog -sv rtl/yifpga_debug/yifpga_jtag_perf_source.sv sim/yifpga_debug/tb_yifpga_jtag_perf_source.sv
+    xelab tb_yifpga_jtag_perf_source -s tb_yifpga_jtag_perf_source_sim
+    xsim tb_yifpga_jtag_perf_source_sim -runall
 
 # Long Vivado build for the dedicated M35 sustained-throughput image.
 m35-perf-bitstream:
-    {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m35_perf_bitstream.tcl
+    {{vivado}} -mode batch -source prj/scripts/build_yifpga_jtag_m35_perf_bitstream.tcl
 
 # Hardware operation; exact cable target filter is mandatory.
 m35-perf-program target:
-    {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m35_perf.tcl -tclargs {{target}}
+    {{vivado}} -mode batch -source prj/scripts/program_yifpga_jtag_m35_perf.tcl -tclargs {{target}}
 
 # M35 Viewer/JTAG source and bridge WebSocket regression.
 m35-check: m34-check parser-test viewer-test
@@ -159,42 +159,42 @@ m36-check: m35-check
 
 # Requires confirmation before running (five Vivado synthesis configurations).
 m36-matrix:
-    {{vivado}} -mode batch -source prj/scripts/check_openfpga_jtag_m36_matrix.tcl
+    {{vivado}} -mode batch -source prj/scripts/check_yifpga_jtag_m36_matrix.tcl
 
 # Long implementation/bitstream build; requires separate confirmation.
 m36-ila-bitstream:
-    {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m36_ila_bitstream.tcl
+    {{vivado}} -mode batch -source prj/scripts/build_yifpga_jtag_m36_ila_bitstream.tcl
 
 # Long M36 performance+ILA implementation build; explicitly authorized hardware image.
 m36-perf-ila-bitstream:
-    {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m36_ila_bitstream.tcl -tclargs perf
+    {{vivado}} -mode batch -source prj/scripts/build_yifpga_jtag_m36_ila_bitstream.tcl -tclargs perf
 
 # Strict functional JTAG-only image: UART disabled, normal packetizer source, ILA retained.
 m36-jtag-only-ila-bitstream:
-    {{vivado}} -mode batch -source prj/scripts/build_openfpga_jtag_m36_ila_bitstream.tcl -tclargs jtag_only
+    {{vivado}} -mode batch -source prj/scripts/build_yifpga_jtag_m36_ila_bitstream.tcl -tclargs jtag_only
 
 # Hardware operation; exact cable target filter and separate confirmation required.
 m36-program target:
-    {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}}
+    {{vivado}} -mode batch -source prj/scripts/program_yifpga_jtag_m36_ila.tcl -tclargs {{target}}
 
 # Hardware operation: program the M36 performance+ILA image on one exact target.
 m36-perf-program target:
-    {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}} perf
+    {{vivado}} -mode batch -source prj/scripts/program_yifpga_jtag_m36_ila.tcl -tclargs {{target}} perf
 
 # Hardware operation: program the strict functional JTAG-only+ILA image.
 m36-jtag-only-program target:
-    {{vivado}} -mode batch -source prj/scripts/program_openfpga_jtag_m36_ila.tcl -tclargs {{target}} jtag_only
+    {{vivado}} -mode batch -source prj/scripts/program_yifpga_jtag_m36_ila.tcl -tclargs {{target}} jtag_only
 
 # Hardware operation: exact target suffix and output file name are mandatory.
 m36-ila-capture target output="m36_ila_capture.csv":
-    {{vivado}} -mode batch -source prj/scripts/capture_openfpga_jtag_m36_ila.tcl -tclargs {{target}} {{output}}
+    {{vivado}} -mode batch -source prj/scripts/capture_yifpga_jtag_m36_ila.tcl -tclargs {{target}} {{output}}
 
 # Validate a running real-board Bridge; defaults to the 30-minute release gate.
-m36-soak seconds="1800" reconnects="3" output="prj/OpenFPGAStudio.runs/m36/m36_soak.csv":
+m36-soak seconds="1800" reconnects="3" output="prj/YiFPGAStudio.runs/m36/m36_soak.csv":
     {{python}} tools/jtag/validate_m36_release.py --seconds {{seconds}} --client-reconnects {{reconnects}} --csv {{output}}
 
 # Sample the Bridge process itself; obtain pid from pgrep after starting the Bridge.
-m36-bridge-rss pid seconds="60" interval="5" output="prj/OpenFPGAStudio.runs/m36/m36_bridge_rss.csv":
+m36-bridge-rss pid seconds="60" interval="5" output="prj/YiFPGAStudio.runs/m36/m36_bridge_rss.csv":
     {{python}} tools/jtag/sample_process_rss.py --pid {{pid}} --seconds {{seconds}} --interval {{interval}} --csv {{output}}
 
 # M36 strict JTAG-only board validation: UART RX commands, JTAG responses/data.
@@ -254,36 +254,36 @@ la-validator-self-test:
 
 # Debug Core arbitration/drop semantics shared by Trace, Profiler and LA.
 debug-core-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/*.vh rtl/openfpga_debug/*.v sim/openfpga_debug/tb_openfpga_debug_m3.v
-    {{xelab}} tb_openfpga_debug_m3 -s tb_openfpga_debug_m3_wp3_drop_fix_sim
-    {{xsim}} tb_openfpga_debug_m3_wp3_drop_fix_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/*.vh rtl/yifpga_debug/*.v sim/yifpga_debug/tb_yifpga_debug_m3.v
+    {{xelab}} tb_yifpga_debug_m3 -s tb_yifpga_debug_m3_wp3_drop_fix_sim
+    {{xsim}} tb_yifpga_debug_m3_wp3_drop_fix_sim -runall
 
 la-core-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v sim/openfpga_debug/tb_openfpga_la_core.v
-    {{xelab}} tb_openfpga_la_core -s tb_openfpga_la_core_wp3_sim
-    {{xsim}} tb_openfpga_la_core_wp3_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_debug_pkg.vh rtl/yifpga_debug/yifpga_la_pkg.vh rtl/yifpga_debug/yifpga_la_probe_pack.v rtl/yifpga_debug/yifpga_la_trigger.v rtl/yifpga_debug/yifpga_la_core.v rtl/yifpga_debug/yifpga_la_adapter.v sim/yifpga_debug/tb_yifpga_la_core.v
+    {{xelab}} tb_yifpga_la_core -s tb_yifpga_la_core_wp3_sim
+    {{xsim}} tb_yifpga_la_core_wp3_sim -runall
 
 profiler-probes-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v sim/openfpga_debug/tb_openfpga_profiler_probes.v
-    {{xelab}} tb_openfpga_profiler_probes -s tb_openfpga_profiler_probes_wp3_fifo_fix_sim
-    {{xsim}} tb_openfpga_profiler_probes_wp3_fifo_fix_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_profiler_pkg.vh rtl/yifpga_debug/yifpga_profiler_axis_probe.v rtl/yifpga_debug/yifpga_profiler_fifo_probe.v rtl/yifpga_debug/yifpga_profiler_frame_probe.v rtl/yifpga_debug/yifpga_profiler_latency.v sim/yifpga_debug/tb_yifpga_profiler_probes.v
+    {{xelab}} tb_yifpga_profiler_probes -s tb_yifpga_profiler_probes_wp3_fifo_fix_sim
+    {{xsim}} tb_yifpga_profiler_probes_wp3_fifo_fix_sim -runall
 
 la-board-sim:
-    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_debug_pkg.vh rtl/openfpga_debug/openfpga_trace_pkg.vh rtl/openfpga_debug/openfpga_monitor_pkg.vh rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_la_pkg.vh rtl/openfpga_debug/openfpga_debug_timestamp.v rtl/openfpga_debug/openfpga_debug_ring_buffer.v rtl/openfpga_debug/openfpga_debug_packetizer.v rtl/openfpga_debug/openfpga_debug_uart_tx.v rtl/openfpga_debug/openfpga_debug_uart_rx.v rtl/openfpga_debug/openfpga_debug_command_parser.v rtl/openfpga_debug/openfpga_trace_adapter.v rtl/openfpga_debug/openfpga_trace_dma_probe.v rtl/openfpga_debug/openfpga_trace_frame_probe.v rtl/openfpga_debug/openfpga_trace_fifo_probe.v rtl/openfpga_debug/openfpga_trace_irq_probe.v rtl/openfpga_debug/openfpga_monitor_reg_bank.v rtl/openfpga_debug/openfpga_monitor_core.v rtl/openfpga_debug/openfpga_monitor_adapter.v rtl/openfpga_debug/openfpga_profiler_counter.v rtl/openfpga_debug/openfpga_profiler_core.v rtl/openfpga_debug/openfpga_profiler_adapter.v rtl/openfpga_debug/openfpga_profiler_axis_probe.v rtl/openfpga_debug/openfpga_profiler_fifo_probe.v rtl/openfpga_debug/openfpga_profiler_frame_probe.v rtl/openfpga_debug/openfpga_profiler_latency.v rtl/openfpga_debug/openfpga_la_probe_pack.v rtl/openfpga_debug/openfpga_la_trigger.v rtl/openfpga_debug/openfpga_la_core.v rtl/openfpga_debug/openfpga_la_adapter.v rtl/openfpga_debug/openfpga_debug_core.v rtl/openfpga_debug/openfpga_debug_top.v rtl/board/openfpga_debug_board_demo.v sim/board/tb_openfpga_debug_board_la.v
-    {{xelab}} tb_openfpga_debug_board_la -s tb_openfpga_debug_board_la_wp3_sim
-    {{xsim}} tb_openfpga_debug_board_la_wp3_sim -runall
+    {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/yifpga_debug rtl/yifpga_debug/yifpga_debug_pkg.vh rtl/yifpga_debug/yifpga_trace_pkg.vh rtl/yifpga_debug/yifpga_monitor_pkg.vh rtl/yifpga_debug/yifpga_profiler_pkg.vh rtl/yifpga_debug/yifpga_la_pkg.vh rtl/yifpga_debug/yifpga_debug_timestamp.v rtl/yifpga_debug/yifpga_debug_ring_buffer.v rtl/yifpga_debug/yifpga_debug_packetizer.v rtl/yifpga_debug/yifpga_debug_uart_tx.v rtl/yifpga_debug/yifpga_debug_uart_rx.v rtl/yifpga_debug/yifpga_debug_command_parser.v rtl/yifpga_debug/yifpga_trace_adapter.v rtl/yifpga_debug/yifpga_trace_dma_probe.v rtl/yifpga_debug/yifpga_trace_frame_probe.v rtl/yifpga_debug/yifpga_trace_fifo_probe.v rtl/yifpga_debug/yifpga_trace_irq_probe.v rtl/yifpga_debug/yifpga_monitor_reg_bank.v rtl/yifpga_debug/yifpga_monitor_core.v rtl/yifpga_debug/yifpga_monitor_adapter.v rtl/yifpga_debug/yifpga_profiler_counter.v rtl/yifpga_debug/yifpga_profiler_core.v rtl/yifpga_debug/yifpga_profiler_adapter.v rtl/yifpga_debug/yifpga_profiler_axis_probe.v rtl/yifpga_debug/yifpga_profiler_fifo_probe.v rtl/yifpga_debug/yifpga_profiler_frame_probe.v rtl/yifpga_debug/yifpga_profiler_latency.v rtl/yifpga_debug/yifpga_la_probe_pack.v rtl/yifpga_debug/yifpga_la_trigger.v rtl/yifpga_debug/yifpga_la_core.v rtl/yifpga_debug/yifpga_la_adapter.v rtl/yifpga_debug/yifpga_debug_core.v rtl/yifpga_debug/yifpga_debug_top.v rtl/board/yifpga_debug_board_demo.v sim/board/tb_yifpga_debug_board_la.v
+    {{xelab}} tb_yifpga_debug_board_la -s tb_yifpga_debug_board_la_wp3_sim
+    {{xsim}} tb_yifpga_debug_board_la_wp3_sim -runall
 
 # Requires confirmation before running (Vivado synthesis/elaboration gate).
 la-elab:
-    {{vivado}} -mode batch -source prj/scripts/check_openfpga_la_m25_elab.tcl
+    {{vivado}} -mode batch -source prj/scripts/check_yifpga_la_m25_elab.tcl
 
 # Long implementation/bitstream build; requires confirmation before running.
 la-bitstream:
-    {{vivado}} -mode batch -source prj/scripts/build_openfpga_la_m26_bitstream.tcl
+    {{vivado}} -mode batch -source prj/scripts/build_yifpga_la_m26_bitstream.tcl
 
 # Hardware operation; requires an explicit target filter and confirmation.
 la-program target:
-    {{vivado}} -mode batch -source prj/scripts/program_openfpga_debug_board_demo.tcl -tclargs {{target}}
+    {{vivado}} -mode batch -source prj/scripts/program_yifpga_debug_board_demo.tcl -tclargs {{target}}
 
 # Hardware operation; install pyserial first if unavailable.
 la-board-validate port baud="115200":

@@ -59,7 +59,7 @@
 版本追溯。以下证据正文及产物仍保持原样，不做机械改名：
 
 - 已完成阶段的验证记录中出现的真实命令、路径、工程名和产物名。
-- `prj/OpenFPGAStudio.runs/...` 等证据路径。
+- `prj/YiFPGAStudio.runs/...` 等证据路径。
 - 既有bitstream、LTX、DCP、CSV、JSONL和VCD文件名及hash。
 - Git tag、commit message、PR正文和已发布release附件。
 
@@ -163,6 +163,13 @@ openfpga_debug_core (deprecated wrapper)
 
 ### YF.WP4：路径、脚本与Vivado工程迁移
 
+状态（2026-07-20）：**代码迁移完成，用户侧 Vivado 验证待执行**。RTL 与仿真目录已迁移为 `rtl/yifpga_debug`、
+`sim/yifpga_debug`，源码、测试、板级、Xilinx 适配、约束和 Tcl 文件名已切换 `yifpga_*`；
+`YiFPGAStudio.xpr`、justfile、当前文档及显式文件清单已同步。24 个旧 Tcl 名称保留轻量
+source wrapper，并提供旧工程只读迁移说明。Debug Core、RTL 新旧命名等价和
+`just release-check` 离线门禁均通过；旧 Tcl wrapper 生成检查通过。尚待用户侧完成新工程
+综合、实现、DRC、CDC、时序、bitstream 与板级验证；未运行综合、实现、bitstream 生成或烧录。
+
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
 - Tcl、Python和约束文件新增`yifpga_*`canonical名称。
@@ -241,7 +248,7 @@ just release-check
 - 品牌展示可通过revert WP1恢复，不影响协议和RTL。
 - Host alias迁移失败时恢复旧入口为canonical，新入口保留实验状态。
 - RTL迁移失败时切回旧module实现，不修改wire format或板级约束。
-- Vivado工程迁移失败时继续使用已签署的`OpenFPGAStudio.xpr`和v1.0产物。
+- Vivado工程迁移失败时继续使用已签署的`YiFPGAStudio.xpr`和v1.0产物。
 - 仓库改名最后执行；在此前所有源码和文档变化都可独立回退。
 
 禁止通过覆盖、删除或重新生成历史证据完成回滚。

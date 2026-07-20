@@ -27,7 +27,7 @@ if {[llength $devices] == 0} {
 set device [lindex $devices 0]
 set script_dir [file dirname [file normalize [info script]]]
 set repo_dir [file normalize [file join $script_dir .. ..]]
-set ltx_file [file join $repo_dir prj OpenFPGAStudio.runs impl_1 openfpga_debug_board_demo_ila.ltx]
+set ltx_file [file join $repo_dir prj YiFPGAStudio.runs impl_1 openfpga_debug_board_demo_ila.ltx]
 if {[file exists $ltx_file]} {
     puts "INFO: Probes file: $ltx_file"
     set_property PROBES.FILE $ltx_file $device

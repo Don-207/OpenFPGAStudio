@@ -19,7 +19,7 @@ set device [lindex [get_hw_devices] 0]
 
 set script_dir [file dirname [file normalize [info script]]]
 set repo_dir [file normalize [file join $script_dir .. ..]]
-set ltx_file [file join $repo_dir prj OpenFPGAStudio.runs impl_1 openfpga_debug_board_demo_ila.ltx]
+set ltx_file [file join $repo_dir prj YiFPGAStudio.runs impl_1 openfpga_debug_board_demo_ila.ltx]
 set trigger_bit 50
 set trigger_value 0
 set out_name monitor_uart_rx_ila.csv
@@ -34,7 +34,7 @@ if {[llength $argv] >= 3} {
     set out_name [lindex $argv 2]
 }
 
-set out_file [file join $repo_dir prj OpenFPGAStudio.runs impl_1 $out_name]
+set out_file [file join $repo_dir prj YiFPGAStudio.runs impl_1 $out_name]
 
 set_property PROBES.FILE $ltx_file $device
 refresh_hw_device $device

@@ -9,7 +9,7 @@ import re
 
 
 ROOT = Path(__file__).resolve().parents[2]
-RTL_DIRS = (ROOT / "rtl/openfpga_debug", ROOT / "rtl/vendor/xilinx", ROOT / "rtl/board")
+RTL_DIRS = (ROOT / "rtl/yifpga_debug", ROOT / "rtl/vendor/xilinx", ROOT / "rtl/board")
 MODULE_RE = re.compile(r"\bmodule\s+(openfpga_[A-Za-z0-9_]+)\b")
 WRAPPER_MARKER = "// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged."
 
@@ -167,7 +167,7 @@ def main() -> int:
     for path, migrated in changes:
         path.write_text(migrated, encoding="utf-8")
     # Internal RTL instantiations use canonical names; wrapper declarations stay legacy.
-    for directory in (ROOT / "rtl/openfpga_debug", ROOT / "rtl/vendor/xilinx", ROOT / "rtl/board"):
+    for directory in (ROOT / "rtl/yifpga_debug", ROOT / "rtl/vendor/xilinx", ROOT / "rtl/board"):
         for path in sorted((*directory.glob("*.v"), *directory.glob("*.sv"))):
             text = path.read_text(encoding="utf-8")
             for legacy, canonical in names:

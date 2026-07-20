@@ -23,7 +23,7 @@ class XilinxHardwareBackend(JtagBackend):
     def _start(self) -> None:
         if self._process and self._process.poll() is None:
             return
-        script = Path(__file__).parents[2] / "prj/scripts/openfpga_jtag_read.tcl"
+        script = Path(__file__).parents[2] / "prj/scripts/yifpga_jtag_read.tcl"
         self._process = subprocess.Popen(
             [self.vivado, "-mode", "tcl", "-nolog", "-nojournal", "-source", str(script)],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
