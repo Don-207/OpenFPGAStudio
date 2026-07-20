@@ -163,7 +163,7 @@ openfpga_debug_core (deprecated wrapper)
 
 ### YF.WP4：路径、脚本与Vivado工程迁移
 
-状态（2026-07-20）：**代码迁移完成，用户侧 Vivado 验证待执行**。RTL 与仿真目录已迁移为 `rtl/yifpga_debug`、
+状态（2026-07-20）：**代码迁移与用户侧 Vivado 构建完成，板级功能复验进行中**。RTL 与仿真目录已迁移为 `rtl/yifpga_debug`、
 `sim/yifpga_debug`，源码、测试、板级、Xilinx 适配、约束和 Tcl 文件名已切换 `yifpga_*`；
 `YiFPGAStudio.xpr`、justfile、当前文档及显式文件清单已同步。24 个旧 Tcl 名称保留轻量
 source wrapper，并提供旧工程只读迁移说明。Debug Core、RTL 新旧命名等价和
@@ -205,7 +205,11 @@ ILA 镜像一致，均位于 Vivado dbg_hub。BIT/LTX 均存在，产物 SHA-256
 - LTX：`019c53da47cee5fb7cecfc429efe703e9b07c038e9534a906d47e44cca115622`
 
 至此 normal、performance 和 JTAG-only 三个 YiFPGA ILA 候选均完成实现、路由、DRC、CDC、
-时序和产物核验；WP4 仅剩三个候选镜像的板级验证与最终签署。
+时序和产物核验。用户同日执行 `just m36-program 'Digilent/210512180081'`
+下载 normal 镜像：Vivado 报告 startup status `HIGH`，目标设备为 `xcku5p_0`，
+且刷新后精确枚举 1 个 ILA core，脚本输出 `PASS`。这确认 normal 产物可成功
+加载且 probes 可被 Vivado Hardware Manager 识别；尚待 normal 数据通路/ILA 采集、
+performance 与 JTAG-only 候选镜像板级验证及最终签署。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
