@@ -195,6 +195,18 @@ Vivado dbg_hub。BIT/LTX 均存在，产物 SHA-256：
 
 尚待 JTAG-only+ILA 实现及三个候选镜像的板级验证。
 
+用户同日完成 `just m36-jtag-only-ila-bitstream`：JTAG-only 配置为 UART=0、JTAG=1、
+JTAG_PERF_MODE=0、JTAG_ONLY_MODE=1，manifest 记录 BSCANE2=1、ILA=1。设计 fully routed，
+11,086 个 routable nets 全部完成路由且 routing errors 为 0；WNS `3.003 ns`、TNS `0`、
+WHS `0.013 ns`、THS `0`，全部用户时序约束满足。DRC/CDC warning 类型和数量与另外两个
+ILA 镜像一致，均位于 Vivado dbg_hub。BIT/LTX 均存在，产物 SHA-256：
+
+- BIT：`8eb320cd5e2693c488205665afcc4b5939229880c05aa97d62b6691b2a77ddc5`
+- LTX：`019c53da47cee5fb7cecfc429efe703e9b07c038e9534a906d47e44cca115622`
+
+至此 normal、performance 和 JTAG-only 三个 YiFPGA ILA 候选均完成实现、路由、DRC、CDC、
+时序和产物核验；WP4 仅剩三个候选镜像的板级验证与最终签署。
+
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
 - Tcl、Python和约束文件新增`yifpga_*`canonical名称。
