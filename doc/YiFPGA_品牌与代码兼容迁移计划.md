@@ -239,7 +239,11 @@ Host CPU `0.716%`。1 次客户端重连成功，drop/overflow 首尾均为 0，
 `slow_clients=0`。CSV SHA-256 为
 `e786010c62740d7d187177950ba59c85572d1282058992a53aaa875c258119c4`。至此 performance
 候选镜像通过下载、ILA 枚举、100 KB/s 门槛和 30 分钟长稳；尚待 JTAG-only
-候选镜像板级验证及最终签署。
+候选镜像板级验证及最终签署。用户同日执行
+`just m36-jtag-only-program 'Digilent/210512180081'` 下载 JTAG-only 镜像：
+Vivado 报告 startup status `HIGH`，目标设备为 `xcku5p_0`，刷新后精确枚举
+1 个 ILA core，脚本输出 `PASS`。尚待 JTAG-only 命令/响应、Profiler 和 LA
+数据闭环验证及最终签署。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
