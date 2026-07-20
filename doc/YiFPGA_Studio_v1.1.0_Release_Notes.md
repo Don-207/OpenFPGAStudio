@@ -70,10 +70,9 @@ prj/OpenFPGAStudio.xpr             -> prj/YiFPGAStudio.xpr
 - Vivado 迁移失败时使用已签署的 `YiFPGAStudio.xpr` 和 v1.0 历史产物；
   不改写历史 runs 或哈希证据。
 
-## 发布前剩余项
+## 发布核验与标签策略
 
 - 干净 clone 验收已从提交 `d11a9c6` 完成：`just release-check`、RTL 新旧
   命名等价仿真、deprecated Python wrapper 和旧 snapshot/协议 fixture 均通过。
-- 确认 tag 策略。截至 2026-07-20，GitHub 远端无 tag，因此不得将计划中的
-  “已有 v1.0.0 tag”当作既成事实。
-- push 候选提交，创建经确认的 tag 和 GitHub Release。
+- 截至 2026-07-20，GitHub 远端无历史 tag；本次发布不回填或伪造
+  `v1.0.0`，首个 YiFPGA minor 版本使用 `v1.1.0`。
