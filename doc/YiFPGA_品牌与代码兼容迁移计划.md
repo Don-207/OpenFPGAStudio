@@ -233,7 +233,13 @@ worker 调度后，Bridge 在 10 MHz、1,024 B 下运行 60.001 s，持续接收
 Host CPU `0.716%`。1 次客户端重连成功，drop/overflow 首尾均为 0，
 `slow_clients=0`，因此通过 100 KB/s 性能门槛。CSV SHA-256 为
 `5796663319d8d00fa75fef1c4df31be604a3fc518dbcc5b87c06ac92b64d99db`。
-尚待 performance 长稳和 JTAG-only 候选镜像板级验证及最终签署。
+同一配置继续完成 1,800.001 s 长稳：接收 418,838,528 B，持续吞吐
+`232,687.952 B/s`，P50/P99 data gap 为 `4.098/9.852 ms`，Host CPU `0.574%`。
+3 次客户端重连全部成功，4 个 HELLO 齐全；drop/overflow 首尾均为 0，
+`slow_clients=0`。CSV SHA-256 为
+`e786010c62740d7d187177950ba59c85572d1282058992a53aaa875c258119c4`。至此 performance
+候选镜像通过下载、ILA 枚举、100 KB/s 门槛和 30 分钟长稳；尚待 JTAG-only
+候选镜像板级验证及最终签署。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
