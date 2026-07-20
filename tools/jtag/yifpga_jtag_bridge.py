@@ -154,10 +154,23 @@ class Bridge:
             except ConnectionError:
                 pass
 
-    async def pump_once(self) -> int:
-        header = await self._backend_call(self.backend.read_header)
+    def _read_transaction(self):
+        """Read and commit one mailbox block in a single worker dispatch."""
+        header = self.backend.read_header()
         if header.build_id != self.identity.build_id:
             raise RuntimeError("target build identity changed")
+        if not header.available_bytes:
+            return header, None
+        length = min(header.available_bytes, self.block_size)
+        block = self.backend.read_block(length)
+        if (block.session_id != header.session_id or
+                block.start_count != header.read_count or len(block.data) != length):
+            raise RuntimeError("stale or short mailbox block")
+        self.backend.commit(block)
+        return header, block
+
+    async def pump_once(self) -> int:
+        header, block = await self._backend_call(self._read_transaction)
         if header.session_id != self.session_id:
             old = self.session_id
             self.session_id = header.session_id
@@ -165,14 +178,8 @@ class Bridge:
         self.stats.overflow_count = header.overflow_count
         self.stats.dropped_bytes = header.dropped_bytes
         self.stats.buffer_used = header.available_bytes
-        if not header.available_bytes:
+        if block is None:
             return 0
-        length = min(header.available_bytes, self.block_size)
-        block = await self._backend_call(self.backend.read_block, length)
-        if (block.session_id != header.session_id or
-                block.start_count != header.read_count or len(block.data) != length):
-            raise RuntimeError("stale or short mailbox block")
-        await self._backend_call(self.backend.commit, block)
         if self._capture:
             self._capture.write(block.data)
             self._capture.flush()
