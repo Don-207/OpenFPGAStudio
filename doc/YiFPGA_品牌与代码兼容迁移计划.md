@@ -214,8 +214,13 @@ ILA 镜像一致，均位于 Vivado dbg_hub。BIT/LTX 均存在，产物 SHA-256
 SHA-256 为 `6d631f887d30b716beabc632dc9e46a06104528fe50e97667c1636eb20fa9fc0`。
 本次为 UART RX 空闲电平立即触发，64-bit probe 全窗口保持
 `0x2a04000000000000`，因此证明 ILA 触发、上传和 CSV 导出链路正常，
-不单独证明业务数据活动。尚待 normal 数据通路、performance 与 JTAG-only
-候选镜像板级验证及最终签署。
+不单独证明业务数据活动。normal Bridge 随后以 6 MHz TCK、1,024 B block
+运行 60.051 s 功能冒烟：接收 53,122 B（`884.610 B/s`），2 个 HELLO 对应
+1 次客户端重连，`buffer_used=0`、`slow_clients=0`，且 drop/overflow 历史计数
+在窗口内未增长（首尾均为 370,931）。CSV SHA-256 为
+`1e17d8c92ece9c4570d62862918eba288a8d9745f223368fbeaaec60dc9e635b`。该结果按
+`--min-rate 0` 仅签署 normal 功能链路；100 KB/s 性能门槛仍由 performance 镜像
+单独验证。尚待 performance 与 JTAG-only 候选镜像板级验证及最终签署。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
