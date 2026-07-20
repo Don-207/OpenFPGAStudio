@@ -163,7 +163,7 @@ openfpga_debug_core (deprecated wrapper)
 
 ### YF.WP4：路径、脚本与Vivado工程迁移
 
-状态（2026-07-20）：**代码迁移与用户侧 Vivado 构建完成，板级功能复验进行中**。RTL 与仿真目录已迁移为 `rtl/yifpga_debug`、
+状态（2026-07-20）：**已完成**。RTL 与仿真目录已迁移为 `rtl/yifpga_debug`、
 `sim/yifpga_debug`，源码、测试、板级、Xilinx 适配、约束和 Tcl 文件名已切换 `yifpga_*`；
 `YiFPGAStudio.xpr`、justfile、当前文档及显式文件清单已同步。24 个旧 Tcl 名称保留轻量
 source wrapper，并提供旧工程只读迁移说明。Debug Core、RTL 新旧命名等价和
@@ -242,8 +242,13 @@ Host CPU `0.716%`。1 次客户端重连成功，drop/overflow 首尾均为 0，
 候选镜像板级验证及最终签署。用户同日执行
 `just m36-jtag-only-program 'Digilent/210512180081'` 下载 JTAG-only 镜像：
 Vivado 报告 startup status `HIGH`，目标设备为 `xcku5p_0`，刷新后精确枚举
-1 个 ILA core，脚本输出 `PASS`。尚待 JTAG-only 命令/响应、Profiler 和 LA
-数据闭环验证及最终签署。
+1 个 ILA core，脚本输出 `PASS`。随后 `just m36-jtag-only-validate` 通过：
+UART Monitor 命令的 JTAG 响应包含 27 个 read response 和 17 个 write response，
+Profiler snapshot/alert 分别为 7/2 帧，LA header/data/status/trigger 分别为
+1/13/1/1 帧，checksum/version 检查通过，测试后 Profiler/LA 配置恢复为 `PASS`。
+至此 normal、performance 和 JTAG-only 三个候选镜像的用户侧 Vivado 构建、
+下载与板级复验均完成；最终 `just release-check` 离线门禁同步通过，
+YF.WP4 签署通过。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
