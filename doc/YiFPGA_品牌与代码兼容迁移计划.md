@@ -266,13 +266,14 @@ JTAG-only+ILA和performance+ILA。
 
 ### YF.WP5：仓库与发布迁移
 
-状态（2026-07-20）：**进行中**。GitHub 仓库已从 `Don-207/OpenFPGAStudio` 重命名为
+状态（2026-07-20）：**已完成**。GitHub 仓库已从 `Don-207/OpenFPGAStudio` 重命名为
 `Don-207/YiFPGAStudio`，本地 `origin` 已同步。新旧 URL 均只读解析到同一
 `main` HEAD，旧 URL 重定向有效；GitHub 远端实际无 tag，原计划的“既有
 `v1.0.0` tag”假设不成立。已起草 v1.1.0 Release Notes 并更新 README 候选状态；
 从提交 `d11a9c6` 创建本地干净 clone，`just release-check`、RTL 新旧命名等价
-仿真、deprecated Python wrapper 以及旧 snapshot/协议 fixture 均通过。尚待 tag 策略
-确认、push 和 GitHub Release。
+仿真、deprecated Python wrapper 以及旧 snapshot/协议 fixture 均通过。用户确认
+不回填 `v1.0.0`；`main` 已推送，并在提交 `ed71cf0` 创建 `v1.1.0`
+带注释 tag 和 GitHub Release。YF.WP5 签署通过。
 
 - GitHub仓库重命名为`YiFPGAStudio`，确认旧URL重定向可用。
 - 更新clone URL、badge、issue/PR模板、release链接和外部文档。
