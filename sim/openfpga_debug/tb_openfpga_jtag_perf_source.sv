@@ -12,7 +12,7 @@ byte checksum;
 
 always #5 clk = ~clk;
 
-openfpga_jtag_perf_source #(.BYTE_INTERVAL_TICKS(2)) dut (
+yifpga_jtag_perf_source #(.BYTE_INTERVAL_TICKS(2)) dut (
     .clk(clk), .rst_n(rst_n), .data(data), .valid(valid), .ready(ready)
 );
 

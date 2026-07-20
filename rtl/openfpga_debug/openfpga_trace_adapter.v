@@ -2,7 +2,7 @@
 
 `include "openfpga_trace_pkg.vh"
 
-module openfpga_trace_adapter (
+module yifpga_trace_adapter (
     input  wire        clk,
     input  wire        rst,
 
@@ -123,4 +123,81 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_trace_adapter (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire [31:0] timestamp,
+
+    input  wire        span_begin_valid,
+    input  wire [15:0] span_begin_trace_id,
+    input  wire [15:0] span_begin_instance_id,
+    input  wire [31:0] span_begin_arg0,
+
+    input  wire        span_end_valid,
+    input  wire [15:0] span_end_trace_id,
+    input  wire [15:0] span_end_instance_id,
+    input  wire [7:0]  span_end_status,
+    input  wire [31:0] span_end_arg0,
+
+    input  wire        mark_valid,
+    input  wire [15:0] mark_trace_id,
+    input  wire [7:0]  mark_level,
+    input  wire [31:0] mark_arg0,
+
+    input  wire        value_valid,
+    input  wire [15:0] value_trace_id,
+    input  wire [15:0] value_id,
+    input  wire [31:0] value_data,
+
+    input  wire        drop_valid,
+    input  wire [15:0] drop_trace_id,
+    input  wire [31:0] drop_count,
+
+    output wire        trace_ready,
+    output wire        trace_accepted,
+    output wire        trace_dropped,
+
+    output wire         msg_valid,
+    output wire  [7:0]  msg_type,
+    output wire  [7:0]  payload_len,
+    output wire  [255:0] payload_flat,
+    input  wire        msg_ready
+);
+yifpga_trace_adapter u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .timestamp(timestamp),
+    .span_begin_valid(span_begin_valid),
+    .span_begin_trace_id(span_begin_trace_id),
+    .span_begin_instance_id(span_begin_instance_id),
+    .span_begin_arg0(span_begin_arg0),
+    .span_end_valid(span_end_valid),
+    .span_end_trace_id(span_end_trace_id),
+    .span_end_instance_id(span_end_instance_id),
+    .span_end_status(span_end_status),
+    .span_end_arg0(span_end_arg0),
+    .mark_valid(mark_valid),
+    .mark_trace_id(mark_trace_id),
+    .mark_level(mark_level),
+    .mark_arg0(mark_arg0),
+    .value_valid(value_valid),
+    .value_trace_id(value_trace_id),
+    .value_id(value_id),
+    .value_data(value_data),
+    .drop_valid(drop_valid),
+    .drop_trace_id(drop_trace_id),
+    .drop_count(drop_count),
+    .trace_ready(trace_ready),
+    .trace_accepted(trace_accepted),
+    .trace_dropped(trace_dropped),
+    .msg_valid(msg_valid),
+    .msg_type(msg_type),
+    .payload_len(payload_len),
+    .payload_flat(payload_flat),
+    .msg_ready(msg_ready)
+);
 endmodule

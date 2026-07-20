@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module openfpga_debug_ring_buffer #(
+module yifpga_debug_ring_buffer #(
     parameter ADDR_WIDTH = 4
 ) (
     input  wire        clk,
@@ -69,4 +69,44 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_ring_buffer #(
+    parameter ADDR_WIDTH = 4
+) (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        wr_valid,
+    input  wire [7:0]  wr_type,
+    input  wire [7:0]  wr_len,
+    input  wire [255:0] wr_payload,
+    output wire        wr_ready,
+
+    output wire        rd_valid,
+    output wire [7:0]  rd_type,
+    output wire [7:0]  rd_len,
+    output wire [255:0] rd_payload,
+    input  wire        rd_ready,
+
+    output wire [ADDR_WIDTH:0] used_count
+);
+yifpga_debug_ring_buffer #(
+    .ADDR_WIDTH(ADDR_WIDTH)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .wr_valid(wr_valid),
+    .wr_type(wr_type),
+    .wr_len(wr_len),
+    .wr_payload(wr_payload),
+    .wr_ready(wr_ready),
+    .rd_valid(rd_valid),
+    .rd_type(rd_type),
+    .rd_len(rd_len),
+    .rd_payload(rd_payload),
+    .rd_ready(rd_ready),
+    .used_count(used_count)
+);
 endmodule

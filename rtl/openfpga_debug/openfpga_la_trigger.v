@@ -2,7 +2,7 @@
 
 `include "openfpga_la_pkg.vh"
 
-module openfpga_la_trigger (
+module yifpga_la_trigger (
     input  wire        clk,
     input  wire        rst,
     input  wire        enable,
@@ -63,4 +63,35 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_la_trigger (
+    input  wire        clk,
+    input  wire        rst,
+    input  wire        enable,
+    input  wire        sample_valid,
+    input  wire [3:0]  trigger_mode,
+    input  wire [4:0]  trigger_channel,
+    input  wire [31:0] trigger_value,
+    input  wire [31:0] trigger_mask,
+    input  wire [31:0] sample_bus,
+    output wire         trigger_hit,
+    output wire  [4:0]  hit_channel,
+    output wire  [31:0] hit_sample_value
+);
+yifpga_la_trigger u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .enable(enable),
+    .sample_valid(sample_valid),
+    .trigger_mode(trigger_mode),
+    .trigger_channel(trigger_channel),
+    .trigger_value(trigger_value),
+    .trigger_mask(trigger_mask),
+    .sample_bus(sample_bus),
+    .trigger_hit(trigger_hit),
+    .hit_channel(hit_channel),
+    .hit_sample_value(hit_sample_value)
+);
 endmodule

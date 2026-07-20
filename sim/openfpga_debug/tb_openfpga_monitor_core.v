@@ -56,7 +56,7 @@ always @(posedge clk) begin
     end
 end
 
-openfpga_monitor_core #(
+yifpga_monitor_core #(
     .DEFAULT_DEMO_PERIOD(32'd100)
 ) dut (
     .clk(clk),

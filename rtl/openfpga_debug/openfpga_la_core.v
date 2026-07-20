@@ -2,7 +2,7 @@
 
 `include "openfpga_la_pkg.vh"
 
-module openfpga_la_core #(
+module yifpga_la_core #(
     parameter SAMPLE_WIDTH = 32,
     parameter SAMPLE_DEPTH = 128
 ) (
@@ -64,7 +64,7 @@ wire [31:0] trigger_sample_value_w;
 
 assign done = state == `OFD_LA_STATE_DONE;
 
-openfpga_la_trigger u_trigger (
+yifpga_la_trigger u_trigger (
     .clk(clk),
     .rst(rst),
     .enable(enable && (state == `OFD_LA_STATE_ARMED)),
@@ -309,4 +309,81 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_la_core #(
+    parameter SAMPLE_WIDTH = 32,
+    parameter SAMPLE_DEPTH = 128
+) (
+    input  wire        clk,
+    input  wire        rst,
+    input  wire        enable,
+    input  wire        arm_pulse,
+    input  wire        stop_pulse,
+    input  wire        clear_pulse,
+    input  wire        force_trigger_pulse,
+    input  wire        start_readout_pulse,
+    input  wire        readout_done_pulse,
+    input  wire [15:0] sample_divisor,
+    input  wire [15:0] capture_depth,
+    input  wire [15:0] pretrigger_depth,
+    input  wire [3:0]  trigger_mode,
+    input  wire [4:0]  trigger_channel,
+    input  wire [31:0] trigger_value,
+    input  wire [31:0] trigger_mask,
+    input  wire [SAMPLE_WIDTH-1:0] sample_bus,
+    output wire  [2:0]  state,
+    output wire  [15:0] samples_written,
+    output wire  [15:0] trigger_index,
+    output wire  [31:0] capture_id,
+    output wire        done,
+    output wire         overflow,
+    output wire         config_error,
+    output wire  [7:0]  error_code,
+    output wire  [15:0] capture_flags,
+    output wire  [31:0] trigger_sample_value,
+    output wire  [4:0]  trigger_hit_channel,
+    input  wire        read_req,
+    input  wire [15:0] read_index,
+    output wire  [SAMPLE_WIDTH-1:0] read_sample,
+    output wire         read_valid
+);
+yifpga_la_core #(
+    .SAMPLE_WIDTH(SAMPLE_WIDTH),
+    .SAMPLE_DEPTH(SAMPLE_DEPTH)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .enable(enable),
+    .arm_pulse(arm_pulse),
+    .stop_pulse(stop_pulse),
+    .clear_pulse(clear_pulse),
+    .force_trigger_pulse(force_trigger_pulse),
+    .start_readout_pulse(start_readout_pulse),
+    .readout_done_pulse(readout_done_pulse),
+    .sample_divisor(sample_divisor),
+    .capture_depth(capture_depth),
+    .pretrigger_depth(pretrigger_depth),
+    .trigger_mode(trigger_mode),
+    .trigger_channel(trigger_channel),
+    .trigger_value(trigger_value),
+    .trigger_mask(trigger_mask),
+    .sample_bus(sample_bus),
+    .state(state),
+    .samples_written(samples_written),
+    .trigger_index(trigger_index),
+    .capture_id(capture_id),
+    .done(done),
+    .overflow(overflow),
+    .config_error(config_error),
+    .error_code(error_code),
+    .capture_flags(capture_flags),
+    .trigger_sample_value(trigger_sample_value),
+    .trigger_hit_channel(trigger_hit_channel),
+    .read_req(read_req),
+    .read_index(read_index),
+    .read_sample(read_sample),
+    .read_valid(read_valid)
+);
 endmodule

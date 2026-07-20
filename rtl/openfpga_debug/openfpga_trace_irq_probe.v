@@ -3,7 +3,7 @@
 `include "openfpga_debug_pkg.vh"
 `include "openfpga_trace_pkg.vh"
 
-module openfpga_trace_irq_probe #(
+module yifpga_trace_irq_probe #(
     parameter ENABLE = 1
 ) (
     input  wire        clk,
@@ -47,4 +47,33 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_trace_irq_probe #(
+    parameter ENABLE = 1
+) (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        irq_level,
+    input  wire [31:0] irq_arg0,
+
+    output wire         mark_valid,
+    output wire  [15:0] mark_trace_id,
+    output wire  [7:0]  mark_level,
+    output wire  [31:0] mark_arg0
+);
+yifpga_trace_irq_probe #(
+    .ENABLE(ENABLE)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .irq_level(irq_level),
+    .irq_arg0(irq_arg0),
+    .mark_valid(mark_valid),
+    .mark_trace_id(mark_trace_id),
+    .mark_level(mark_level),
+    .mark_arg0(mark_arg0)
+);
 endmodule

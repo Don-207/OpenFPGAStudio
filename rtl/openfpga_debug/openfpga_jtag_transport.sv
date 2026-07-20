@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module openfpga_jtag_transport #(
+module yifpga_jtag_transport #(
     parameter int ADDR_WIDTH = 12,
     parameter logic [31:0] BUILD_ID = 32'd0
 ) (
@@ -37,7 +37,7 @@ logic ring_valid, ring_ready, ring_commit, ring_abort;
 // adjacent source cycles and violate write-read==available around wrap/refill.
 assign mailbox_write_count = read_count + {{(31-ADDR_WIDTH){1'b0}}, available_bytes};
 
-openfpga_jtag_ring_buffer #(.ADDR_WIDTH(ADDR_WIDTH)) u_ring (
+yifpga_jtag_ring_buffer #(.ADDR_WIDTH(ADDR_WIDTH)) u_ring (
     .wr_clk(debug_clk), .wr_rst_n(debug_rst_n), .wr_data(debug_data),
     .wr_valid(debug_valid), .wr_ready(debug_ready), .write_count(write_count),
     .overflow_count(overflow_count), .dropped_bytes(dropped_bytes),
@@ -48,7 +48,7 @@ openfpga_jtag_ring_buffer #(.ADDR_WIDTH(ADDR_WIDTH)) u_ring (
     .rd_overflow_count(rd_overflow_count), .rd_dropped_bytes(rd_dropped_bytes)
 );
 
-openfpga_jtag_mailbox #(
+yifpga_jtag_mailbox #(
     .ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(BUILD_ID)
 ) u_mailbox (
     .clk(jtag_clk), .rst_n(jtag_rst_n), .header_req(header_req),
@@ -63,4 +63,57 @@ openfpga_jtag_mailbox #(
     .ring_abort(ring_abort)
 );
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_transport #(
+    parameter int ADDR_WIDTH = 12,
+    parameter logic [31:0] BUILD_ID = 32'd0
+) (
+    input  logic       debug_clk,
+    input  logic       debug_rst_n,
+    input  logic [7:0] debug_data,
+    input  logic       debug_valid,
+    output wire       debug_ready,
+    input  logic       jtag_clk,
+    input  logic       jtag_rst_n,
+    input  logic [31:0] session_id,
+    input  logic       header_req,
+    input  logic [5:0] header_addr,
+    output wire [7:0] header_data,
+    output wire       header_valid,
+    input  logic       payload_req,
+    output wire [7:0] payload_data,
+    output wire       payload_valid,
+    input  logic       payload_ready,
+    input  logic       payload_commit,
+    input  logic       payload_abort,
+    output wire [31:0] overflow_count,
+    output wire [31:0] dropped_bytes
+);
+yifpga_jtag_transport #(
+    .ADDR_WIDTH(ADDR_WIDTH),
+    .BUILD_ID(BUILD_ID)
+) u_yifpga_compat (
+    .debug_clk(debug_clk),
+    .debug_rst_n(debug_rst_n),
+    .debug_data(debug_data),
+    .debug_valid(debug_valid),
+    .debug_ready(debug_ready),
+    .jtag_clk(jtag_clk),
+    .jtag_rst_n(jtag_rst_n),
+    .session_id(session_id),
+    .header_req(header_req),
+    .header_addr(header_addr),
+    .header_data(header_data),
+    .header_valid(header_valid),
+    .payload_req(payload_req),
+    .payload_data(payload_data),
+    .payload_valid(payload_valid),
+    .payload_ready(payload_ready),
+    .payload_commit(payload_commit),
+    .payload_abort(payload_abort),
+    .overflow_count(overflow_count),
+    .dropped_bytes(dropped_bytes)
+);
 endmodule

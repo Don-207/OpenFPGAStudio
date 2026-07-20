@@ -2,7 +2,7 @@
 
 `include "openfpga_la_pkg.vh"
 
-module openfpga_la_adapter (
+module yifpga_la_adapter (
     input  wire        clk,
     input  wire        rst,
     input  wire [31:0] timestamp,
@@ -211,4 +211,61 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_la_adapter (
+    input  wire        clk,
+    input  wire        rst,
+    input  wire [31:0] timestamp,
+    input  wire        start_readout_pulse,
+    output wire         core_start_readout_pulse,
+    output wire         core_readout_done_pulse,
+    input  wire [2:0]  core_state,
+    input  wire [7:0]  core_error_code,
+    input  wire [15:0] core_samples_written,
+    input  wire [15:0] core_trigger_index,
+    input  wire [31:0] core_capture_id,
+    input  wire [15:0] core_capture_flags,
+    input  wire [31:0] core_sample_period_cycles,
+    input  wire [4:0]  core_trigger_channel,
+    input  wire [31:0] core_trigger_sample_value,
+    input  wire [31:0] core_trigger_value,
+    output wire         core_read_req,
+    output wire  [15:0] core_read_index,
+    input  wire [31:0] core_read_sample,
+    input  wire        core_read_valid,
+    output wire         msg_valid,
+    input  wire        msg_ready,
+    output wire  [7:0]  msg_type,
+    output wire  [7:0]  payload_len,
+    output wire  [255:0] payload_flat
+);
+yifpga_la_adapter u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .timestamp(timestamp),
+    .start_readout_pulse(start_readout_pulse),
+    .core_start_readout_pulse(core_start_readout_pulse),
+    .core_readout_done_pulse(core_readout_done_pulse),
+    .core_state(core_state),
+    .core_error_code(core_error_code),
+    .core_samples_written(core_samples_written),
+    .core_trigger_index(core_trigger_index),
+    .core_capture_id(core_capture_id),
+    .core_capture_flags(core_capture_flags),
+    .core_sample_period_cycles(core_sample_period_cycles),
+    .core_trigger_channel(core_trigger_channel),
+    .core_trigger_sample_value(core_trigger_sample_value),
+    .core_trigger_value(core_trigger_value),
+    .core_read_req(core_read_req),
+    .core_read_index(core_read_index),
+    .core_read_sample(core_read_sample),
+    .core_read_valid(core_read_valid),
+    .msg_valid(msg_valid),
+    .msg_ready(msg_ready),
+    .msg_type(msg_type),
+    .payload_len(payload_len),
+    .payload_flat(payload_flat)
+);
 endmodule

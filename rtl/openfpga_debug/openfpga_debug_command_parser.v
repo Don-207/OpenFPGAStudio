@@ -3,7 +3,7 @@
 `include "openfpga_debug_pkg.vh"
 `include "openfpga_monitor_pkg.vh"
 
-module openfpga_debug_command_parser (
+module yifpga_debug_command_parser (
     input  wire        clk,
     input  wire        rst,
 
@@ -144,4 +144,46 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_command_parser (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        byte_valid,
+    input  wire [7:0]  byte_data,
+
+    output wire         monitor_req_valid,
+    input  wire        monitor_req_ready,
+    output wire  [15:0] monitor_req_seq,
+    output wire  [15:0] monitor_req_addr,
+    output wire         monitor_req_write,
+    output wire  [7:0]  monitor_req_width,
+    output wire  [31:0] monitor_req_wdata,
+    output wire  [31:0] monitor_req_wmask,
+
+    output wire         checksum_error,
+    output wire         bad_len_error,
+    output wire         unsupported_error,
+    output wire [2:0]  debug_state
+);
+yifpga_debug_command_parser u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .byte_valid(byte_valid),
+    .byte_data(byte_data),
+    .monitor_req_valid(monitor_req_valid),
+    .monitor_req_ready(monitor_req_ready),
+    .monitor_req_seq(monitor_req_seq),
+    .monitor_req_addr(monitor_req_addr),
+    .monitor_req_write(monitor_req_write),
+    .monitor_req_width(monitor_req_width),
+    .monitor_req_wdata(monitor_req_wdata),
+    .monitor_req_wmask(monitor_req_wmask),
+    .checksum_error(checksum_error),
+    .bad_len_error(bad_len_error),
+    .unsupported_error(unsupported_error),
+    .debug_state(debug_state)
+);
 endmodule

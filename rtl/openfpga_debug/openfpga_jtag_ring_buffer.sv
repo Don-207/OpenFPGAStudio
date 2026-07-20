@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module openfpga_jtag_ring_buffer #(
+module yifpga_jtag_ring_buffer #(
     parameter int ADDR_WIDTH = 12
 ) (
     input  logic        wr_clk,
@@ -167,4 +167,56 @@ always_ff @(posedge rd_clk or negedge rd_rst_n) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_ring_buffer #(
+    parameter int ADDR_WIDTH = 12
+) (
+    input  logic        wr_clk,
+    input  logic        wr_rst_n,
+    input  logic [7:0]  wr_data,
+    input  logic        wr_valid,
+    output wire        wr_ready,
+    output wire [31:0] write_count,
+    output wire [31:0] overflow_count,
+    output wire [31:0] dropped_bytes,
+
+    input  logic        rd_clk,
+    input  logic        rd_rst_n,
+    output wire [7:0]  rd_data,
+    output wire        rd_valid,
+    input  logic        rd_ready,
+    input  logic        rd_commit,
+    input  logic        rd_abort,
+    output wire [31:0] read_count,
+    output wire [ADDR_WIDTH:0] available_bytes,
+    output wire [31:0] rd_write_count,
+    output wire [31:0] rd_overflow_count,
+    output wire [31:0] rd_dropped_bytes
+);
+yifpga_jtag_ring_buffer #(
+    .ADDR_WIDTH(ADDR_WIDTH)
+) u_yifpga_compat (
+    .wr_clk(wr_clk),
+    .wr_rst_n(wr_rst_n),
+    .wr_data(wr_data),
+    .wr_valid(wr_valid),
+    .wr_ready(wr_ready),
+    .write_count(write_count),
+    .overflow_count(overflow_count),
+    .dropped_bytes(dropped_bytes),
+    .rd_clk(rd_clk),
+    .rd_rst_n(rd_rst_n),
+    .rd_data(rd_data),
+    .rd_valid(rd_valid),
+    .rd_ready(rd_ready),
+    .rd_commit(rd_commit),
+    .rd_abort(rd_abort),
+    .read_count(read_count),
+    .available_bytes(available_bytes),
+    .rd_write_count(rd_write_count),
+    .rd_overflow_count(rd_overflow_count),
+    .rd_dropped_bytes(rd_dropped_bytes)
+);
 endmodule

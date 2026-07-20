@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // Legal Debug Protocol heartbeat stream for sustained JTAG transport testing.
-module openfpga_jtag_perf_source #(
+module yifpga_jtag_perf_source #(
     parameter int BYTE_INTERVAL_TICKS = 50
 ) (
     input  logic       clk,
@@ -58,4 +58,25 @@ always_ff @(posedge clk or negedge rst_n) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_perf_source #(
+    parameter int BYTE_INTERVAL_TICKS = 50
+) (
+    input  logic       clk,
+    input  logic       rst_n,
+    output wire [7:0] data,
+    output wire       valid,
+    input  logic       ready
+);
+yifpga_jtag_perf_source #(
+    .BYTE_INTERVAL_TICKS(BYTE_INTERVAL_TICKS)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst_n(rst_n),
+    .data(data),
+    .valid(valid),
+    .ready(ready)
+);
 endmodule

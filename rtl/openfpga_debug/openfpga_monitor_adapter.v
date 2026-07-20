@@ -2,7 +2,7 @@
 
 `include "openfpga_monitor_pkg.vh"
 
-module openfpga_monitor_adapter (
+module yifpga_monitor_adapter (
     input  wire        clk,
     input  wire        rst,
 
@@ -61,4 +61,50 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_monitor_adapter (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire [31:0] timestamp,
+
+    input  wire        resp_valid,
+    output wire        resp_ready,
+    input  wire [15:0] resp_seq,
+    input  wire [15:0] resp_addr,
+    input  wire        resp_write,
+    input  wire [7:0]  resp_width,
+    input  wire [7:0]  resp_status,
+    input  wire [31:0] resp_rdata,
+    input  wire [31:0] resp_old_value,
+    input  wire [31:0] resp_new_value,
+
+    output wire         msg_valid,
+    input  wire        msg_ready,
+    output wire  [7:0]  msg_type,
+    output wire  [7:0]  payload_len,
+    output wire  [255:0] payload_flat
+);
+yifpga_monitor_adapter u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .timestamp(timestamp),
+    .resp_valid(resp_valid),
+    .resp_ready(resp_ready),
+    .resp_seq(resp_seq),
+    .resp_addr(resp_addr),
+    .resp_write(resp_write),
+    .resp_width(resp_width),
+    .resp_status(resp_status),
+    .resp_rdata(resp_rdata),
+    .resp_old_value(resp_old_value),
+    .resp_new_value(resp_new_value),
+    .msg_valid(msg_valid),
+    .msg_ready(msg_ready),
+    .msg_type(msg_type),
+    .payload_len(payload_len),
+    .payload_flat(payload_flat)
+);
 endmodule

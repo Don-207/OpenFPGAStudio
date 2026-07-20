@@ -3,7 +3,7 @@
 `include "openfpga_debug_pkg.vh"
 `include "openfpga_trace_pkg.vh"
 
-module openfpga_debug_core #(
+module yifpga_debug_core #(
     parameter CLK_FREQ_HZ = 50000000,
     parameter UART_BAUD   = 115200,
     parameter BUFFER_ADDR_WIDTH = 4,
@@ -121,7 +121,7 @@ assign packet_byte_ready = ENABLE_UART ? uart_data_ready : transport_byte_ready;
 assign transport_byte_valid = packet_byte_valid && packet_byte_ready;
 assign transport_byte_data = packet_byte_data;
 
-openfpga_debug_timestamp u_timestamp (
+yifpga_debug_timestamp u_timestamp (
     .clk(clk),
     .rst(rst),
     .timestamp(timestamp)
@@ -214,7 +214,7 @@ always @(*) begin
     end
 end
 
-openfpga_trace_adapter u_trace_adapter (
+yifpga_trace_adapter u_trace_adapter (
     .clk(clk),
     .rst(rst),
     .timestamp(timestamp),
@@ -248,7 +248,7 @@ openfpga_trace_adapter u_trace_adapter (
     .msg_ready(trace_msg_ready)
 );
 
-openfpga_debug_ring_buffer #(
+yifpga_debug_ring_buffer #(
     .ADDR_WIDTH(BUFFER_ADDR_WIDTH)
 ) u_ring_buffer (
     .clk(clk),
@@ -266,7 +266,7 @@ openfpga_debug_ring_buffer #(
     .used_count(fifo_used_count)
 );
 
-openfpga_debug_packetizer u_packetizer (
+yifpga_debug_packetizer u_packetizer (
     .clk(clk),
     .rst(rst),
     .msg_valid(fifo_rd_valid),
@@ -280,7 +280,7 @@ openfpga_debug_packetizer u_packetizer (
 );
 
 generate if (ENABLE_UART) begin : g_uart_tx
-openfpga_debug_uart_tx #(
+yifpga_debug_uart_tx #(
     .CLK_FREQ_HZ(CLK_FREQ_HZ),
     .BAUD(UART_BAUD)
 ) u_uart_tx (
@@ -310,4 +310,150 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_core #(
+    parameter CLK_FREQ_HZ = 50000000,
+    parameter UART_BAUD   = 115200,
+    parameter BUFFER_ADDR_WIDTH = 4,
+    parameter ENABLE_UART = 1
+) (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        heartbeat_valid,
+    input  wire        status_valid,
+
+    input  wire        event_valid,
+    input  wire [15:0] event_id,
+    input  wire [7:0]  event_level,
+    input  wire [31:0] event_arg0,
+
+    input  wire        watch_valid,
+    input  wire [15:0] watch_id,
+    input  wire [31:0] watch_value,
+
+    input  wire        print_valid,
+    input  wire [15:0] print_id,
+    input  wire [31:0] print_arg0,
+    input  wire [31:0] print_arg1,
+
+    input  wire        trace_span_begin_valid,
+    input  wire [15:0] trace_span_begin_trace_id,
+    input  wire [15:0] trace_span_begin_instance_id,
+    input  wire [31:0] trace_span_begin_arg0,
+
+    input  wire        trace_span_end_valid,
+    input  wire [15:0] trace_span_end_trace_id,
+    input  wire [15:0] trace_span_end_instance_id,
+    input  wire [7:0]  trace_span_end_status,
+    input  wire [31:0] trace_span_end_arg0,
+
+    input  wire        trace_mark_valid,
+    input  wire [15:0] trace_mark_trace_id,
+    input  wire [7:0]  trace_mark_level,
+    input  wire [31:0] trace_mark_arg0,
+
+    input  wire        trace_value_valid,
+    input  wire [15:0] trace_value_trace_id,
+    input  wire [15:0] trace_value_id,
+    input  wire [31:0] trace_value_data,
+
+    input  wire        trace_drop_valid,
+    input  wire [15:0] trace_drop_trace_id,
+    input  wire [31:0] trace_drop_count,
+
+    input  wire        monitor_msg_valid,
+    input  wire [7:0]  monitor_msg_type,
+    input  wire [7:0]  monitor_msg_len,
+    input  wire [255:0] monitor_msg_payload,
+    output wire        monitor_msg_ready,
+
+    input  wire        profiler_msg_valid,
+    input  wire [7:0]  profiler_msg_type,
+    input  wire [7:0]  profiler_msg_len,
+    input  wire [255:0] profiler_msg_payload,
+    output wire        profiler_msg_ready,
+
+    input  wire        la_msg_valid,
+    input  wire [7:0]  la_msg_type,
+    input  wire [7:0]  la_msg_len,
+    input  wire [255:0] la_msg_payload,
+    output wire        la_msg_ready,
+
+    output wire        uart_tx,
+    output wire        transport_byte_valid,
+    output wire [7:0]  transport_byte_data,
+    input  wire        transport_byte_ready,
+    output wire        busy,
+    output wire [15:0] buffer_used,
+    output wire  [15:0] drop_count,
+    output wire  [15:0] packet_count
+);
+yifpga_debug_core #(
+    .CLK_FREQ_HZ(CLK_FREQ_HZ),
+    .UART_BAUD(UART_BAUD),
+    .BUFFER_ADDR_WIDTH(BUFFER_ADDR_WIDTH),
+    .ENABLE_UART(ENABLE_UART)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .heartbeat_valid(heartbeat_valid),
+    .status_valid(status_valid),
+    .event_valid(event_valid),
+    .event_id(event_id),
+    .event_level(event_level),
+    .event_arg0(event_arg0),
+    .watch_valid(watch_valid),
+    .watch_id(watch_id),
+    .watch_value(watch_value),
+    .print_valid(print_valid),
+    .print_id(print_id),
+    .print_arg0(print_arg0),
+    .print_arg1(print_arg1),
+    .trace_span_begin_valid(trace_span_begin_valid),
+    .trace_span_begin_trace_id(trace_span_begin_trace_id),
+    .trace_span_begin_instance_id(trace_span_begin_instance_id),
+    .trace_span_begin_arg0(trace_span_begin_arg0),
+    .trace_span_end_valid(trace_span_end_valid),
+    .trace_span_end_trace_id(trace_span_end_trace_id),
+    .trace_span_end_instance_id(trace_span_end_instance_id),
+    .trace_span_end_status(trace_span_end_status),
+    .trace_span_end_arg0(trace_span_end_arg0),
+    .trace_mark_valid(trace_mark_valid),
+    .trace_mark_trace_id(trace_mark_trace_id),
+    .trace_mark_level(trace_mark_level),
+    .trace_mark_arg0(trace_mark_arg0),
+    .trace_value_valid(trace_value_valid),
+    .trace_value_trace_id(trace_value_trace_id),
+    .trace_value_id(trace_value_id),
+    .trace_value_data(trace_value_data),
+    .trace_drop_valid(trace_drop_valid),
+    .trace_drop_trace_id(trace_drop_trace_id),
+    .trace_drop_count(trace_drop_count),
+    .monitor_msg_valid(monitor_msg_valid),
+    .monitor_msg_type(monitor_msg_type),
+    .monitor_msg_len(monitor_msg_len),
+    .monitor_msg_payload(monitor_msg_payload),
+    .monitor_msg_ready(monitor_msg_ready),
+    .profiler_msg_valid(profiler_msg_valid),
+    .profiler_msg_type(profiler_msg_type),
+    .profiler_msg_len(profiler_msg_len),
+    .profiler_msg_payload(profiler_msg_payload),
+    .profiler_msg_ready(profiler_msg_ready),
+    .la_msg_valid(la_msg_valid),
+    .la_msg_type(la_msg_type),
+    .la_msg_len(la_msg_len),
+    .la_msg_payload(la_msg_payload),
+    .la_msg_ready(la_msg_ready),
+    .uart_tx(uart_tx),
+    .transport_byte_valid(transport_byte_valid),
+    .transport_byte_data(transport_byte_data),
+    .transport_byte_ready(transport_byte_ready),
+    .busy(busy),
+    .buffer_used(buffer_used),
+    .drop_count(drop_count),
+    .packet_count(packet_count)
+);
 endmodule

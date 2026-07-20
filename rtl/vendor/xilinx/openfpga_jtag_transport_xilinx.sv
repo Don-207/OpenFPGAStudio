@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // Xilinx integration boundary: BSCANE2 -> generic USER-DR engine -> transport.
 // Board designs instantiate this module only when JTAG transport is enabled.
-module openfpga_jtag_transport_xilinx #(
+module yifpga_jtag_transport_xilinx #(
     parameter int ADDR_WIDTH = 12,
     parameter int USER_CHAIN = 2,
     parameter logic [31:0] BUILD_ID = 32'd0
@@ -28,12 +28,12 @@ logic command_rst_n;
 // cross-domain counter distance after a host reconnect.
 assign command_rst_n = debug_rst_n && !bscan_reset;
 
-openfpga_jtag_bscan_xilinx #(.USER_CHAIN(USER_CHAIN)) u_bscan (
+yifpga_jtag_bscan_xilinx #(.USER_CHAIN(USER_CHAIN)) u_bscan (
     .capture(capture), .drck(drck), .reset(bscan_reset), .runtest(runtest),
     .sel(sel), .shift(shift), .tck(tck), .tdi(tdi), .update(update), .tdo(tdo)
 );
 
-openfpga_jtag_user_dr u_user_dr (
+yifpga_jtag_user_dr u_user_dr (
     .tck(tck), .rst_n(command_rst_n), .sel(sel), .capture(capture), .shift(shift),
     .update(update), .tdi(tdi), .tdo(tdo), .header_req(header_req),
     .header_addr(header_addr), .header_data(header_data), .header_valid(header_valid),
@@ -42,7 +42,7 @@ openfpga_jtag_user_dr u_user_dr (
     .payload_abort(payload_abort)
 );
 
-openfpga_jtag_transport #(.ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(BUILD_ID)) u_transport (
+yifpga_jtag_transport #(.ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(BUILD_ID)) u_transport (
     .debug_clk(debug_clk), .debug_rst_n(debug_rst_n), .debug_data(debug_data),
     .debug_valid(debug_valid), .debug_ready(debug_ready), .jtag_clk(tck),
     .jtag_rst_n(debug_rst_n), .session_id(session_id), .header_req(header_req),
@@ -53,4 +53,35 @@ openfpga_jtag_transport #(.ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(BUILD_ID)) u_transp
     .dropped_bytes(dropped_bytes)
 );
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_transport_xilinx #(
+    parameter int ADDR_WIDTH = 12,
+    parameter int USER_CHAIN = 2,
+    parameter logic [31:0] BUILD_ID = 32'd0
+) (
+    input  logic        debug_clk,
+    input  logic        debug_rst_n,
+    input  logic [7:0]  debug_data,
+    input  logic        debug_valid,
+    output wire        debug_ready,
+    input  logic [31:0] session_id,
+    output wire [31:0] overflow_count,
+    output wire [31:0] dropped_bytes
+);
+yifpga_jtag_transport_xilinx #(
+    .ADDR_WIDTH(ADDR_WIDTH),
+    .USER_CHAIN(USER_CHAIN),
+    .BUILD_ID(BUILD_ID)
+) u_yifpga_compat (
+    .debug_clk(debug_clk),
+    .debug_rst_n(debug_rst_n),
+    .debug_data(debug_data),
+    .debug_valid(debug_valid),
+    .debug_ready(debug_ready),
+    .session_id(session_id),
+    .overflow_count(overflow_count),
+    .dropped_bytes(dropped_bytes)
+);
 endmodule

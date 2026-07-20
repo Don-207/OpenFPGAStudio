@@ -132,6 +132,17 @@
 
 ### YF.WP3：RTL标识兼容迁移
 
+状态（2026-07-20）：**已完成**。36 个通用、板级及 Xilinx 适配 module
+已迁移为单一 `yifpga_*` canonical 实现，旧 `openfpga_*` module 保留端口和参数默认值不变的
+轻量 wrapper；RTL 内部实例已切换新名称。`YIFPGA_DEBUG_SIM` 已成为 canonical 构建宏，旧
+`OPENFPGA_DEBUG_SIM` 继续映射为兼容 alias。现有 Debug Core、Trace、Profiler、Logic
+Analyzer、board demo 和 JTAG 用例均通过 `xvlog` 分析与 `xelab` 静态展开，Xilinx 适配源码
+也通过 `xvlog` 分析。Debug Core、Profiler 和 Logic Analyzer 行为用例通过；新增 Trace 与
+board demo 新旧顶层逐周期等价仿真并通过。提交 `46acb9a` 的独立基线复验确认 Trace Adapter
+原有 27 项断言、board demo 原有 1 项 LED activity 断言以及 JTAG transport 原有 2 项断言在
+迁移前已同样失败，均不属于 WP3 回归，后续应以独立功能修复处理。`just release-check` 与
+`git diff --check` 通过。未运行综合、实现、bitstream 生成或板级操作。
+
 - 新核心module采用`yifpga_*`名称。
 - 对外公开的旧`openfpga_*`module保留wrapper，端口名、参数默认值和时序行为不变。
 - 先迁移内部实例到新module，再迁移下游示例；不得同时维护两份功能RTL。

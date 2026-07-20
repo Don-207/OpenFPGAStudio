@@ -2,7 +2,7 @@
 
 `include "openfpga_debug_pkg.vh"
 
-module openfpga_debug_packetizer (
+module yifpga_debug_packetizer (
     input  wire        clk,
     input  wire        rst,
 
@@ -95,4 +95,33 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_packetizer (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        msg_valid,
+    input  wire [7:0]  msg_type,
+    input  wire [7:0]  payload_len,
+    input  wire [255:0] payload_flat,
+    output wire        msg_ready,
+
+    output wire         out_valid,
+    output wire  [7:0]  out_data,
+    input  wire        out_ready
+);
+yifpga_debug_packetizer u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .msg_valid(msg_valid),
+    .msg_type(msg_type),
+    .payload_len(payload_len),
+    .payload_flat(payload_flat),
+    .msg_ready(msg_ready),
+    .out_valid(out_valid),
+    .out_data(out_data),
+    .out_ready(out_ready)
+);
 endmodule

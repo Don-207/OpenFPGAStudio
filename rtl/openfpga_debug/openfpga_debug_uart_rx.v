@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module openfpga_debug_uart_rx #(
+module yifpga_debug_uart_rx #(
     parameter CLK_FREQ_HZ = 50000000,
     parameter BAUD = 115200
 ) (
@@ -105,4 +105,29 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_uart_rx #(
+    parameter CLK_FREQ_HZ = 50000000,
+    parameter BAUD = 115200
+) (
+    input  wire       clk,
+    input  wire       rst,
+    input  wire       rx,
+    output wire        data_valid,
+    output wire [7:0]  data,
+    output wire        frame_error
+);
+yifpga_debug_uart_rx #(
+    .CLK_FREQ_HZ(CLK_FREQ_HZ),
+    .BAUD(BAUD)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .rx(rx),
+    .data_valid(data_valid),
+    .data(data),
+    .frame_error(frame_error)
+);
 endmodule

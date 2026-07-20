@@ -2,7 +2,7 @@
 
 `include "openfpga_profiler_pkg.vh"
 
-module openfpga_profiler_fifo_probe #(
+module yifpga_profiler_fifo_probe #(
     parameter ENABLE = 1,
     parameter LEVEL_WIDTH = 16,
     parameter METRIC_ID = `OFD_PROFILER_METRIC_FIFO_DEMO_LEVEL
@@ -82,4 +82,57 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_profiler_fifo_probe #(
+    parameter ENABLE = 1,
+    parameter LEVEL_WIDTH = 16,
+    parameter METRIC_ID = `OFD_PROFILER_METRIC_FIFO_DEMO_LEVEL
+) (
+    input  wire                         clk,
+    input  wire                         rst,
+    input  wire                         clear,
+    input  wire                         enable,
+
+    input  wire [LEVEL_WIDTH-1:0]       fifo_level,
+    input  wire                         fifo_wr_en,
+    input  wire                         fifo_rd_en,
+    input  wire                         fifo_full,
+    input  wire                         fifo_empty,
+    input  wire                         fifo_overflow,
+    input  wire                         fifo_underflow,
+
+    output wire                          metric_valid,
+    output wire  [15:0]                  metric_id,
+    output wire  [31:0]                  metric_value0,
+    output wire  [31:0]                  metric_value1,
+    output wire  [31:0]                  metric_value2,
+    output wire  [31:0]                  metric_value3,
+    output wire                          metric_overflow
+);
+yifpga_profiler_fifo_probe #(
+    .ENABLE(ENABLE),
+    .LEVEL_WIDTH(LEVEL_WIDTH),
+    .METRIC_ID(METRIC_ID)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .clear(clear),
+    .enable(enable),
+    .fifo_level(fifo_level),
+    .fifo_wr_en(fifo_wr_en),
+    .fifo_rd_en(fifo_rd_en),
+    .fifo_full(fifo_full),
+    .fifo_empty(fifo_empty),
+    .fifo_overflow(fifo_overflow),
+    .fifo_underflow(fifo_underflow),
+    .metric_valid(metric_valid),
+    .metric_id(metric_id),
+    .metric_value0(metric_value0),
+    .metric_value1(metric_value1),
+    .metric_value2(metric_value2),
+    .metric_value3(metric_value3),
+    .metric_overflow(metric_overflow)
+);
 endmodule

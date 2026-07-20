@@ -51,7 +51,8 @@ SOF + VERSION + TYPE + LEN + PAYLOAD + XOR_CHECKSUM
 
 ## 3. RTL 接入
 
-用户工程通常实例化 `openfpga_debug_top`，并把 Trace 输入接到业务逻辑或 probe 输出。
+用户工程通常实例化 `yifpga_debug_top`，并把 Trace 输入接到业务逻辑或 probe 输出；旧
+`openfpga_debug_top` 仍作为等价 wrapper 保留。
 
 核心输入分五组，均为单周期脉冲：
 

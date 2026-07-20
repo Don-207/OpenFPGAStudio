@@ -35,6 +35,14 @@ trace-board-sim:
 # Current-source Trace software/RTL regression; Vivado elaboration and real board remain separate.
 trace-check: parser-test viewer-test trace-adapter-sim trace-board-sim
 
+# YF.WP3 old/new RTL naming equivalence; behavioral simulation only.
+rtl-naming-equivalence-sim:
+    {{xvlog}} -sv -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/*.vh rtl/openfpga_debug/*.v rtl/board/openfpga_debug_board_demo.v sim/openfpga_debug/tb_yifpga_trace_naming_equivalence.sv sim/board/tb_yifpga_board_naming_equivalence.sv
+    {{xelab}} tb_yifpga_trace_naming_equivalence -s tb_yifpga_trace_naming_equivalence_sim
+    {{xsim}} tb_yifpga_trace_naming_equivalence_sim -runall
+    {{xelab}} tb_yifpga_board_naming_equivalence -s tb_yifpga_board_naming_equivalence_sim
+    {{xsim}} tb_yifpga_board_naming_equivalence_sim -runall
+
 # Fourth-stage Profiler core snapshot/alert regression.
 profiler-core-sim:
     {{xvlog}} -d OPENFPGA_DEBUG_SIM -i rtl/openfpga_debug rtl/openfpga_debug/openfpga_profiler_pkg.vh rtl/openfpga_debug/openfpga_profiler_core.v sim/openfpga_debug/tb_openfpga_profiler_core.v

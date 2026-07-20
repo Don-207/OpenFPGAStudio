@@ -2,7 +2,7 @@
 
 `include "openfpga_profiler_pkg.vh"
 
-module openfpga_profiler_axis_probe #(
+module yifpga_profiler_axis_probe #(
     parameter ENABLE = 1,
     parameter DATA_WIDTH = 32,
     parameter METRIC_ID = `OFD_PROFILER_METRIC_AXIS_DEMO_THROUGHPUT,
@@ -83,4 +83,55 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_profiler_axis_probe #(
+    parameter ENABLE = 1,
+    parameter DATA_WIDTH = 32,
+    parameter METRIC_ID = `OFD_PROFILER_METRIC_AXIS_DEMO_THROUGHPUT,
+    parameter COUNT_BYTES = 1,
+    parameter STALL_MODE = 0
+) (
+    input  wire                         clk,
+    input  wire                         rst,
+    input  wire                         clear,
+    input  wire                         enable,
+
+    input  wire                         axis_valid,
+    input  wire                         axis_ready,
+    input  wire [(DATA_WIDTH / 8)-1:0]  axis_keep,
+    input  wire                         axis_last,
+
+    output wire                          metric_valid,
+    output wire  [15:0]                  metric_id,
+    output wire  [31:0]                  metric_value0,
+    output wire  [31:0]                  metric_value1,
+    output wire  [31:0]                  metric_value2,
+    output wire  [31:0]                  metric_value3,
+    output wire                          metric_overflow
+);
+yifpga_profiler_axis_probe #(
+    .ENABLE(ENABLE),
+    .DATA_WIDTH(DATA_WIDTH),
+    .METRIC_ID(METRIC_ID),
+    .COUNT_BYTES(COUNT_BYTES),
+    .STALL_MODE(STALL_MODE)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .clear(clear),
+    .enable(enable),
+    .axis_valid(axis_valid),
+    .axis_ready(axis_ready),
+    .axis_keep(axis_keep),
+    .axis_last(axis_last),
+    .metric_valid(metric_valid),
+    .metric_id(metric_id),
+    .metric_value0(metric_value0),
+    .metric_value1(metric_value1),
+    .metric_value2(metric_value2),
+    .metric_value3(metric_value3),
+    .metric_overflow(metric_overflow)
+);
 endmodule

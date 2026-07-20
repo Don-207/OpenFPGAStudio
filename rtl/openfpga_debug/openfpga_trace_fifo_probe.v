@@ -3,7 +3,7 @@
 `include "openfpga_debug_pkg.vh"
 `include "openfpga_trace_pkg.vh"
 
-module openfpga_trace_fifo_probe #(
+module yifpga_trace_fifo_probe #(
     parameter ENABLE = 1,
     parameter VALUE_ID = 16'h0001
 ) (
@@ -67,4 +67,48 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_trace_fifo_probe #(
+    parameter ENABLE = 1,
+    parameter VALUE_ID = 16'h0001
+) (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        sample_valid,
+    input  wire        almost_full,
+    input  wire        overflow_valid,
+    input  wire [31:0] level,
+
+    output wire         mark_valid,
+    output wire  [15:0] mark_trace_id,
+    output wire  [7:0]  mark_level,
+    output wire  [31:0] mark_arg0,
+
+    output wire         value_valid,
+    output wire  [15:0] value_trace_id,
+    output wire  [15:0] value_id,
+    output wire  [31:0] value_data
+);
+yifpga_trace_fifo_probe #(
+    .ENABLE(ENABLE),
+    .VALUE_ID(VALUE_ID)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .sample_valid(sample_valid),
+    .almost_full(almost_full),
+    .overflow_valid(overflow_valid),
+    .level(level),
+    .mark_valid(mark_valid),
+    .mark_trace_id(mark_trace_id),
+    .mark_level(mark_level),
+    .mark_arg0(mark_arg0),
+    .value_valid(value_valid),
+    .value_trace_id(value_trace_id),
+    .value_id(value_id),
+    .value_data(value_data)
+);
 endmodule

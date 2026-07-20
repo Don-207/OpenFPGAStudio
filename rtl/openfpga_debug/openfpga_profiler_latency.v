@@ -2,7 +2,7 @@
 
 `include "openfpga_profiler_pkg.vh"
 
-module openfpga_profiler_latency #(
+module yifpga_profiler_latency #(
     parameter ENABLE = 1,
     parameter METRIC_ID = `OFD_PROFILER_METRIC_DEMO_LATENCY,
     parameter TIMEOUT_CYCLES = 32'd0
@@ -161,4 +161,51 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_profiler_latency #(
+    parameter ENABLE = 1,
+    parameter METRIC_ID = `OFD_PROFILER_METRIC_DEMO_LATENCY,
+    parameter TIMEOUT_CYCLES = 32'd0
+) (
+    input  wire        clk,
+    input  wire        rst,
+    input  wire        clear,
+    input  wire        enable,
+
+    input  wire        start_valid,
+    input  wire        end_valid,
+    input  wire        timeout_clear,
+
+    output wire         busy,
+    output wire         metric_valid,
+    output wire  [15:0] metric_id,
+    output wire  [31:0] metric_value0,
+    output wire  [31:0] metric_value1,
+    output wire  [31:0] metric_value2,
+    output wire  [31:0] metric_value3,
+    output wire         metric_overflow
+);
+yifpga_profiler_latency #(
+    .ENABLE(ENABLE),
+    .METRIC_ID(METRIC_ID),
+    .TIMEOUT_CYCLES(TIMEOUT_CYCLES)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .clear(clear),
+    .enable(enable),
+    .start_valid(start_valid),
+    .end_valid(end_valid),
+    .timeout_clear(timeout_clear),
+    .busy(busy),
+    .metric_valid(metric_valid),
+    .metric_id(metric_id),
+    .metric_value0(metric_value0),
+    .metric_value1(metric_value1),
+    .metric_value2(metric_value2),
+    .metric_value3(metric_value3),
+    .metric_overflow(metric_overflow)
+);
 endmodule

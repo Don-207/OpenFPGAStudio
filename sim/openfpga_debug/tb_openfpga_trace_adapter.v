@@ -48,7 +48,7 @@ integer errors = 0;
 
 always #5 clk = ~clk;
 
-openfpga_trace_adapter dut (
+yifpga_trace_adapter dut (
     .clk(clk),
     .rst(rst),
     .timestamp(timestamp),

@@ -2,7 +2,9 @@
 
 ## P0 能力
 
-当前 Logic Analyzer 集成在 `openfpga_debug_board_demo` 中，采样宽度固定为 32 bit，默认最大深度为 128 samples。Viewer 通过 Monitor UART 寄存器窗口配置、arm、force trigger、clear 和 start readout。
+当前 Logic Analyzer canonical 集成顶层为 `yifpga_debug_board_demo`；旧
+`openfpga_debug_board_demo` 作为等价 wrapper 保留。采样宽度固定为 32 bit，默认最大深度为
+128 samples。Viewer 通过 Monitor UART 寄存器窗口配置、arm、force trigger、clear 和 start readout。
 
 ## Monitor Register Map
 

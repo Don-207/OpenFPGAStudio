@@ -1,12 +1,19 @@
 `timescale 1ns / 1ps
 
+// OPENFPGA_DEBUG_SIM remains a v1.x-compatible build alias.
+`ifdef OPENFPGA_DEBUG_SIM
+`ifndef YIFPGA_DEBUG_SIM
+`define YIFPGA_DEBUG_SIM
+`endif
+`endif
+
 `include "openfpga_debug_pkg.vh"
 `include "openfpga_trace_pkg.vh"
 `include "openfpga_monitor_pkg.vh"
 `include "openfpga_profiler_pkg.vh"
 `include "openfpga_la_pkg.vh"
 
-module openfpga_debug_board_demo #(
+module yifpga_debug_board_demo #(
     parameter CLK_FREQ_HZ = 100000000,
     parameter UART_BAUD = 115200,
     parameter BUFFER_ADDR_WIDTH = 6,
@@ -32,7 +39,7 @@ module openfpga_debug_board_demo #(
     output wire       led1
 );
 
-`ifdef OPENFPGA_DEBUG_SIM
+`ifdef YIFPGA_DEBUG_SIM
 wire clk = clk_p;
 `else
 wire clk;
@@ -393,12 +400,12 @@ assign la_status_set = {
     la_core_state
 };
 
-openfpga_la_probe_pack u_la_probe_pack (
+yifpga_la_probe_pack u_la_probe_pack (
     .probe_bits(la_sample_bus_raw & la_channel_mask),
     .sample_bus(la_sample_bus)
 );
 
-openfpga_la_core #(
+yifpga_la_core #(
     .SAMPLE_WIDTH(32),
     .SAMPLE_DEPTH(`OFD_LA_MAX_SAMPLE_DEPTH)
 ) u_la_core (
@@ -436,7 +443,7 @@ openfpga_la_core #(
     .read_valid(la_core_read_valid)
 );
 
-openfpga_la_adapter u_la_adapter (
+yifpga_la_adapter u_la_adapter (
     .clk(clk),
     .rst(rst),
     .timestamp(watch_value),
@@ -464,7 +471,7 @@ openfpga_la_adapter u_la_adapter (
     .payload_flat(la_msg_payload)
 );
 
-openfpga_trace_dma_probe u_dma_trace_probe (
+yifpga_trace_dma_probe u_dma_trace_probe (
     .clk(clk),
     .rst(rst),
     .start_valid(dma_start_valid),
@@ -488,7 +495,7 @@ openfpga_trace_dma_probe u_dma_trace_probe (
     .mark_arg0(dma_mark_arg0)
 );
 
-openfpga_trace_frame_probe u_frame_trace_probe (
+yifpga_trace_frame_probe u_frame_trace_probe (
     .clk(clk),
     .rst(rst),
     .frame_start_valid(frame_start_valid),
@@ -511,7 +518,7 @@ openfpga_trace_frame_probe u_frame_trace_probe (
     .mark_arg0(frame_mark_arg0)
 );
 
-openfpga_trace_fifo_probe u_fifo_trace_probe (
+yifpga_trace_fifo_probe u_fifo_trace_probe (
     .clk(clk),
     .rst(rst),
     .sample_valid(fifo_sample_valid),
@@ -528,7 +535,7 @@ openfpga_trace_fifo_probe u_fifo_trace_probe (
     .value_data(fifo_value_data)
 );
 
-openfpga_trace_irq_probe u_irq_trace_probe (
+yifpga_trace_irq_probe u_irq_trace_probe (
     .clk(clk),
     .rst(rst),
     .irq_level(irq_level),
@@ -539,7 +546,7 @@ openfpga_trace_irq_probe u_irq_trace_probe (
     .mark_arg0(irq_mark_arg0)
 );
 
-openfpga_profiler_axis_probe #(
+yifpga_profiler_axis_probe #(
     .DATA_WIDTH(32),
     .STALL_MODE(2)
 ) u_axis_profiler_probe (
@@ -560,7 +567,7 @@ openfpga_profiler_axis_probe #(
     .metric_overflow(axis_metric_overflow)
 );
 
-openfpga_profiler_fifo_probe #(
+yifpga_profiler_fifo_probe #(
     .LEVEL_WIDTH(16)
 ) u_fifo_profiler_probe (
     .clk(clk),
@@ -583,7 +590,7 @@ openfpga_profiler_fifo_probe #(
     .metric_overflow(fifo_metric_overflow)
 );
 
-openfpga_profiler_latency #(
+yifpga_profiler_latency #(
     .TIMEOUT_CYCLES(CLK_FREQ_HZ / 20)
 ) u_latency_profiler_probe (
     .clk(clk),
@@ -603,7 +610,7 @@ openfpga_profiler_latency #(
     .metric_overflow(latency_metric_overflow)
 );
 
-openfpga_profiler_frame_probe u_frame_profiler_probe (
+yifpga_profiler_frame_probe u_frame_profiler_probe (
     .clk(clk),
     .rst(rst),
     .clear(profiler_clear_all),
@@ -621,7 +628,7 @@ openfpga_profiler_frame_probe u_frame_profiler_probe (
     .metric_overflow(frame_metric_overflow)
 );
 
-openfpga_profiler_core #(
+yifpga_profiler_core #(
     .DEFAULT_SAMPLE_PERIOD(`OFD_PROFILER_DEFAULT_SAMPLE_PERIOD)
 ) u_profiler_core (
     .clk(clk),
@@ -657,7 +664,7 @@ openfpga_profiler_core #(
     .alert_arg1(profiler_alert_arg1)
 );
 
-openfpga_profiler_adapter u_profiler_adapter (
+yifpga_profiler_adapter u_profiler_adapter (
     .clk(clk),
     .rst(rst),
     .timestamp(watch_value),
@@ -685,7 +692,7 @@ openfpga_profiler_adapter u_profiler_adapter (
     .payload_flat(profiler_msg_payload)
 );
 
-openfpga_debug_top #(
+yifpga_debug_top #(
     .CLK_FREQ_HZ(CLK_FREQ_HZ),
     .UART_BAUD(UART_BAUD),
     .BUFFER_ADDR_WIDTH(BUFFER_ADDR_WIDTH),
@@ -780,16 +787,16 @@ openfpga_debug_top #(
     .la_probe_monitor_resp_valid(la_probe_monitor_resp_valid)
 );
 
-`ifndef OPENFPGA_DEBUG_SIM
+`ifndef YIFPGA_DEBUG_SIM
 generate if (ENABLE_JTAG) begin : g_jtag_transport
-openfpga_jtag_perf_source #(
+yifpga_jtag_perf_source #(
     .BYTE_INTERVAL_TICKS(JTAG_PERF_BYTE_INTERVAL_TICKS)
 ) u_jtag_perf_source (
     .clk(clk), .rst_n(~rst), .data(perf_source_data), .valid(perf_source_valid),
     .ready(jtag_transport_ready)
 );
 
-openfpga_jtag_transport_xilinx #(
+yifpga_jtag_transport_xilinx #(
     .ADDR_WIDTH(12), .USER_CHAIN(2), .BUILD_ID(JTAG_BUILD_ID)
 ) u_jtag_transport (
     .debug_clk(clk), .debug_rst_n(~rst),
@@ -1136,4 +1143,57 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_debug_board_demo #(
+    parameter CLK_FREQ_HZ = 100000000,
+    parameter UART_BAUD = 115200,
+    parameter BUFFER_ADDR_WIDTH = 6,
+    parameter HEARTBEAT_INTERVAL_TICKS = CLK_FREQ_HZ,
+    parameter EVENT_INTERVAL_TICKS = CLK_FREQ_HZ / 10,
+    parameter WATCH_INTERVAL_TICKS = CLK_FREQ_HZ / 20,
+    parameter PRINT_INTERVAL_TICKS = CLK_FREQ_HZ / 5,
+    parameter STATUS_INTERVAL_TICKS = CLK_FREQ_HZ / 10,
+    parameter TRACE_SCENARIO_INTERVAL_TICKS = (CLK_FREQ_HZ / 200) + 17,
+    parameter LED_HOLD_TICKS = CLK_FREQ_HZ / 20,
+    parameter ENABLE_UART = 1,
+    parameter ENABLE_JTAG = 1,
+    parameter JTAG_PERF_MODE = 0,
+    parameter JTAG_PERF_BYTE_INTERVAL_TICKS = 50
+) (
+    input  wire       clk_p,
+    input  wire       clk_n,
+    input  wire       reset_n,
+    input  wire       demo_trigger,
+    input  wire       uart_rx,
+    output wire       uart_tx,
+    output wire       led0,
+    output wire       led1
+);
+yifpga_debug_board_demo #(
+    .CLK_FREQ_HZ(CLK_FREQ_HZ),
+    .UART_BAUD(UART_BAUD),
+    .BUFFER_ADDR_WIDTH(BUFFER_ADDR_WIDTH),
+    .HEARTBEAT_INTERVAL_TICKS(HEARTBEAT_INTERVAL_TICKS),
+    .EVENT_INTERVAL_TICKS(EVENT_INTERVAL_TICKS),
+    .WATCH_INTERVAL_TICKS(WATCH_INTERVAL_TICKS),
+    .PRINT_INTERVAL_TICKS(PRINT_INTERVAL_TICKS),
+    .STATUS_INTERVAL_TICKS(STATUS_INTERVAL_TICKS),
+    .TRACE_SCENARIO_INTERVAL_TICKS(TRACE_SCENARIO_INTERVAL_TICKS),
+    .LED_HOLD_TICKS(LED_HOLD_TICKS),
+    .ENABLE_UART(ENABLE_UART),
+    .ENABLE_JTAG(ENABLE_JTAG),
+    .JTAG_PERF_MODE(JTAG_PERF_MODE),
+    .JTAG_PERF_BYTE_INTERVAL_TICKS(JTAG_PERF_BYTE_INTERVAL_TICKS)
+) u_yifpga_compat (
+    .clk_p(clk_p),
+    .clk_n(clk_n),
+    .reset_n(reset_n),
+    .demo_trigger(demo_trigger),
+    .uart_rx(uart_rx),
+    .uart_tx(uart_tx),
+    .led0(led0),
+    .led1(led1)
+);
 endmodule

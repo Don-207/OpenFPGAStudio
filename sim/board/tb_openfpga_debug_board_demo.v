@@ -45,7 +45,7 @@ reg [7:0] rx_byte;
 
 always #5 clk_p = ~clk_p;
 
-openfpga_debug_board_demo #(
+yifpga_debug_board_demo #(
     .CLK_FREQ_HZ(CLK_FREQ_HZ),
     .UART_BAUD(UART_BAUD),
     .BUFFER_ADDR_WIDTH(3),

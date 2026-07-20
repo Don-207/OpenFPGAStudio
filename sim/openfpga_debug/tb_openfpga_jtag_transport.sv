@@ -21,7 +21,7 @@ int errors = 0;
 always #5 debug_clk = ~debug_clk;
 always #7 jtag_clk = ~jtag_clk;
 
-openfpga_jtag_transport #(.ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(32'h12345678)) dut (.*);
+yifpga_jtag_transport #(.ADDR_WIDTH(ADDR_WIDTH), .BUILD_ID(32'h12345678)) dut (.*);
 openfpga_transport_router router (
     .clk(debug_clk), .rst_n(debug_rst_n), .in_data(router_in_data),
     .in_valid(router_in_valid), .in_ready(), .uart_data(router_uart_data),

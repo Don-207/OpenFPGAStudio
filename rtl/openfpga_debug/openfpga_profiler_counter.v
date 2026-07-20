@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module openfpga_profiler_counter #(
+module yifpga_profiler_counter #(
     parameter WIDTH = 32
 ) (
     input  wire             clk,
@@ -35,4 +35,31 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_profiler_counter #(
+    parameter WIDTH = 32
+) (
+    input  wire             clk,
+    input  wire             rst,
+    input  wire             clear,
+    input  wire             add_valid,
+    input  wire [WIDTH-1:0] add_value,
+    output wire  [WIDTH-1:0] value,
+    output wire              saturated,
+    output wire              overflow_pulse
+);
+yifpga_profiler_counter #(
+    .WIDTH(WIDTH)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .clear(clear),
+    .add_valid(add_valid),
+    .add_value(add_value),
+    .value(value),
+    .saturated(saturated),
+    .overflow_pulse(overflow_pulse)
+);
 endmodule

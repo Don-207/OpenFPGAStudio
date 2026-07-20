@@ -8,7 +8,7 @@
 // The following scan returns exactly length bytes, LSB first. UPDATE commits a
 // payload only when the exact response length was shifted; all partial/overlong
 // scans abort the speculative mailbox read.
-module openfpga_jtag_user_dr (
+module yifpga_jtag_user_dr (
     input  logic       tck,
     input  logic       rst_n,
     input  logic       sel,
@@ -124,4 +124,48 @@ always_ff @(posedge tck or negedge rst_n) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_user_dr (
+    input  logic       tck,
+    input  logic       rst_n,
+    input  logic       sel,
+    input  logic       capture,
+    input  logic       shift,
+    input  logic       update,
+    input  logic       tdi,
+    output wire       tdo,
+
+    output wire       header_req,
+    output wire [5:0] header_addr,
+    input  logic [7:0] header_data,
+    input  logic       header_valid,
+    output wire       payload_req,
+    input  logic [7:0] payload_data,
+    input  logic       payload_valid,
+    output wire       payload_ready,
+    output wire       payload_commit,
+    output wire       payload_abort
+);
+yifpga_jtag_user_dr u_yifpga_compat (
+    .tck(tck),
+    .rst_n(rst_n),
+    .sel(sel),
+    .capture(capture),
+    .shift(shift),
+    .update(update),
+    .tdi(tdi),
+    .tdo(tdo),
+    .header_req(header_req),
+    .header_addr(header_addr),
+    .header_data(header_data),
+    .header_valid(header_valid),
+    .payload_req(payload_req),
+    .payload_data(payload_data),
+    .payload_valid(payload_valid),
+    .payload_ready(payload_ready),
+    .payload_commit(payload_commit),
+    .payload_abort(payload_abort)
+);
 endmodule

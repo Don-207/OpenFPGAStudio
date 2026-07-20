@@ -27,10 +27,11 @@ prj/constraints/openfpga_debug_board_demo.xdc
 
 ## 3. 顶层接口
 
-推荐用户工程实例化 `openfpga_debug_top`：
+新用户工程推荐实例化 `yifpga_debug_top`；旧 `openfpga_debug_top` 在兼容期内作为等价 wrapper
+保留：
 
 ```verilog
-openfpga_debug_top #(
+yifpga_debug_top #(
     .CLK_FREQ_HZ(100000000),
     .UART_BAUD(115200),
     .BUFFER_ADDR_WIDTH(4)

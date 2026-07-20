@@ -3,7 +3,7 @@
 `include "openfpga_profiler_pkg.vh"
 `include "openfpga_debug_pkg.vh"
 
-module openfpga_profiler_core #(
+module yifpga_profiler_core #(
     parameter DEFAULT_SAMPLE_PERIOD = `OFD_PROFILER_DEFAULT_SAMPLE_PERIOD
 ) (
     input  wire        clk,
@@ -82,7 +82,7 @@ assign metric_ready = enable && snapshot_can_capture && alert_can_capture;
 assign sample_due = enable && (sample_counter >= (effective_sample_period - 32'd1));
 assign counter_clear = rst || clear_pulse || clear_counters_next;
 
-openfpga_profiler_counter u_counter0 (
+yifpga_profiler_counter u_counter0 (
     .clk(clk),
     .rst(rst),
     .clear(counter_clear),
@@ -93,7 +93,7 @@ openfpga_profiler_counter u_counter0 (
     .overflow_pulse(counter_overflow0)
 );
 
-openfpga_profiler_counter u_counter1 (
+yifpga_profiler_counter u_counter1 (
     .clk(clk),
     .rst(rst),
     .clear(counter_clear),
@@ -104,7 +104,7 @@ openfpga_profiler_counter u_counter1 (
     .overflow_pulse(counter_overflow1)
 );
 
-openfpga_profiler_counter u_counter2 (
+yifpga_profiler_counter u_counter2 (
     .clk(clk),
     .rst(rst),
     .clear(counter_clear),
@@ -115,7 +115,7 @@ openfpga_profiler_counter u_counter2 (
     .overflow_pulse(counter_overflow2)
 );
 
-openfpga_profiler_counter u_counter3 (
+yifpga_profiler_counter u_counter3 (
     .clk(clk),
     .rst(rst),
     .clear(counter_clear),
@@ -207,4 +207,81 @@ always @(posedge clk) begin
     end
 end
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_profiler_core #(
+    parameter DEFAULT_SAMPLE_PERIOD = `OFD_PROFILER_DEFAULT_SAMPLE_PERIOD
+) (
+    input  wire        clk,
+    input  wire        rst,
+
+    input  wire        enable,
+    input  wire        clear_pulse,
+    input  wire [31:0] sample_period,
+    input  wire [31:0] metric_mask,
+
+    input  wire        metric_valid,
+    output wire        metric_ready,
+    input  wire [15:0] metric_id,
+    input  wire [31:0] metric_value0,
+    input  wire [31:0] metric_value1,
+    input  wire [31:0] metric_value2,
+    input  wire [31:0] metric_value3,
+    input  wire        metric_overflow,
+
+    output wire         snapshot_valid,
+    input  wire        snapshot_ready,
+    output wire  [15:0] snapshot_metric_id,
+    output wire  [15:0] snapshot_flags,
+    output wire  [31:0] snapshot_sample_cycles,
+    output wire  [31:0] snapshot_value0,
+    output wire  [31:0] snapshot_value1,
+    output wire  [31:0] snapshot_value2,
+    output wire  [31:0] snapshot_value3,
+    output wire  [15:0] snapshot_overflow_count,
+
+    output wire         alert_valid,
+    input  wire        alert_ready,
+    output wire  [15:0] alert_metric_id,
+    output wire  [7:0]  alert_level,
+    output wire  [7:0]  alert_code,
+    output wire  [31:0] alert_arg0,
+    output wire  [31:0] alert_arg1
+);
+yifpga_profiler_core #(
+    .DEFAULT_SAMPLE_PERIOD(DEFAULT_SAMPLE_PERIOD)
+) u_yifpga_compat (
+    .clk(clk),
+    .rst(rst),
+    .enable(enable),
+    .clear_pulse(clear_pulse),
+    .sample_period(sample_period),
+    .metric_mask(metric_mask),
+    .metric_valid(metric_valid),
+    .metric_ready(metric_ready),
+    .metric_id(metric_id),
+    .metric_value0(metric_value0),
+    .metric_value1(metric_value1),
+    .metric_value2(metric_value2),
+    .metric_value3(metric_value3),
+    .metric_overflow(metric_overflow),
+    .snapshot_valid(snapshot_valid),
+    .snapshot_ready(snapshot_ready),
+    .snapshot_metric_id(snapshot_metric_id),
+    .snapshot_flags(snapshot_flags),
+    .snapshot_sample_cycles(snapshot_sample_cycles),
+    .snapshot_value0(snapshot_value0),
+    .snapshot_value1(snapshot_value1),
+    .snapshot_value2(snapshot_value2),
+    .snapshot_value3(snapshot_value3),
+    .snapshot_overflow_count(snapshot_overflow_count),
+    .alert_valid(alert_valid),
+    .alert_ready(alert_ready),
+    .alert_metric_id(alert_metric_id),
+    .alert_level(alert_level),
+    .alert_code(alert_code),
+    .alert_arg0(alert_arg0),
+    .alert_arg1(alert_arg1)
+);
 endmodule

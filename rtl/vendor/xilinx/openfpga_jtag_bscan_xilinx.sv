@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module openfpga_jtag_bscan_xilinx #(
+module yifpga_jtag_bscan_xilinx #(
     parameter int USER_CHAIN = 2
 ) (
     output logic capture,
@@ -21,4 +21,35 @@ BSCANE2 #(.JTAG_CHAIN(USER_CHAIN)) u_bscan (
     .UPDATE(update), .TDO(tdo)
 );
 
+endmodule
+
+// Deprecated v1.x compatibility wrapper; keep ports and defaults unchanged.
+module openfpga_jtag_bscan_xilinx #(
+    parameter int USER_CHAIN = 2
+) (
+    output wire capture,
+    output wire drck,
+    output wire reset,
+    output wire runtest,
+    output wire sel,
+    output wire shift,
+    output wire tck,
+    output wire tdi,
+    output wire update,
+    input  logic tdo
+);
+yifpga_jtag_bscan_xilinx #(
+    .USER_CHAIN(USER_CHAIN)
+) u_yifpga_compat (
+    .capture(capture),
+    .drck(drck),
+    .reset(reset),
+    .runtest(runtest),
+    .sel(sel),
+    .shift(shift),
+    .tck(tck),
+    .tdi(tdi),
+    .update(update),
+    .tdo(tdo)
+);
 endmodule
