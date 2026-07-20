@@ -34,8 +34,10 @@ buffer used、overflow、dropped bytes、reconnect 和最近错误。
 ## Raw capture 与回放
 
 ```bash
-python3 tools/jtag/openfpga_jtag_bridge.py --capture capture.bin
+python3 tools/jtag/yifpga_jtag_bridge.py --capture capture.bin
 ```
+
+旧入口 `tools/jtag/openfpga_jtag_bridge.py` 在兼容期内仍转发到同一实现，但会输出弃用提示。
 
 `capture.bin` 是 Parser 原始 byte stream，旁路的 `capture.bin.jsonl` 记录时间、session、起始
 计数和块长。在 Viewer 的 Raw replay 文件框选择 `.bin` 可离线送入同一 Parser。若 capture

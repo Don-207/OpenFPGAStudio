@@ -163,9 +163,9 @@ AI_DEBUG_EXPRESSION = r"""
   let cancelCount = 0;
   let cancelledFindingCount = 0;
   for (let index = 0; index < 5; index += 1) {
-    const controller = new window.OpenFPGAAIProvider.AnalysisController();
+    const controller = new window.YiFPGAAIProvider.AnalysisController();
     const pending = controller.run(
-      new window.OpenFPGAAIProvider.MockProvider("valid", 50),
+      new window.YiFPGAAIProvider.MockProvider("valid", 50),
       api.aiDebug.state.snapshot,
       api.aiDebug.state.ruleResult
     );

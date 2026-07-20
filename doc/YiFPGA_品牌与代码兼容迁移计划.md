@@ -114,6 +114,11 @@
 
 ### YF.WP2：Host软件双命名兼容
 
+状态（2026-07-20）：**已完成**。Viewer 已以 `YiFPGA*` 全局作为 canonical 名称，旧
+`OpenFPGA*` 全局继续指向同一对象；JTAG Bridge 已以 `yifpga_jtag_bridge.py` 作为 canonical
+入口，旧脚本保留轻量 wrapper 和弃用提示。冻结 schema、fixture 与 Bridge protocol 保持
+不变。新旧入口恒等测试及 `just release-check` 均通过。
+
 - 新增`YiFPGA*` JavaScript全局，同时将`OpenFPGA*`保留为同一对象的deprecated alias。
 - 新增`yifpga_*` Python入口；旧`openfpga_*`脚本保留轻量wrapper并打印一次弃用提示。
 - CLI帮助、日志和用户可见错误使用新品牌，协议字段和fixture保持不变。

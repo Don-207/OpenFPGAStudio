@@ -12,6 +12,7 @@ default:
 # v1.0 hardware-free/no-network release-candidate gate. Vivado and board sign-off remain separate.
 release-check: m27-check m28-check m29-check m30-check m32-check m36-check
     {{python}} tools/viewer/ai_debug_validate.py release
+    node tools/viewer/web/host_naming_compatibility_test.js
     node --check tools/viewer/web/diagnostic_snapshot.js
     node --check tools/viewer/web/diagnostic_rules.js
     node --check tools/viewer/web/ai_provider.js
@@ -109,23 +110,24 @@ m33-elab:
 m34-check:
     {{python}} tools/jtag/test_ftdi_mpsse.py
     {{python}} tools/jtag/test_ftdi_backend.py
-    {{python}} tools/jtag/openfpga_jtag_bridge.py --self-test
+    {{python}} tools/jtag/yifpga_jtag_bridge.py --self-test
+    {{python}} tools/jtag/openfpga_jtag_bridge.py --help
 
 # Start the local-only M34 bridge with the hardware-free backend.
 m34-mock:
-    {{python}} tools/jtag/openfpga_jtag_bridge.py --backend mock
+    {{python}} tools/jtag/yifpga_jtag_bridge.py --backend mock
 
 # Start the local-only Bridge over the direct FT232H USER2 backend (hardware operation).
 m35-ftdi-bridge tck="6000000" block="1024":
-    {{python}} tools/jtag/openfpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}}
+    {{python}} tools/jtag/yifpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}}
 
 # Start Bridge for the M36 normal image and require its release build identity.
 m36-ftdi-bridge tck="6000000" block="1024":
-    {{python}} tools/jtag/openfpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}} --build-id 0x4d360001
+    {{python}} tools/jtag/yifpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}} --build-id 0x4d360001
 
 # Start Bridge for the M36 performance image (M35-compatible performance build ID).
 m36-perf-ftdi-bridge tck="6000000" block="1024":
-    {{python}} tools/jtag/openfpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}} --build-id 0x4d350001
+    {{python}} tools/jtag/yifpga_jtag_bridge.py --backend ftdi --tck-hz {{tck}} --block-size {{block}} --build-id 0x4d350001
 
 m35-perf-source-sim:
     xvlog -sv rtl/openfpga_debug/openfpga_jtag_perf_source.sv sim/openfpga_debug/tb_openfpga_jtag_perf_source.sv

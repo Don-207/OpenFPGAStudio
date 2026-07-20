@@ -39,8 +39,10 @@ u8 type | u32le payload_length | payload
 ## Raw capture
 
 ```bash
-python3 tools/jtag/openfpga_jtag_bridge.py --capture capture.bin
+python3 tools/jtag/yifpga_jtag_bridge.py --capture capture.bin
 ```
+
+旧入口 `tools/jtag/openfpga_jtag_bridge.py` 在兼容期内仍转发到同一实现，但会输出弃用提示。
 
 `capture.bin` 仅保存原始 payload；`capture.bin.jsonl` 保存时间、session、逻辑起始计数和块长。
 
@@ -66,7 +68,7 @@ Hardware Manager 对同一 cable 的连接。
 ## Xilinx Hardware Manager backend 状态
 
 ```bash
-python3 tools/jtag/openfpga_jtag_bridge.py --backend xilinx --list-targets
+python3 tools/jtag/yifpga_jtag_bridge.py --backend xilinx --list-targets
 ```
 
 Python/Vivado 常驻进程、目标枚举、显式选择、结构化错误和退出清理已经实现。FPGA 端

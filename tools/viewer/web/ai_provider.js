@@ -1,8 +1,9 @@
 /* YiFPGA Studio M29 provider-neutral context and lifecycle boundary. */
 (function (root, factory) {
-  const validator = typeof module === "object" && module.exports ? require("./diagnosis_validator.js") : root.OpenFPGADiagnosisValidator;
+  const validator = typeof module === "object" && module.exports ? require("./diagnosis_validator.js") : root.YiFPGADiagnosisValidator;
   const api = factory(validator);
   if (typeof module === "object" && module.exports) module.exports = api;
+  root.YiFPGAAIProvider = api;
   root.OpenFPGAAIProvider = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function (validator) {
   "use strict";

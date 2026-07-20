@@ -2963,7 +2963,7 @@
     window.setTimeout(() => target.classList.remove("diagnostic-highlight"), 1600); return true;
   }
 
-  aiDebug = new window.OpenFPGAAIDebugModel.AIDebugModel({
+  aiDebug = new window.YiFPGAAIDebugModel.AIDebugModel({
     stateSource: () => state,
     download: downloadText,
     onLocate: locateDiagnosticEvidence,
@@ -3031,22 +3031,22 @@
     consumeBridgeRecord,
     diagnosticSnapshot: {
       createSession(options = {}) {
-        return window.OpenFPGADiagnosticSnapshot.build(state, options);
+        return window.YiFPGADiagnosticSnapshot.build(state, options);
       },
       createTimeWindow(from, to, options = {}) {
-        return window.OpenFPGADiagnosticSnapshot.build(state, { ...options, scope: { type: "time_window", from, to } });
+        return window.YiFPGADiagnosticSnapshot.build(state, { ...options, scope: { type: "time_window", from, to } });
       },
       createLogicAnalyzerCapture(captureId = state.logicAnalyzer.latestCaptureId, options = {}) {
-        return window.OpenFPGADiagnosticSnapshot.build(state, { ...options, captureId, scope: { type: "la_capture", capture_id: captureId } });
+        return window.YiFPGADiagnosticSnapshot.build(state, { ...options, captureId, scope: { type: "la_capture", capture_id: captureId } });
       },
       import(json) {
-        return window.OpenFPGADiagnosticSnapshot.importSnapshot(json);
+        return window.YiFPGADiagnosticSnapshot.importSnapshot(json);
       },
       export(snapshot) {
-        return window.OpenFPGADiagnosticSnapshot.canonicalize(snapshot);
+        return window.YiFPGADiagnosticSnapshot.canonicalize(snapshot);
       },
       locate(snapshot, evidenceId, callback) {
-        return window.OpenFPGADiagnosticSnapshot.locate(snapshot, evidenceId, callback);
+        return window.YiFPGADiagnosticSnapshot.locate(snapshot, evidenceId, callback);
       },
     },
     aiDebug,

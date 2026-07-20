@@ -2,6 +2,7 @@
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
+  root.YiFPGADiagnosisValidator = api;
   root.OpenFPGADiagnosisValidator = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";

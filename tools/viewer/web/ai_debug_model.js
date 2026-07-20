@@ -2,6 +2,7 @@
 (function (root, factory) {
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
+  root.YiFPGAAIDebugModel = api;
   root.OpenFPGAAIDebugModel = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function (root) {
   "use strict";
@@ -10,7 +11,7 @@
   class AIDebugModel {
     constructor(options) {
       this.stateSource = options.stateSource; this.elements = options.elements; this.download = options.download; this.onLocate = options.onLocate;
-      this.controller = new root.OpenFPGAAIProvider.AnalysisController(); this.provider = new root.OpenFPGAAIProvider.MockProvider("valid", 80);
+      this.controller = new root.YiFPGAAIProvider.AnalysisController(); this.provider = new root.YiFPGAAIProvider.MockProvider("valid", 80);
       this.state = { status: "idle", scope: { type: "session" }, snapshot: null, ruleResult: null, providerResult: null, preview: null, history: [], feedback: { rating: "", root_cause: "", note: "" } };
       this.bind(); this.render();
     }
@@ -27,12 +28,12 @@
       this.state.status = "building_snapshot"; this.render();
       const options = { scope: this.state.scope, target: { build_id: this.stateSource().transport.sessionId || null } };
       if (this.state.scope.type === "la_capture") options.captureId = this.stateSource().logicAnalyzer.latestCaptureId;
-      this.state.snapshot = await root.OpenFPGADiagnosticSnapshot.build(this.stateSource(), options); return this.state.snapshot;
+      this.state.snapshot = await root.YiFPGADiagnosticSnapshot.build(this.stateSource(), options); return this.state.snapshot;
     }
     async runLocal() {
       const snapshot = await this.buildSnapshot(); this.state.status = "local_analyzing"; this.render();
-      this.state.ruleResult = root.OpenFPGADiagnosticRules.evaluate(snapshot); this.state.providerResult = null;
-      this.state.preview = root.OpenFPGAAIProvider.preview(root.OpenFPGAAIProvider.buildContext(snapshot, this.state.ruleResult));
+      this.state.ruleResult = root.YiFPGADiagnosticRules.evaluate(snapshot); this.state.providerResult = null;
+      this.state.preview = root.YiFPGAAIProvider.preview(root.YiFPGAAIProvider.buildContext(snapshot, this.state.ruleResult));
       this.state.status = "local_complete"; this.record("local"); this.render(); return this.state.ruleResult;
     }
     async askAI() {
@@ -46,9 +47,9 @@
     }
     record(kind) { this.state.history.unshift({ kind, snapshot_id: this.state.snapshot.snapshot_id, status: this.state.status, finding_count: this.state.ruleResult.findings.length, timestamp: new Date().toISOString() }); this.state.history = this.state.history.slice(0, 20); }
     reset() { this.controller.cancel(); this.state = { status: "idle", scope: { type: "session" }, snapshot: null, ruleResult: null, providerResult: null, preview: null, history: [], feedback: { rating: "", root_cause: "", note: "" } }; this.elements.scope.value = "session"; this.elements.consent.checked = false; this.render(); }
-    locate(id) { const ref = root.OpenFPGADiagnosticSnapshot.locate(this.state.snapshot, id); if (ref && this.onLocate) this.onLocate(ref, id); return ref; }
-    report() { return { schema: "openfpga.ai_debug_report", schema_version: 1, snapshot_id: this.state.snapshot && this.state.snapshot.snapshot_id, rule_set_version: this.state.ruleResult && this.state.ruleResult.rule_set_version, prompt_version: root.OpenFPGAAIProvider.PROMPT_VERSION, findings: this.state.ruleResult && this.state.ruleResult.findings || [], diagnosis: this.state.providerResult, feedback: this.state.feedback }; }
-    exportSnapshot() { if (this.state.snapshot) this.download(`${this.state.snapshot.snapshot_id}.json`, "application/json", root.OpenFPGADiagnosticSnapshot.canonicalize(this.state.snapshot)); }
+    locate(id) { const ref = root.YiFPGADiagnosticSnapshot.locate(this.state.snapshot, id); if (ref && this.onLocate) this.onLocate(ref, id); return ref; }
+    report() { return { schema: "openfpga.ai_debug_report", schema_version: 1, snapshot_id: this.state.snapshot && this.state.snapshot.snapshot_id, rule_set_version: this.state.ruleResult && this.state.ruleResult.rule_set_version, prompt_version: root.YiFPGAAIProvider.PROMPT_VERSION, findings: this.state.ruleResult && this.state.ruleResult.findings || [], diagnosis: this.state.providerResult, feedback: this.state.feedback }; }
+    exportSnapshot() { if (this.state.snapshot) this.download(`${this.state.snapshot.snapshot_id}.json`, "application/json", root.YiFPGADiagnosticSnapshot.canonicalize(this.state.snapshot)); }
     exportDiagnosis() { if (this.state.snapshot) this.download(`${this.state.snapshot.snapshot_id}-diagnosis.json`, "application/json", JSON.stringify(this.report(), null, 2)); }
     exportMarkdown() {
       if (!this.state.snapshot) return; const report = this.report(); const lines = [`# AI Debug Report`, ``, `Snapshot: ${report.snapshot_id}`, `Scope: ${this.state.scope.type}`, `Integrity: ${this.state.snapshot.integrity.complete ? "complete" : "incomplete"}`, ``, `## Local Findings`];

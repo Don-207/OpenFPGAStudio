@@ -14,7 +14,9 @@
 ## 兼容承诺
 
 - `openfpga.*` schema、`openfpga-diagnosis-v1` 和 `OFD_*` 是 v1 ABI，保持不变。
-- `OpenFPGA*` JavaScript 全局、`openfpga_*` Python/RTL 入口本阶段保持不变。
+- `YiFPGA*` JavaScript 全局已成为 canonical；`OpenFPGA*` 作为同一对象的兼容别名保留。
+- JTAG Bridge canonical 入口为 `yifpga_jtag_bridge.py`；旧 `openfpga_jtag_bridge.py` wrapper
+  继续可用并提示弃用。RTL 入口仍留待后续工作包迁移。
 - Viewer 继续导入旧 capture、JSONL、VCD、CSV 和 snapshot；解析不依赖文件名。
 - Viewer 新导出的 VCD、CSV 和 JSONL 默认使用 `yifpga-` 前缀。
 - 历史验证文档文件名可使用新品牌；其中记录的产物路径、hash、Git tag 和已发布附件不重命名。

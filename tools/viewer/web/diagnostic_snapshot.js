@@ -2,6 +2,7 @@
 (function (root, factory) {
   const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
+  root.YiFPGADiagnosticSnapshot = api;
   root.OpenFPGADiagnosticSnapshot = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function (root) {
   "use strict";

@@ -8,10 +8,20 @@ import unittest
 
 from bridge_protocol import TYPE_DATA, TYPE_HELLO, data_frame, decode_records, hello
 from jtag_backend import MockBackend, TargetSelectionError
-from openfpga_jtag_bridge import Bridge, select_target
+import openfpga_jtag_bridge as legacy_bridge
+import yifpga_jtag_bridge as canonical_bridge
+from yifpga_jtag_bridge import Bridge, select_target
 
 
 FIXTURE = Path(__file__).with_name("fixtures") / "m32_mailbox_vectors.json"
+
+
+class BridgeNamingCompatibilityTest(unittest.TestCase):
+    def test_legacy_entry_reexports_canonical_objects(self) -> None:
+        self.assertIs(legacy_bridge.Bridge, canonical_bridge.Bridge)
+        self.assertIs(legacy_bridge.select_target, canonical_bridge.select_target)
+        self.assertIs(legacy_bridge.parser, canonical_bridge.parser)
+        self.assertIs(legacy_bridge.main, canonical_bridge.main)
 
 
 class BridgeProtocolTest(unittest.TestCase):
