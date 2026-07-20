@@ -72,7 +72,8 @@ prj/OpenFPGAStudio.xpr             -> prj/YiFPGAStudio.xpr
 
 ## 发布前剩余项
 
-- 从候选提交执行干净 clone 离线门禁。
+- 干净 clone 验收已从提交 `d11a9c6` 完成：`just release-check`、RTL 新旧
+  命名等价仿真、deprecated Python wrapper 和旧 snapshot/协议 fixture 均通过。
 - 确认 tag 策略。截至 2026-07-20，GitHub 远端无 tag，因此不得将计划中的
   “已有 v1.0.0 tag”当作既成事实。
 - push 候选提交，创建经确认的 tag 和 GitHub Release。

@@ -270,7 +270,9 @@ JTAG-only+ILA和performance+ILA。
 `Don-207/YiFPGAStudio`，本地 `origin` 已同步。新旧 URL 均只读解析到同一
 `main` HEAD，旧 URL 重定向有效；GitHub 远端实际无 tag，原计划的“既有
 `v1.0.0` tag”假设不成立。已起草 v1.1.0 Release Notes 并更新 README 候选状态；
-尚待干净 clone 验收、tag 策略确认、push 和 GitHub Release。
+从提交 `d11a9c6` 创建本地干净 clone，`just release-check`、RTL 新旧命名等价
+仿真、deprecated Python wrapper 以及旧 snapshot/协议 fixture 均通过。尚待 tag 策略
+确认、push 和 GitHub Release。
 
 - GitHub仓库重命名为`YiFPGAStudio`，确认旧URL重定向可用。
 - 更新clone URL、badge、issue/PR模板、release链接和外部文档。
