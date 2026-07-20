@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-YiFPGA Studio（原 OpenFPGA Studio）是面向 FPGA 的开放调试与可观测性平台。当前 v1.0 release candidate 以 Xilinx `xcku5p-ffvb676-2-i` 为参考平台，提供 Debug Core、Trace、Monitor、Profiler、Logic Analyzer、AI Debug，以及 UART/JTAG 数据通道和统一 Web Viewer。
+YiFPGA Studio（原 OpenFPGA Studio）是面向 FPGA 的开放调试与可观测性平台。当前 v1.1.0 迁移候选以 Xilinx `xcku5p-ffvb676-2-i` 为参考平台，提供 Debug Core、Trace、Monitor、Profiler、Logic Analyzer、AI Debug，以及 UART/JTAG 数据通道和统一 Web Viewer。
 
 当前板级 demo 已在 `xcku5p-ffvb676-2-i` 工程上跑通，默认串口参数为 `115200 8N1`。
 
@@ -11,21 +11,21 @@ YiFPGA Studio（原 OpenFPGA Studio）是面向 FPGA 的开放调试与可观测
 - Debug Protocol v1：`SOF + VER + TYPE + LEN + PAYLOAD + XOR checksum`
 - Debug Core：packetizer、timestamp、ring buffer、UART TX/RX、事件、Watch、状态和丢包统计。
 - Trace：Span/Mark/Value/Drop 模型，以及 DMA、Frame、FIFO、IRQ Probe 和时间轴视图。
-- Monitor：安全寄存器窗口、读写权限、W1C/Trigger 和 Viewer 轮询；RTL闭环已通过，真实板级UART RX仍是v1.0阻塞项。
+- Monitor：安全寄存器窗口、读写权限、W1C/Trigger 和 Viewer 轮询；RTL 与真实板级 UART/JTAG 闭环均已通过。
 - Profiler：AXI Stream、FIFO、Frame、Latency指标采集、告警、趋势和Monitor配置窗口。
 - Logic Analyzer：32-bit/128-sample参考捕获、触发、分块读出、波形显示及VCD/JSONL导出。
 - AI Debug：诊断快照、证据模型、10条本地规则、12个Golden Cases、受校验Provider和无网络降级。
-- Transport：UART和Xilinx BSCAN/USER2 JTAG；JTAG性能镜像已达到100 KB/s门槛，普通功能闭环仍在收口。
+- Transport：UART和Xilinx BSCAN/USER2 JTAG；normal、performance 和 JTAG-only+ILA 板级闭环已通过，performance 长稳达到 232,687.952 B/s。
 - Web Viewer：共享协议Parser、串口/JTAG来源选择、七类视图、暂停、历史、反馈和导出。
 - 板级Demo：100 MHz差分时钟、UART、JTAG、LED、可控场景和多类观测数据源。
 
 Qt Viewer 仍保留为后续目标；当前以 Web Viewer 作为可验收上位机。
 
-## v1.0 状态与边界
+## v1.1.0 迁移状态与边界
 
-当前版本统一标记为 **v1.0 release candidate**，尚未标记正式发布。主要阻塞项是Monitor真实双向UART、Logic Analyzer/AI Debug板级长稳签署，以及JTAG普通功能流、ILA共存和物理重连证据。
+当前源码为 **v1.1.0 迁移候选**。YiFPGA canonical 名称、旧名兼容入口、Vivado 构建矩阵、normal/performance/JTAG-only+ILA 板级复验和离线发布门禁已完成。尚待发布前的干净 clone 验收、tag 与 GitHub Release。
 
-v1.0只承诺Xilinx参考实现；Intel/Lattice/国产FPGA、PCIe/Ethernet/USB/SPI Transport和Qt Viewer属于后续版本。完整范围、门禁和停止发布条件见[v1.0收口阶段实施计划](doc/YiFPGA_Studio_v1.0收口阶段实施计划.md)。
+v1.1.0 只承诺 Xilinx 参考实现；Intel/Lattice/国产 FPGA、PCIe/Ethernet/USB/SPI Transport 和 Qt Viewer 属于后续版本。迁移范围、门禁、兼容期和回退方法见 [v1.1.0 Release Notes](doc/YiFPGA_Studio_v1.1.0_Release_Notes.md)。
 
 ## 目录
 
@@ -181,6 +181,7 @@ python3 tools/viewer/ai_debug_validate.py release
 
 ### 品牌与版本
 
+- [v1.1.0 Release Notes](doc/YiFPGA_Studio_v1.1.0_Release_Notes.md)
 - [YiFPGA 品牌与代码兼容迁移计划](doc/YiFPGA_品牌与代码兼容迁移计划.md)
 - [YF.WP0 YiFPGA 名称与资产冻结记录](doc/YF_WP0_YiFPGA名称与资产冻结记录.md)
 - [YiFPGA 品牌迁移与兼容说明](doc/YiFPGA_品牌迁移说明.md)
