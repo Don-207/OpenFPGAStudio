@@ -167,8 +167,11 @@ openfpga_debug_core (deprecated wrapper)
 `sim/yifpga_debug`，源码、测试、板级、Xilinx 适配、约束和 Tcl 文件名已切换 `yifpga_*`；
 `YiFPGAStudio.xpr`、justfile、当前文档及显式文件清单已同步。24 个旧 Tcl 名称保留轻量
 source wrapper，并提供旧工程只读迁移说明。Debug Core、RTL 新旧命名等价和
-`just release-check` 离线门禁均通过；旧 Tcl wrapper 生成检查通过。尚待用户侧完成新工程
-综合、实现、DRC、CDC、时序、bitstream 与板级验证；未运行综合、实现、bitstream 生成或烧录。
+`just release-check` 离线门禁均通过；旧 Tcl wrapper 生成检查通过。用户于 2026-07-20
+完成 `just m36-matrix`：UART、JTAG、UART_AND_JTAG、JTAG-disabled 与 JTAG-performance
+五组综合配置全部生成 manifest，BSCANE2 数量分别符合 0/1 裁剪预期，CDC 均报告
+`All paths are Safely Timed`，时钟交互均为 `Clean/Timed`，综合 WNS 为正。尚待用户侧完成
+实现、DRC、最终时序、bitstream、LTX 与板级验证；本次审查未继续运行实现、bitstream 生成或烧录。
 
 - `rtl/openfpga_debug`迁移为`rtl/yifpga_debug`。
 - `sim/openfpga_debug`迁移为`sim/yifpga_debug`。
